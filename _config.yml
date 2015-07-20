@@ -1,30 +1,30 @@
 # Site settings
-title:       Pixyll
-email:       your_email@example.com
-author:      John Otander
-description: "A simple, beautiful theme for Jekyll that emphasizes content rather than aesthetic fluff."
+title:       Krishan Subudhi Blog
+email:       krishan.subudhi@gmail.com
+author:      Krishan Subudhi
+description: "Simple tech blog by Krishan Subudhi"
 baseurl:     ""
-url:         "http://pixyll.com"
+url:         "http://krishansubudhi.github.io"
 
 # Google analytics
 google_analytics:
 
 # Optional features
-animated:           false
-show_related_posts: false
+animated:           true
+show_related_posts: true
 show_post_footers:  false
-show_social_icons:  false
+show_social_icons:  true
 
 # Disqus post comments
 # (leave blank to disable Disqus)
 disqus_shortname:
 
 # Social icons
-github_username:
+github_username:krishansubudhi
 stackoverflow_id:
-twitter_username:
-google_plus_id:
-linkedin_username:
+twitter_username:krishanrockz
+google_plus_id:+krishansubudhi
+linkedin_username:104802110
 angellist_username:
 medium_id:
 bitcoin_url:
@@ -32,13 +32,13 @@ paypal_url:
 flattr_button:
 
 # Post sharing icons
-show_sharing_icons: false
+show_sharing_icons: true
 share_text: 'Share this post!'
 # Change to 'true' to enable individual icons
-share_facebook: false
-share_twitter: false
-share_googleplus: false
-share_linkedin: false
+share_facebook: true
+share_twitter: true
+share_googleplus: true
+share_linkedin: true
 share_digg: false
 share_tumblr: false
 share_reddit: false
