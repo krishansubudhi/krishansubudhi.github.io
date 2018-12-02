@@ -16,23 +16,25 @@ Even though the tutorial involves azure, the instructions will work in any linux
 
 ## Setting up the VM
 Boot a linux VM in azure.
-open port 22 and 5000 in the security group of the VM. 
+In the portal, navigate to the VM page, go to networking.
+Add inbound rule for port 22 and 5000 in the security group of the VM. 
+
 Port 22 will be used for ssh and 5000 for testing flask application.
 
-## SSH to VM instance
+### SSH to VM instance
 	> ssh user@host
 
-## install dependencies
+### Install dependencies
 	$ sudo apt-get install python python-pip nginx
 
-## create virtualenv
+### Create virtualenv
 	$ mkdir -p www/flaskapp
 	$ cd www/flaskapp
 	$ pip3 install virtualenv	
 	$ python3 -m virtualenv flaskenv 	
 	$ chmod 755 flaskenv/
 
-## install python dependencies
+### Install python dependencies
 
 	$ source flaskenv/bin/activate
 	$ python -V
@@ -51,7 +53,7 @@ def helloworld():
 	return 'Hello World!'
 ````
 	
-## Run the flask application
+### Run the flask application
 	$ FLASK_APP=app.py
 	$ flask run
 
@@ -65,20 +67,21 @@ You should get
 
 ## Access flask application from your browser
 By default ports  are not accessible from hosts other than local host.
-Try accessing _http://\<server-IP\>:5000_ from local browser. You should not be able to access the page yet.
-This post helped me to understand the concept.
+Try accessing _http://\<server-IP\>:5000_ from local browser. You should not be able to access the page yet. The flask app is configured to accept connections from localhost only.
+[This post](http://dixu.me/2015/10/26/How_to_Allow_Remote_Connections_to_Flask_Web_Service/) helped me to understand the concept.
 
-[Post](http://dixu.me/2015/10/26/How_to_Allow_Remote_Connections_to_Flask_Web_Service/)
 
-### Restart the flask server allowing inbound connection from all ips
+
+#### Restart the flask server allowing inbound connection from all ips
 	$ flask run --host 0.0.0.0
 
 ### Check if your server is accessible from your home network
 Enable telnet for windows(google it ). 
 Open powershell and check if port 5000 is accessible
+	
 	telnet 40.113.192.53 5000
-You should get a blank screen with blinking cursor. If not, port 5000 is not accessible from your laptop.
-If not, then go back to azure portal and enable inbound connection for your host.
+
+You should get a blank screen with blinking cursor. If not, port 5000 is not accessible from your laptop and you should go back to azure portal and enable inbound connection for your host.
 
 ### Enable TCP traffic through port 5000
 Now go to the server shell and run
@@ -88,7 +91,7 @@ Open your browser and enter the url _http://\<server-IP\>:5000_
 You should be able to see the response now.
 **Hello World!**
 
-## WSGI server
+## WSGI server and Web server
 When you execute flask run , a warning message appears on the screen
    WARNING: Do not use the development server in a production environment.
    Use a production WSGI server instead.
@@ -118,40 +121,50 @@ Examples of web frameworks for python include: Django, Python, Bottle, Pyramid
 
 https://en.wikipedia.org/wiki/Web_framework
 
+This image explains the flow quiet well.
+![alt text](https://files.realpython.com/media/flask-nginx-gunicorn-architecture.012eb1c10f5e.jpg "Image explaining the flow")
+[Picture source](https://realpython.com/kickstarting-flask-on-ubuntu-setup-and-deployment/)
 
-## Attach WSGI server to flask application
+## Configure WSGI server
+### Attach gunicorn with flask application
 	$ gunicorn --bind 0.0.0.0:5000 app:app --reload &
+
 Now open your browser and access _http://\<server-IP\>:8000_
 
 You should be able to see __Hello World!__
 
-## make changes to code
+### Make changes to code
 	$ vim app.py
-change return `'Hello World!'` to `return 'Hello World Again!'`
---reload in gunicorn configures it to restart the applicatoin everytime there is a code change.
 
-## configure nginx web server
+change return `'Hello World!'` to `return 'Hello World Again!'`
+
+`--reload`  configures gunicorn to restart the application everytime there is a code change.
+
+## Configure nginx web server
 ..Wait. Another web server!
 If gunicorn is a poserful web server then, why another web server on top of it?
 Well I can only guess that, nginx is very generic. It will help us host multiple web applications in multiple languages. While gunicorn is a WSGI server only.
 There can be other reasons but I am not aware of them. For the sake of completion let's configure nginx too.
 
+### Create nginx config file
+
 	$ sudo rm /etc/nginx/sites-available/default
 	$ vim /etc/nginx/sites-available/flaskpp
 
-paste this to the file
-server{
-	listen 80;
-	location / {
-		proxy_pass http://localhost:5000;
+Replace file content with
+
+	server{
+		listen 80;
+		location / {
+			proxy_pass http://localhost:5000;
+		}
 	}
-}
 
 Save the file.
 
 Here we are configuring nginx to call gunicorn server for all incoming requests.
 
-###Create a softlink of our configuration in sites-enables folder.
+### Create a softlink of configuration in sites-enables folder.
 	$sudo ln /etc/nginx/sites-available/flaskapp /etc//nginx/sites-enabled/flaskapp
 
 ### Restart nginx
@@ -170,17 +183,17 @@ _http://<server-IP>/_
 Now what happened ? The site is not available.
 Well what changed? 
 
-...????
+...
 
 The port. Is port 80 accessible from my laptop? How do I check that?
 Same thing we did previously.
 
-	> telnet \<server-IP\> 80
+	> telnet <server-IP> 80
 	Connecting To \<server-IP\>...
 
 If this is shown in the console, that mean 80 is not open to public.
 
-## Enable inbound to port 80 in azure
+### Enable inbound to port 80 in azure
 Go to azure portal and enable inbound from all ips to port 80.
 Now go to your browser and go to _http://\<server-IP\>/_
 
