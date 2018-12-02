@@ -2,11 +2,10 @@
 author: krishan
 layout: post
 categories: webapp
+title: Python Flask web application in azure linux 
 ---
 
-# How to create a FLASK web application in a linux VM in azure
-
-Even though the tutorial is done in azure, the instructions will hold true in any linux machine.
+Even though the tutorial involves azure, the instructions will work in any linux machine.
 
 ## Prerequisites
 
