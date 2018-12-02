@@ -68,26 +68,28 @@ You should get
 ## Access flask application from your browser
 By default ports  are not accessible from hosts other than local host.
 Try accessing _http://\<server-IP\>:5000_ from local browser. You should not be able to access the page yet. The flask app is configured to accept connections from localhost only.
-[This post](http://dixu.me/2015/10/26/How_to_Allow_Remote_Connections_to_Flask_Web_Service/) helped me to understand the concept.
+[This post](http://dixu.me/2015/10/26/How_to_Allow_Remote_Connections_to_Flask_Web_Service/) helped me understand the concept.
 
 
 
 #### Restart the flask server allowing inbound connection from all ips
 	$ flask run --host 0.0.0.0
 
-### Check if your server is accessible from your home network
-Enable telnet for windows(google it ). 
+### Check if your server is accessible from your laptop.
+If your laptop is running windows, enable telnet for windows ( google the instructions ).
 Open powershell and check if port 5000 is accessible
 	
-	telnet 40.113.192.53 5000
+	telnet <server-IP> 5000
 
 You should get a blank screen with blinking cursor. If not, port 5000 is not accessible from your laptop and you should go back to azure portal and enable inbound connection for your host.
 
 ### Enable TCP traffic through port 5000
 Now go to the server shell and run
+
 	$ sudo iptables -I INPUT -p tcp --dport 5000 -j ACCEPT
 
 Open your browser and enter the url _http://\<server-IP\>:5000_
+
 You should be able to see the response now.
 **Hello World!**
 
@@ -104,14 +106,15 @@ A web server has multiple functionalities too. It can handle cucurrency, applies
 It can internally call other programs which are written in python/ruby/java with the request and serve the response from those programs. The client is unaware of the internals of how the request is seved.
 Apache and nginx are examples of web servers.
 
-https://www.fullstackpython.com/nginx.html
+[nginx explanation](https://www.fullstackpython.com/nginx.html)
 
 ### WSGI server:
 In layman's term it is a broker between web servers and python programs.
 A Web Server Gateway Interface (WSGI) server implements the web server side of the WSGI interface for running Python web applications. 
 Python programs do not need to worry about connection to web servers. They only need to be WSGI compliant.
 gunicorn is a WSGI server
-https://www.fullstackpython.com/wsgi-servers.html
+
+[wsgi-servers explanation](https://www.fullstackpython.com/wsgi-servers.html)
 
 ### Web frameworks: 
 A web framework contains tools and libraries to develop a web application.
@@ -119,7 +122,7 @@ A WSGI compliant web framework follow the WSGI standard.
 
 Examples of web frameworks for python include: Django, Python, Bottle, Pyramid
 
-https://en.wikipedia.org/wiki/Web_framework
+[Web framework explanation](https://en.wikipedia.org/wiki/Web_framework)
 
 This image explains the flow quiet well.
 ![alt text](https://files.realpython.com/media/flask-nginx-gunicorn-architecture.012eb1c10f5e.jpg "Image explaining the flow")
