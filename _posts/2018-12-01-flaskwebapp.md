@@ -1,6 +1,7 @@
 ---
 author: krishan
 layout: post
+categories: webapp
 ---
 
 # How to create a FLASK web application in a linux VM in azure
