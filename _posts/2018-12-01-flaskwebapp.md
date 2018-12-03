@@ -7,7 +7,7 @@ title: Python Flask web application in azure linux
 
 Even though the tutorial involves azure, the instructions will work in any ubuntu based linux machine.
 
-> For aws, there change port by visiting the security group of your vm. If you have selected generic amazon ami, which is most probably a cent-os flavour of linux, replace apt-get commands with yum.
+> For aws, change port by visiting the security group of your vm. If you have selected generic amazon ami, which is most probably a cent-os flavour of linux, replace apt-get commands with yum.
 
 ## Prerequisites
 
@@ -154,7 +154,7 @@ Notice you did not have to restart gunicorn. The flag `--reload` configures guni
 
 ## Configure nginx web server
 ..Wait. Another web server!
-If gunicorn is a poserful web server then, why another web server on top of it?
+If gunicorn is a powerful web server then, why another web server on top of it?
 Well I can only guess that, nginx is very generic. It will help us host multiple web applications in multiple languages. While gunicorn is a WSGI server only.
 There can be other reasons but I am not aware of them. For the sake of completion let's configure nginx too.
 
