@@ -5,7 +5,9 @@ categories: webapp
 title: Python Flask web application in azure linux 
 ---
 
-Even though the tutorial involves azure, the instructions will work in any linux machine.
+Even though the tutorial involves azure, the instructions will work in any ubuntu based linux machine.
+
+> For aws, there change port by visiting the security group of your vm. If you have selected generic amazon ami, which is most probably a cent-os flavour of linux, replace apt-get commands with yum.
 
 ## Prerequisites
 
@@ -28,11 +30,16 @@ Port 22 will be used for ssh and 5000 for testing flask application.
 	$ sudo apt-get install python python-pip nginx
 
 ### Create virtualenv
+
+
+
 	$ mkdir -p www/flaskapp
 	$ cd www/flaskapp
 	$ pip3 install virtualenv	
 	$ python3 -m virtualenv flaskenv 	
 	$ chmod 755 flaskenv/
+
+> For cent-os replace python3 with python36 and pip3 with pip-3.6 . If you still see error, google how to install python 3.6 and pip 3.6 in cent-os.
 
 ### Install python dependencies
 
@@ -120,7 +127,7 @@ gunicorn is a WSGI server
 A web framework contains tools and libraries to develop a web application.
 A WSGI compliant web framework follow the WSGI standard.
 
-Examples of web frameworks for python include: Django, Python, Bottle, Pyramid
+Examples of web frameworks for python include: Django, Flask, Bottle, Pyramid
 
 [Web framework explanation](https://en.wikipedia.org/wiki/Web_framework)
 
@@ -130,9 +137,9 @@ This image explains the flow quiet well.
 
 ## Configure WSGI server
 ### Attach gunicorn with flask application
-	$ gunicorn --bind 0.0.0.0:5000 app:app --reload &
+	$ gunicorn --bind 0.0.0.0:5000 app:app --reload & >> /dev/null
 
-Now open your browser and access _http://\<server-IP\>:8000_
+Niw your web page is served by gunicorn.To verify that gunicoen is working, open your browser and access _http://\<server-IP\>:5000_ again.
 
 You should be able to see __Hello World!__
 
@@ -141,7 +148,9 @@ You should be able to see __Hello World!__
 
 change return `'Hello World!'` to `return 'Hello World Again!'`
 
-`--reload`  configures gunicorn to restart the application everytime there is a code change.
+Now reload the page in your browser. It should display __ Hello World Again!__.
+
+Notice you did not have to restart gunicorn. The flag `--reload` configures gunicorn to restart the application everytime there is a code change.
 
 ## Configure nginx web server
 ..Wait. Another web server!
@@ -153,6 +162,9 @@ There can be other reasons but I am not aware of them. For the sake of completio
 
 	$ sudo rm /etc/nginx/sites-available/default
 	$ vim /etc/nginx/sites-available/flaskpp
+
+> Fir cent-os , you might have ro create two folders in /etc/nginx and make changes to nginx.conf.
+[More info here](https://stackoverflow.com/questions/17413526/nginx-missing-sites-available-directory)
 
 Replace file content with
 
@@ -173,28 +185,35 @@ Here we are configuring nginx to call gunicorn server for all incoming requests.
 ### Restart nginx
 	$ sudo /etc/init.d/nginx restart
 	
-nginx listens requests to port 80 which is the default http protocol.
+nginx listens requests to port 80 which is the default http protocol. Verify that nginx is talking to gunicorn with thia command.
+
 	$ curl localhost:80
 	Hello World Again!
 
 Perfect. nginx is now talking to gunicorn.
 
-Now again access the website from the browser.
-(no need to mention port for port 80)
-_http://<server-IP>/_
+> If you see something else other then __Hello World Again!__ , then check if the default server config in nginx is deleted properly. In cent-os the config is in /etc/nginx/nginx.conf
+
+
+
+Now again try to access the website from the browser.(no need to mention __:\<port\>__ for port 80)
+_http://\<server-IP\>/_
 
 Now what happened ? The site is not available.
 Well what changed? 
 
 ...
 
-The port. Is port 80 accessible from my laptop? How do I check that?
-Same thing we did previously.
+The answer is port. Is port 80 accessible from my laptop? How do I check that?
+
+Same thing we used previously.
 
 	> telnet <server-IP> 80
-	Connecting To \<server-IP\>...
+	
 
-If this is shown in the console, that mean 80 is not open to public.
+If this is coming in the console, that mean 80 is not open to public.
+
+    Connecting To \<server-IP\>...
 
 ### Enable inbound to port 80 in azure
 Go to azure portal and enable inbound from all ips to port 80.
@@ -209,8 +228,8 @@ In this article, we explored
 2. Dependencies required
 3. Types of web servers and their roles
 4. How to check for port access using telnet
-5. How to check if web application is accessible
-6. How to enable ports to the public
+5. How to check if web application is accessible using curl and browser.
+6. How to make ports public
 7. How to start flask application through gunicorn
 8. How to configure nginx 
 9. How to run a fully fledged python web server in azure
