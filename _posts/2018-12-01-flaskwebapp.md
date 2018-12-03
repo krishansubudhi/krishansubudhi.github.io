@@ -139,14 +139,14 @@ This image explains the flow quiet well.
 ### Attach gunicorn with flask application
 	$ gunicorn --bind 0.0.0.0:5000 app:app --reload & >> /dev/null
 
-Niw your web page is served by gunicorn.To verify that gunicoen is working, open your browser and access _http://\<server-IP\>:5000_ again.
+Now your web page is served by gunicorn.To verify that gunicorn is working, open your browser and access _http://\<server-IP\>:5000_ again.
 
 You should be able to see __Hello World!__
 
 ### Make changes to code
 	$ vim app.py
 
-change return `'Hello World!'` to `return 'Hello World Again!'`
+change `return 'Hello World!'` to `return 'Hello World Again!'`
 
 Now reload the page in your browser. It should display __ Hello World Again!__.
 
@@ -163,7 +163,7 @@ There can be other reasons but I am not aware of them. For the sake of completio
 	$ sudo rm /etc/nginx/sites-available/default
 	$ vim /etc/nginx/sites-available/flaskpp
 
-> Fir cent-os , you might have ro create two folders in /etc/nginx and make changes to nginx.conf.
+> For cent-os , you might have to create two folders in /etc/nginx and make changes to nginx.conf.
 [More info here](https://stackoverflow.com/questions/17413526/nginx-missing-sites-available-directory)
 
 Replace file content with
@@ -196,8 +196,11 @@ Perfect. nginx is now talking to gunicorn.
 
 
 
-Now again try to access the website from the browser.(no need to mention __:\<port\>__ for port 80)
+Now let's try to access the website from the browser. But this time we will access through port 80 instead of 5000
+
 _http://\<server-IP\>/_
+
+No need to mention _:\<port\>_ for port 80
 
 Now what happened ? The site is not available.
 Well what changed? 
