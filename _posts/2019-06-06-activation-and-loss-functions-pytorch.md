@@ -1,12 +1,12 @@
 ---
 author: krishan
 layout: post
-categories: webapp
-title: Sigmoid and Loss function implementations in Deep Learning
+categories: deeplearning
+title: Activation and Loss function implementations
 ---
-# Functions
+# Deep learning Functions
 
-Functions are created using low level math functions in pytorch. Then the functions are validated with preimplemented versions inside pytorch.
+Functions in this notebook are created using low level math functions in pytorch. Then the functions are validated with preimplemented versions inside pytorch.
 
 ```python
 import torch
@@ -49,7 +49,7 @@ print('wx+b = ',w*x+b)
     wx+b =  tensor([-0.3480])
     
 
-## activation function
+# Activation function
 
 ### sigmoid
 
@@ -148,7 +148,7 @@ plotfun(mysoftmax,softmax)
 ![plot](/assets/functions/output_15_0.png)
 
 
-## Loss
+# Loss Functions
 
 ### MSE
 
