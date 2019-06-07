@@ -34,17 +34,7 @@ categories: jekyll
 	* [Fork](https://github.com/jekyll/jekyll/fork) and [Contribute](https://jekyllrb.com/docs/contributing/) your own modifications
 	* Have questions? Check out our official forum community [Jekyll Talk](https://talk.jekyllrb.com/) or [`##jekyll` on irc.freenode.net](https://botbot.me/freenode/jekyll/)
 
-
-1. ## [install jekyll](https://jekyllrb.com/docs/)
-	jekyll new myblog
-
-1. ## [Step by step](https://jekyllrb.com/docs/step-by-step/04-layouts/)
-
-1. ## Execute
-
-   `bundle exec jekyll serve`
-
-1. ## [Adding comments](https://deepaksood619.github.io/technology/adding-comments-system-for-posts-in-jekyll/)
+1. ## [Adding comments feature](https://deepaksood619.github.io/technology/adding-comments-system-for-posts-in-jekyll/)
 
 1. ## Github markdown for md files
 
