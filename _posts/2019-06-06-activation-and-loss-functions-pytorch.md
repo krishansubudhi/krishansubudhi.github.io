@@ -1,3 +1,9 @@
+---
+author: krishan
+layout: post
+categories: webapp
+title: Sigmoid and Loss function implementations in Deep Learning
+---
 
 
 ```python
@@ -68,7 +74,7 @@ plotfun(mysigmoid, sigmoid)
 ```
 
 
-![png](output_7_0.png)
+![png](assets/functions/output_7_0.png)
 
 
 ### tanh
@@ -85,7 +91,7 @@ plotfun(mytanh, tanh)
 ```
 
 
-![png](output_9_0.png)
+![png](assets/functions/output_9_0.png)
 
 
 ### relu
@@ -100,7 +106,7 @@ plotfun(myrelu, relu)
 ```
 
 
-![png](output_11_0.png)
+![png](assets/functions/output_11_0.png)
 
 
 ### prelu
@@ -121,7 +127,7 @@ plotfun(myprelu(param), prelu)
 ```
 
 
-![png](output_13_0.png)
+![png](assets/functions/output_13_0.png)
 
 
 ### Softmax
@@ -137,7 +143,7 @@ plotfun(mysoftmax,softmax)
 ```
 
 
-![png](output_15_0.png)
+![png](assets/functions/output_15_0.png)
 
 
 ## Loss
