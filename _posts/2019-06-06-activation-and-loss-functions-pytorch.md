@@ -4,7 +4,9 @@ layout: post
 categories: webapp
 title: Sigmoid and Loss function implementations in Deep Learning
 ---
+# Functions
 
+Functions are created using low level math functions in pytorch. Then the functions are validated with preimplemented versions inside pytorch.
 
 ```python
 import torch
@@ -74,7 +76,7 @@ plotfun(mysigmoid, sigmoid)
 ```
 
 
-![png](assets/functions/output_7_0.png)
+![plot](../assets/functions/output_7_0.png)
 
 
 ### tanh
@@ -91,7 +93,7 @@ plotfun(mytanh, tanh)
 ```
 
 
-![png](assets/functions/output_9_0.png)
+![plot](../assets/functions/output_9_0.png)
 
 
 ### relu
@@ -106,7 +108,7 @@ plotfun(myrelu, relu)
 ```
 
 
-![png](assets/functions/output_11_0.png)
+![plot](../assets/functions/output_11_0.png)
 
 
 ### prelu
@@ -127,7 +129,7 @@ plotfun(myprelu(param), prelu)
 ```
 
 
-![png](assets/functions/output_13_0.png)
+![plot](../assets/functions/output_13_0.png)
 
 
 ### Softmax
@@ -143,7 +145,7 @@ plotfun(mysoftmax,softmax)
 ```
 
 
-![png](assets/functions/output_15_0.png)
+![plot](../assets/functions/output_15_0.png)
 
 
 ## Loss
