@@ -6,7 +6,9 @@ title: Word analogy using Glove Embeddings
 ---
 # Word Embeddings
 
-Load word embedding file into memory. Find analogy between different words based on word embedding
+Word embeddings are lower dimentionals dense representation of words. Word embeddings are generated using semi supervised learning where the embeddings are learned based on an objective function such as finding the next word, finding the masked word, relevance of two given words. Trained on a huge corpus of public data such as books and wikipedia, word embeddings capture the features of a word in a lower dimentional space. Word embeddings are also useful in finding similarity between two words as similar words will have similar features in their embeddings.
+
+The example code here loads word embedding file into memory. Then it finds analogy between different words based on word embedding
 
 
 ```python
