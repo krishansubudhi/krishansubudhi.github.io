@@ -19,7 +19,7 @@ Explanation of CNN : https://en.wikipedia.org/wiki/Convolutional_neural_network#
 import torch
 ```
 
-## Apply pytorch convolution
+### Apply pytorch convolution
 
 
 ```python
@@ -62,7 +62,7 @@ print('\nInput shape = {}.\nConvolution output shape = {}\nMaxpool output shape 
     Maxpool output shape = torch.Size([1, 3, 4])
     
 
-## Extract parameters
+### Extract parameters
 
 
 ```python
@@ -73,7 +73,7 @@ print ('W(params[0]),B(params[1]) = ',[p.shape for p in params])
     W(params[0]),B(params[1]) =  [torch.Size([3, 2, 4]), torch.Size([3])]
     
 
-## Verify by applying kernel weights manually
+### Verify by applying kernel weights manually
 This step should produce same first output as conv(data)
 
 
