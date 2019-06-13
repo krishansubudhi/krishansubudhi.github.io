@@ -8,12 +8,14 @@ title: Convolution Explained
 Convolution is the building block of Convolutional Neural Networks (CNN). CNNs are used both for image and text processing. 
 Online diagrams do a grat job explaining CNNs. I, however failed to find a good diagram with explanation of the convolution operation. This diagram aims to explains the details of **convolution** operation in a  neural networks. I have also provided python scripts explaining details of the convolution operation inside pytorch.  
 
-![Convolution explained](/assets/convolution/convolution.jpg)
+![Convolution explained](/assets/convolution/convolution.png)
 
 
 Explanation of CNN : https://en.wikipedia.org/wiki/Convolutional_neural_network#Convolutional
 
 ## Let's get into the Math
+
+This is a 1D convolution example. The diagram above explains 2D convolution. There will be reduction in one dimension both for the filter and input.
 
 ```python
 import torch
@@ -63,14 +65,25 @@ print('\nInput shape = {}.\nConvolution output shape = {}\nMaxpool output shape 
     
 
 ### Extract parameters
-
+All the filter weights are different for different input and output layers
 
 ```python
 params = [param for param in conv.parameters()]
 print ('W(params[0]),B(params[1]) = ',[p.shape for p in params])
+print(params)
 ```
 
     W(params[0]),B(params[1]) =  [torch.Size([3, 2, 4]), torch.Size([3])]
+    [Parameter containing:
+    tensor([[[ 0.0707, -0.2901, -0.3524, -0.0037],
+             [-0.2905, -0.1704, -0.0577,  0.2452]],
+    
+            [[-0.2023,  0.2368,  0.1679, -0.2610],
+             [-0.0565, -0.1940, -0.0979, -0.3149]],
+    
+            [[-0.0693,  0.2306, -0.2638,  0.1681],
+             [ 0.3357,  0.3071,  0.1310, -0.2856]]], requires_grad=True), Parameter containing:
+    tensor([ 0.3274,  0.1311, -0.2084], requires_grad=True)]
     
 
 ### Verify by applying kernel weights manually
@@ -101,31 +114,3 @@ mul.sum(dim=(1,2))+params[1] #B for all output channels
 Hence Conv layer sums across both input channels and kernel size for one kernel filtering operations
 
 
-```python
-data[:,:,:kernel_size]
-```
-
-
-
-
-    tensor([[[ 0.1239,  0.5952,  1.0756, -2.2702],
-             [-0.9282,  0.4426,  1.2979,  1.0455]]])
-
-
-
-
-```python
-mul.sum(dim=(1,2))
-```
-
-
-
-
-    tensor([-0.6469, -0.8232,  1.0262])
-
-
-
-
-```python
-
-```
