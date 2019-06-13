@@ -8,7 +8,8 @@ title: Convolution Explained
 #Diagram
 ![Convolution explained](/assets/convolution/convolution.jpg)
 
-#Example
+# Let's get into the Math
+
 ```python
 import torch
 ```
