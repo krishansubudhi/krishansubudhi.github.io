@@ -4,7 +4,7 @@ layout: post
 categories: deeplearning
 title: Convolution Explained
 ---
-# Convolution
+## Convolution
 Convolution is the building block of Convolutional Neural Networks (CNN). CNNs are used both for image and text processing. 
 Online diagrams do a grat job explaining CNNs. I, however failed to find a good diagram with explanation of the convolution operation. This diagram aims to explains the details of **convolution** operation in a  neural networks. I have also provided python scripts explaining details of the convolution operation inside pytorch.  
 
@@ -13,7 +13,7 @@ Online diagrams do a grat job explaining CNNs. I, however failed to find a good 
 
 Explanation of CNN : https://en.wikipedia.org/wiki/Convolutional_neural_network#Convolutional
 
-# Let's get into the Math
+## Let's get into the Math
 
 ```python
 import torch
