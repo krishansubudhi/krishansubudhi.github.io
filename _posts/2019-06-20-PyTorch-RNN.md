@@ -19,6 +19,7 @@ import numpy as np
 import pandas as pd
 from torch.utils.data import Dataset, DataLoader
 from argparse import Namespace
+from tqdm import tqdm
 ```
 
 ### Create RNN layer using RNNCell
@@ -96,6 +97,7 @@ class Vectorizer():
         self.nationality_vocabulary = nationality_vocabulary
     
     def vectorize(self, surname, vector_length = -1):
+        surname = surname.lower()
         indices = [self.surname_vocabulary.start_index]
         
         #TODO: handle unknown token
@@ -122,6 +124,7 @@ class Vectorizer():
         nationality_vocabulary = Vocabulary()
         
         for surname in surnames:
+            surname = surname.lower()
             for char in surname:
                 surname_vocabulary.add_token(char)
         
@@ -197,15 +200,16 @@ class SurnameDataset(Dataset):
 
 ```python
 args = Namespace(
-    surname_csv = r'data\surname\surnames_split_krishan.csv', #change this path
-    epochs = 20,
+    surname_csv = r'data\surname\surnames_split_krishan.csv',
+    epochs = 40,
     lr = 0.03,
     loss = nn.CrossEntropyLoss,
     max_surname_len = 15,
     hidden_size = 64,
-    embedding_size = 16
+    embedding_size = 16,
+    model_file = 'rnn_model.pkl'
 )
-
+df = pd.read_csv(args.surname_csv)
 #Find 95th percentile length 
 lengths = df[df['split'] == 'train']['surname'].apply(lambda x: len(x))
 print('lengths of surnames =\n',lengths.describe())
@@ -232,7 +236,7 @@ args.max_surname_len = _95thperc
 
 
 ```python
-df = pd.read_csv(args.surname_csv)
+
 dataset = SurnameDataset.from_df(df)
 train_dataloader = DataLoader(dataset,32,True)
 
@@ -243,7 +247,7 @@ print ('tokens = {}, classes = {}'.format(num_tokens,num_classes ))
 df.sample(5)
 ```
 
-    tokens = 88, classes = 18
+    tokens = 59, classes = 18
     
 
 
@@ -274,34 +278,34 @@ df.sample(5)
   </thead>
   <tbody>
     <tr>
-      <th>9327</th>
-      <td>Irish</td>
-      <td>val</td>
-      <td>Cleirigh</td>
-    </tr>
-    <tr>
-      <th>8053</th>
-      <td>Chinese</td>
-      <td>train</td>
-      <td>Chew</td>
-    </tr>
-    <tr>
-      <th>10331</th>
-      <td>Spanish</td>
+      <th>2922</th>
+      <td>English</td>
       <td>test</td>
-      <td>Félix</td>
+      <td>Renshaw</td>
     </tr>
     <tr>
-      <th>5045</th>
+      <th>7833</th>
+      <td>Japanese</td>
+      <td>val</td>
+      <td>Takaoka</td>
+    </tr>
+    <tr>
+      <th>3715</th>
+      <td>Arabic</td>
+      <td>train</td>
+      <td>Arian</td>
+    </tr>
+    <tr>
+      <th>8269</th>
+      <td>Italian</td>
+      <td>train</td>
+      <td>Serafini</td>
+    </tr>
+    <tr>
+      <th>4808</th>
       <td>Russian</td>
       <td>train</td>
-      <td>Pitaevsky</td>
-    </tr>
-    <tr>
-      <th>7498</th>
-      <td>Japanese</td>
-      <td>train</td>
-      <td>Hyobanshi</td>
+      <td>Chehluev</td>
     </tr>
   </tbody>
 </table>
@@ -399,8 +403,8 @@ model = SurnameRNNClassifier(num_tokens, num_classes )
 print(model)
 optimizer = torch.optim.SGD(model.parameters(),lr = args.lr)
 train_losses, val_losses, val_accs = [],[],[]
-
-for epoch in range(args.epochs):
+max_acc = 0
+for epoch in tqdm(range(args.epochs)):
     losses = []
     for data in train_dataloader:
         x = data['x']
@@ -420,38 +424,25 @@ for epoch in range(args.epochs):
     val_loss, val_acc = calculate_loss_acc(dataset, model)
     val_losses.append(val_loss)
     val_accs.append(val_acc)
-    print('epoch {} : train_loss {}, val_loss {}, val_acc {}'.format(epoch
-          ,train_losses[-1],val_losses[-1],val_accs[-1]))
+    
+    if (val_acc > max_acc):
+        max_acc = val_acc
+        torch.save(model.state_dict(),args.model_file)
+    #print('epoch {} : train_loss {}, val_loss {}, val_acc {}'.format(epoch
+    #      ,train_losses[-1],val_losses[-1],val_accs[-1]))
 ```
 
     SurnameRNNClassifier(
-      (embedding): Embedding(88, 16, padding_idx=1)
+      (embedding): Embedding(59, 16, padding_idx=1)
       (rnn): ElmanRNN(
         (rnncell): RNNCell(16, 64)
       )
       (linear): Linear(in_features=64, out_features=18, bias=True)
       (dropout): Dropout(p=0.1)
     )
-    epoch 0 : train_loss 2.2965063979228337, val_loss 2.142411273259383, val_acc 0.3591463414634146
-    epoch 1 : train_loss 2.050973414381345, val_loss 1.9430594260875995, val_acc 0.4451219512195122
-    epoch 2 : train_loss 1.907807615896066, val_loss 1.8554594562603877, val_acc 0.45670731707317075
-    epoch 3 : train_loss 1.8028959915041924, val_loss 1.7653987591083233, val_acc 0.4865853658536585
-    epoch 4 : train_loss 1.7090267524123193, val_loss 1.6766792031434865, val_acc 0.5140243902439025
-    epoch 5 : train_loss 1.6379290473957857, val_loss 1.6299713666622455, val_acc 0.5219512195121951
-    epoch 6 : train_loss 1.5674623471995195, val_loss 1.5803549518952003, val_acc 0.5323170731707317
-    epoch 7 : train_loss 1.5027624413371086, val_loss 1.508364567389855, val_acc 0.5670731707317073
-    epoch 8 : train_loss 1.4425324335694314, val_loss 1.4327852405034578, val_acc 0.5804878048780487
-    epoch 9 : train_loss 1.382294626533985, val_loss 1.4343391840274518, val_acc 0.5676829268292682
-    epoch 10 : train_loss 1.325134468326966, val_loss 1.3726348556005037, val_acc 0.6060975609756097
-    epoch 11 : train_loss 1.2833637627462546, val_loss 1.3074743701861455, val_acc 0.6067073170731707
-    epoch 12 : train_loss 1.2457967475056648, val_loss 1.2868399597131288, val_acc 0.6225609756097561
-    epoch 13 : train_loss 1.2039708423117796, val_loss 1.2699937522411346, val_acc 0.6341463414634146
-    epoch 14 : train_loss 1.1685669176280498, val_loss 1.2110394858396971, val_acc 0.650609756097561
-    epoch 15 : train_loss 1.1382594662408034, val_loss 1.2288372333233173, val_acc 0.6603658536585366
-    epoch 16 : train_loss 1.1155679715176423, val_loss 1.1853035642550542, val_acc 0.6670731707317074
-    epoch 17 : train_loss 1.0854565724730492, val_loss 1.141878836430036, val_acc 0.676219512195122
-    epoch 18 : train_loss 1.0628218047320843, val_loss 1.181883229659154, val_acc 0.6554878048780488
-    epoch 19 : train_loss 1.037904354929924, val_loss 1.1669966051211724, val_acc 0.6731707317073171
+    
+
+    100%|██████████████████████████████████████████████████████████████████████████████████| 40/40 [02:25<00:00,  3.82s/it]
     
 
 
@@ -472,11 +463,74 @@ pp.show()
 ![loss](/assets/rnn/loss.png)
 ![acc](/assets/rnn/acc.png)
 
+
 ```python
+#Fetch best model
+model.load_state_dict(torch.load(args.model_file))
+val_loss,val_acc = calculate_loss_acc(dataset,model,'val')
+print('val loss and acc = ', val_loss,val_acc)
+
 test_loss,test_acc = calculate_loss_acc(dataset,model,'test')
-test_loss,test_acc
+print('test loss and acc = ', test_loss,test_acc)
 ```
 
-    (1.2183352983914888, 0.6608433734939759)
+    val loss and acc =  1.0600555860079253 0.7042682926829268
+    test loss and acc =  1.1671412655940423 0.6825301204819277
+    
 
 
+```python
+def predict(surname):
+    model.eval()
+    x = torch.LongTensor(dataset.vectorizer.vectorize(surname)).view(1,-1)
+    oindex = torch.argmax(model(x)).item()
+    
+    nationality = dataset.vectorizer.nationality_vocabulary.idx_to_token[oindex]
+    #print ('Nationality for {} is predicted as {}'.format(surname, nationality))
+    return nationality
+```
+
+
+```python
+predict('Subudhi')
+```
+
+
+
+
+    'Japanese'
+
+
+
+
+```python
+count = 0
+total_count = 10
+
+for i in np.random.randint(0, len(df),(total_count,)):
+    row = df.iloc[i]
+    isSame = row['nationality'] == predict(row['surname'])
+    print('surname = {: <15}, original = {: <10}, predicted = {: <10}, Correct = {}'
+          .format(row['surname'], row['nationality'], predict(row['surname']),isSame))
+    if isSame:
+        count += 1
+print('acc = ',count/total_count)
+```
+
+    surname = Stevenson      , original = Scottish  , predicted = English   , Correct = False
+    surname = Ughi           , original = Italian   , predicted = Japanese  , Correct = False
+    surname = Kartoziya      , original = Russian   , predicted = Japanese  , Correct = False
+    surname = Issa           , original = Arabic    , predicted = Japanese  , Correct = False
+    surname = Webb           , original = English   , predicted = German    , Correct = False
+    surname = Shadid         , original = Arabic    , predicted = English   , Correct = False
+    surname = Yuferev        , original = Russian   , predicted = Russian   , Correct = True
+    surname = Stroud         , original = English   , predicted = English   , Correct = True
+    surname = Paterson       , original = English   , predicted = English   , Correct = True
+    surname = Idane          , original = Japanese  , predicted = Japanese  , Correct = True
+    acc =  0.4
+    
+
+
+```python
+
+```
