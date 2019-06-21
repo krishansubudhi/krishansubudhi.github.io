@@ -9,8 +9,7 @@ A recurrent neural network (**RNN**) is a class of artificial neural network whe
 
 This is a complete example of an RNN multiclass classifier in pytorch. This uses a basic RNN cell and builds with minimal library dependency. 
 
-You can download the [data file] first.
-[data file]: {{ site.url }}/download/surnames_split_krishan.csv
+[data file]({{ site.url }}/download/surnames_split_krishan.csv)
 
 ```python
 import torch
