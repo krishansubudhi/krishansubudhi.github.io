@@ -9,14 +9,14 @@ title: PyTorch BERT
 ```python
 #! pip install pytorch-pretrained-bert
 ```
-#Using BERT
+## Using BERT
 [BERT Paper](https://arxiv.org/pdf/1810.04805.pdf)
 
 
 ## Tokenizer
 
-See how bert tokenizer works
-Tutorial source : Huggingface BERT [repo](https://github.com/huggingface/pytorch-pretrained-BERT#usage) 
+See how BERT tokenizer works
+Tutorial source : [Huggingface BERT repo](https://github.com/huggingface/pytorch-pretrained-BERT#usage) 
 
 ```python
 import torch
@@ -34,13 +34,6 @@ logging.basicConfig(level=logging.ERROR)
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 len(tokenizer.wordpiece_tokenizer.vocab), tokenizer.convert_tokens_to_ids(['[MASK]','[CLS]','[SEP]'])
 ```
-
-    INFO:pytorch_pretrained_bert.tokenization:loading vocabulary file https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-uncased-vocab.txt from cache at C:\Users\krkusuk\.pytorch_pretrained_bert\26bc1ad6c0ac742e9b52263248f6d0f00068293b33709fae12320c0e35ccfbbb.542ce4285a40d23a559526243235df47c5f75c197f04f37d1a0c124c32c9a084
-    
-
-
-
-
     (30522, [103, 101, 102])
 
 
@@ -70,8 +63,6 @@ tokens_tensor = torch.tensor([indexed_tokens])
 segment_tensor = torch.tensor([segments_ids])
 tokens_tensor, segment_tensor
 ```
-
-
 
 
     (tensor([[  101,  2040,  2001,  2990,  3536,  1029,   102,  2990,   103,  2001,
@@ -401,10 +392,10 @@ print(model)
       )
     )
     
-
+#### Move to GPU/CPU
 
 ```python
-device = 'cpu'
+device = 'cuda'
 tokens_tensor = tokens_tensor.to(device)
 segment_tensor = segment_tensor.to(device)
 model = model.to(device)
@@ -477,21 +468,10 @@ print('prediction shape = ', predictions.shape) # batch, tokens, vocab size
     prediction shape =  torch.Size([1, 15, 30522])
     
 
+#### Check what it predicts for the masked word
 
 ```python
-#Check what it predicts for the masked index
-predictions[0, masked_index]
-```
 
-
-
-
-    tensor([-7.3110, -7.4073, -7.4439,  ..., -7.6398, -6.9253, -7.8818])
-
-
-
-
-```python
 token_index = torch.argmax(predictions[0, masked_index]).item()
 print(tokenizer.ids_to_tokens[token_index])
 ```
