@@ -520,6 +520,8 @@ def calculate_val_loss(model, dataset):
             correct += torch.sum(y==yhat).item()
             total += len(y)
     loss_avg = sum(losses)/len(losses)
+    dataset.set_split('train')
+    model.train()
     return loss_avg, correct/total 
 
 
@@ -535,7 +537,6 @@ loader = DataLoader(dataset,batch_size=16)
 
 loss = torch.nn.BCEWithLogitsLoss()
 
-model.train()
 for e in range(epochs):
     for x, y in loader:
         y = torch.tensor(y, dtype = torch.float32)
