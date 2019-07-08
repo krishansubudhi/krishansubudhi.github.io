@@ -11,7 +11,7 @@ The distributed package included in PyTorch (i.e., torch.distributed) enables re
 
 [Reference](https://pytorch.org/tutorials/intermediate/dist_tuto.html)
 
-I booted two data science virtual machines in Azure. Copied their IP adresses and in my browser opened https://<machine-ip>:8000 to open jupyter hub.
+I booted two data science virtual machines in Azure. Copied their IP adresses and in my browser opened https://machine-ip:8000 to open jupyter hub.
 
 ## Node 1
 
@@ -228,7 +228,7 @@ startprocesses([0,1],2,broadcast)
 
 ### Note
 
-for _address in use _ errors, check which process is using the port
+for _address in use _ errors, check which process is using the port and kill that.
     
     !netstat -tulpn| grep 29500
     
