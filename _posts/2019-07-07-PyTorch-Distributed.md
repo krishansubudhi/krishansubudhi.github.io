@@ -5,7 +5,7 @@ categories: deeplearning
 title: PyTorch distributed
 ---
 
-# WRITING DISTRIBUTED APPLICATIONS WITH PYTORCH
+## WRITING DISTRIBUTED APPLICATIONS WITH PYTORCH
 
 The distributed package included in PyTorch (i.e., torch.distributed) enables researchers and practitioners to easily parallelize their computations across processes and clusters of machines. To do so, it leverages the messaging passing semantics allowing each process to communicate data to any of the other processes.
 
@@ -13,7 +13,8 @@ The distributed package included in PyTorch (i.e., torch.distributed) enables re
 
 I booted two data science virtual machines in Azure. Copied their IP adresses and in my browser opened https://<machine-ip>:8000 to open jupyter hub.
 
-# Node 1
+## Node 1
+
 ```python
 import torch
 import socket
@@ -25,7 +26,7 @@ print(socket.gethostname())
     krishan-standard-machine
 
 
-## process groups
+### process groups
 
 
 ```python
@@ -72,8 +73,6 @@ Let’s have a look at the init_processes function. It ensures that every proces
 
 dist.init_process_group essentially allows processes to communicate with each other by sharing their locations.
 
-## Testing
-
 ### 1. A simple function
 
 
@@ -103,7 +102,7 @@ startprocesses([0,1],2,run)
     finished
 
 
-#### Multi Node
+#### Test with Multi Node
 
 
 ```python
@@ -162,7 +161,7 @@ startprocesses([0,1,2],4,sendreceive)
 
 
 ### 3. All Reduce
-![All reduce](./distributed/gpu.png)
+![All reduce](/assets/distributed/gpu.png)
 As opposed to point-to-point communcation, **collectives allow for communication patterns across all processes in a group**. A group is a subset of all our processes. To create a group, we can pass a list of ranks to dist.new_group(group). By default, **collectives are executed on the all processes***, also known as the world. For example, in order to obtain the sum of all tensors at all processes, we can use the dist.all_reduce(tensor, op, group) collective.
 
     dist.reduce(tensor, dst, op, group): Applies op to all tensor and stores the result in dst.
@@ -194,7 +193,7 @@ startprocesses([0],3,all_reduce)
 
 
 ## 4. Broadcast
-![broadcast](./distributed/broadcast.png)
+![broadcast](/assets/distributed/broadcast.png)
 
 
 ```python
@@ -240,7 +239,7 @@ If still getting timeout errors, that means the arguments to startprocesses(...)
 
 
 
-#Node 2
+## Node 2
 
 
 
