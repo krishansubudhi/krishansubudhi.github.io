@@ -120,7 +120,7 @@ startprocesses([0,1],3,run)
 
 ### 2. Send and recieve data between processes 
 
-![Send Receive](send_recv.png)
+![Send Receive](/assets/distributed/send_recv.png)
 
 
 ```python
