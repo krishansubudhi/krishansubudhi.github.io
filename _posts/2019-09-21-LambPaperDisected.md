@@ -6,16 +6,15 @@ title: LAMB paper summary
 ---
 [LAMB paper](https://arxiv.org/pdf/1904.00962.pdf)
 
-# LR scheduling strategies
-Previous LR scaling with batch size strategy
+# Previous LR scaling with batch size
 
 1. Simple large batch training
 	Training with extremely large batch was difficult. The researchers needed to carefully tune training hyper-parameters, like learning rate and momentum
-2. Increase the LR (learning rate) by √ b when batch size is scaled by b (https://arxiv.org/abs/1404.5997)
+2. Increase the LR (learning rate) by √ b when batch size is scaled by b . [Paper](https://arxiv.org/abs/1404.5997)
 	optimization instability due to high learning rate.
-3. Learning rate warm-up strategy (https://arxiv.org/abs/1706.02677)
+3. [Learning rate warm-up strategy](https://arxiv.org/abs/1706.02677)
 	empirical study  shows that learning rate scaling heuristics with the batch size do not hold across all problems or across all batch sizes
-4. Adaptive learning rate layer wise (Lars) (https://arxiv.org/abs/1708.03888v1)
+4. Adaptive learning rate layer wise -  [Lars](https://arxiv.org/abs/1708.03888v1) and LAMB
 	A theoretical understanding of the adaptation employed in LARS is largely missing
 
 # LAMB
@@ -25,15 +24,13 @@ Adaptive layerwise optimization
 Notations:  xt are parameters and st are samples
 
 **Loss function**
-![lossfunction](/assets/lamb/loss.png)
-<img src="/assets/lamb/loss.png" width="100">
+<img src="/assets/lamb/loss.png" width="300">
 
 **Simple SGD**
-![sgd](/assets/lamb/sgd1.png)
-<img src="/assets/lamb/sgd1.png" width="100">
+<img src="/assets/lamb/sgd1.png" width="300">
 where St is set of b random samples drawn from the distribution P. This can be simplified to
-![sgdgeneral](/assets/lamb/sgd2.png)
-<img src="/assets/lamb/sgd2.png" width="100">
+
+<img src="/assets/lamb/sgd2.png" width="300">
 
 ## General Strategy
 For adaptive layerwise learning
