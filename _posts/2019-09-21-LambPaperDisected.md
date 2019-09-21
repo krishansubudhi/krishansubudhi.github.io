@@ -86,7 +86,8 @@ Unlike LARS, the adaptivity of LAMB is two-fold:
       * we are able to make full utilization of the hardware resources throughout the training procedure.
       * Instead of decaying the learning rate at the second stage, we ramp up the learning rate from zero again in the second stage (re-warm-up). As with the first stage, we decay the learning rate after the re-warm-up phase.
       
-	  ![Lamb loss curve BERT](/assets/lamb/lamb loss bert.png)
+![Lamb loss curve BERT](/assets/lamb/lamblossbert.png)
+
   * We achieve 76.8% scaling efficiency (49 times speedup by 64 times computational resources) and 101.8% scaling efficiency with a mixed, scaled batch size (65.2 times speedup by 64 times computational resources). 1024-mixed means the mixed-batch training on 1024 TPUs.
 
 ![LAMB scaling efficiency](/assets/lamb/scalingeff.png)
