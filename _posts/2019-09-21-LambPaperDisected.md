@@ -25,12 +25,15 @@ Adaptive layerwise optimization
 Notations:  xt are parameters and st are samples
 
 **Loss function**
-![lossfunction](/assets/lamb/loss.png =100x)
+![lossfunction](/assets/lamb/loss.png)
+<img src="/assets/lamb/loss.png" width="100">
 
 **Simple SGD**
-![sgd](/assets/lamb/sgd1.png =100x)
+![sgd](/assets/lamb/sgd1.png)
+<img src="/assets/lamb/sgd1.png" width="100">
 where St is set of b random samples drawn from the distribution P. This can be simplified to
-![sgdgeneral](/assets/lamb/sgd2.png =100x)
+![sgdgeneral](/assets/lamb/sgd2.png)
+<img src="/assets/lamb/sgd2.png" width="100">
 
 ## General Strategy
 For adaptive layerwise learning
