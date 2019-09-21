@@ -25,11 +25,11 @@ Notations:  xt are parameters and st are samples
 
 **Loss function**
 
-<img src="/assets/lamb/loss.png" width="300">
+<img src="/assets/lamb/loss.png" width="400">
 
 **Simple SGD**
 
-<img src="/assets/lamb/sgd1.png" width="300">
+<img src="/assets/lamb/sgd1.png" width="400">
 
 where St is set of b random samples drawn from the distribution P. This can be simplified to
 
