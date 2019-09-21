@@ -23,14 +23,14 @@ Previous LR scaling with batch size strategy
 Adaptive layerwise optimization
 
 Notations:  xt are parameters and st are samples
+
 **Loss function**
-![lossfunction](/assets/lamb/loss.png)
+![lossfunction](/assets/lamb/loss.png =100x)
 
 **Simple SGD**
-![sgd](/assets/lamb/sgd1.png)
-where St is set of b random samples drawn from the distribution P
-OR
-![sgdgeneral](/assets/lamb/sgd2.png)
+![sgd](/assets/lamb/sgd1.png =100x)
+where St is set of b random samples drawn from the distribution P. This can be simplified to
+![sgdgeneral](/assets/lamb/sgd2.png =100x)
 
 ## General Strategy
 For adaptive layerwise learning
