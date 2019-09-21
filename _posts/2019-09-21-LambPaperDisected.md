@@ -40,7 +40,7 @@ For adaptive layerwise learning
 
 <img src="/assets/lamb/generalstrategy.png" width="400">
 
-for all layers i∈[h] and where x (i) t and g (i) t are the parameters and the gradients of the i th layer at time step t.
+for all layers i∈[h] and where x^(i)^  and g^(i)^  are the parameters and the gradients of the i th layer at time step t.
 
 the paper proposes the following two changes to the update for large batch settings: 
 
