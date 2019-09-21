@@ -5,6 +5,15 @@ categories: deeplearning
 title: Bert Memory Consumption
 ---
 
+This document analyses the memory usage of Bert Base and Bert Large for different sequences.
+Additionally, the document provides memory usage without grad and finds that gradients consume most of the GPU memory for one Bert forward pass.
+This also analyses the maximum batch size that can be accomodated for both Bert base and large. All the tests were conducted in Azure NC24sv3 machines
+
+CORE	|RAM	|STORAGE	| GPU
+--- | --- | --- | ---
+24	|448 GiB	|2,948 GiB	|4X V100
+
+
 ```python
 import torch
 torch.cuda.is_available(),torch.cuda.device_count()
