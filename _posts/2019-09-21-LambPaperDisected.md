@@ -44,12 +44,12 @@ for all layers i∈[h] and where x^(i)^  and g^(i)^  are the parameters and the 
 
 the paper proposes the following two changes to the update for large batch settings: 
 
-1. The update is normalized to unit l2-norm. This is ensured by modifying the update to the form ut/|ut|. Throughout this paper, such a normalization is done layerwise 
-2. The learning rate is scaled by φ(|xt|) for some function φ. Similar to the normalization, such a scaling is done layerwise. 
+1. The update is normalized to unit l2-norm. This is ensured by modifying the update to the form u~t~/\|u~t~\|. Throughout this paper, such a normalization is done layerwise 
+2. The learning rate is scaled by φ(\|x~t~\|) for some function φ. Similar to the normalization, such a scaling is done layerwise. 
 
 #### Benefits:
 
-1. such a normalization(gt/|gt|) provides robustness to exploding gradients (where the gradient can be arbitrarily large) and plateaus (where the gradient can be arbitrarily small).Normalization of this form essentially ignores the size of the gradient (adding a bit of bias) and is particularly useful in large batch settings where the direction of the gradient is largely preserved.
+1. such a normalization(gt/\|g~t~\|) provides robustness to exploding gradients (where the gradient can be arbitrarily large) and plateaus (where the gradient can be arbitrarily small).Normalization of this form essentially ignores the size of the gradient (adding a bit of bias) and is particularly useful in large batch settings where the direction of the gradient is largely preserved.
 2. The scaling term involving φ ensures that the norm of the update is of the same order as that of the parameter. We found that this typically ensures faster convergence in deep neural networks
 
 **Both LARS and LAMB are based on this general strategy.**
