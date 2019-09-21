@@ -73,23 +73,23 @@ Unlike LARS, the adaptivity of LAMB is two-fold:
 * To train BERT, Devlin et al. (2018) first train the model for 900k iterations using sequence length of 128 and then switch to sequence length of 512 for the last 100k iterations.
 * The F1 score on SQuAD-v1 is used as the accuracy metric in our experiments. The baseline BERT model 2 achieves a F1 score of 90.395. We report a F1 score of 91.345 , which is the score obtained for the untuned version
 * To ensure a fair comparison, we follow the same SQuAD fine-tune procedure of (Devlin et al., 2018) without modifying any configuration (including number of epochs and hyperparameters).
-* by just slightly changing the learning rate in the fine-tune stage, we can obtain a higher F1 score of 91.688 for the batch size of 16K using LAMB.
-* two different training choices for training BERT using LAMB
+* By just slightly changing the learning rate in the fine-tune stage, we can obtain a higher F1 score of 91.688 for the batch size of 16K using LAMB.
+* Two different training choices for training BERT using LAMB
     * Regular Training using LAMB 
-      1) maintain the same training procedure as the baseline except for changing the pre-training optimizer to LAMB.We run with the same number of epochs as the baseline but with batch size scaled from 512 to 32K.
-      2) . By using the LAMB optimizer, we are able to achieve a F1 score of 91.460 in 15625 iterations for a batch size of 32768 (14063 iterations for sequence length 128 and 1562 iterations for sequence length 512). With 32K batch size, we reduce BERT pre-training time from 3 days to around 100 minutes. 
-      3) We achieved 76.7% scaling efficiency
-      4) ![Lamb performance on Bert](/assets/lamb/lambf1bert.png)
+      * Maintain the same training procedure as the baseline except for changing the pre-training optimizer to LAMB.We run with the same number of epochs as the baseline but with batch size scaled from 512 to 32K.
+      * By using the LAMB optimizer, we are able to achieve a F1 score of 91.460 in 15625 iterations for a batch size of 32768 (14063 iterations for sequence length 128 and 1562 iterations for sequence length 512). With 32K batch size, we reduce BERT pre-training time from 3 days to around 100 minutes. 
+      * We achieved 76.7% scaling efficiency
+      * ![Lamb performance on Bert](/assets/lamb/lambf1bert.png)
     * Mixed-Batch Training using LAMB 
-      1) BERT pre-training involves two stages: the first 9/10 of the total epochs use a sequence length of 128, while the last 1/10 of the total epochs use a sequence length of 512.
-      2) we increase the batch size to 65536 for this stage.
-      3) we are able to make full utilization of the hardware resources throughout the training procedure.
-      4) Instead of decaying the learning rate at the second stage, we ramp up the learning rate from zero again in the second stage (re-warm-up). As with the first stage, we decay the learning rate after the re-warm-up phase.
-      5) ![Lamb loss curve BERT](/assets/lamb/lamb loss bert.png)
+      * BERT pre-training involves two stages: the first 9/10 of the total epochs use a sequence length of 128, while the last 1/10 of the total epochs use a sequence length of 512.
+      * we increase the batch size to 65536 for this stage.
+      * we are able to make full utilization of the hardware resources throughout the training procedure.
+      * Instead of decaying the learning rate at the second stage, we ramp up the learning rate from zero again in the second stage (re-warm-up). As with the first stage, we decay the learning rate after the re-warm-up phase.
+      * ![Lamb loss curve BERT](/assets/lamb/lamb loss bert.png)
   * We achieve 76.8% scaling efficiency (49 times speedup by 64 times computational resources) and 101.8% scaling efficiency with a mixed, scaled batch size (65.2 times speedup by 64 times computational resources). 1024-mixed means the mixed-batch training on 1024 TPUs.
 
- * LAMB scaling efficiency](/assets/lamb/scalingeff.png)
-*
+![LAMB scaling efficiency](/assets/lamb/scalingeff.png)
+
 * Comparison with ADAMW and LARS
     * ADAMW stops scaling beyond batch size of 16K because it is not able to achieve the target F1 score (88.1 vs 90.4).We conclude that ADAMW does not work well in large-batch BERT pre-training or is at least hard to tune. 
     	![ADAMW performance](/assets/lamb/adamwbert.png)
