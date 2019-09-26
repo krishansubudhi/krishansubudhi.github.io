@@ -1,7 +1,7 @@
 ---
 author: krishan
 layout: post
-categories: development
+categories: deeplearning
 title: Bert Attention Visualization
 ---
 
