@@ -2,7 +2,7 @@
 author: krishan
 layout: post
 categories: deeplearning
-title: PyTorch distributed
+title: PyTorch distributed communication : Multi-node
 ---
 
 ## WRITING DISTRIBUTED APPLICATIONS WITH PYTORCH
@@ -12,6 +12,14 @@ The distributed package included in PyTorch (i.e., torch.distributed) enables re
 [Reference](https://pytorch.org/tutorials/intermediate/dist_tuto.html)
 
 I booted two data science virtual machines in Azure. Copied their IP adresses and in my browser opened https://machine-ip:8000 to open jupyter hub.
+
+Also for running multinode distributed experiments, few things should be taken care while booting the machines in Azure.
+
+1. Machines need to be in same resource group
+	![Send Receive](/assets/distributed/resource_group.png)
+
+2. One of the machines which will be master should have a port open for incoming connections.
+	![Send Receive](/assets/distributed/network_port.png)
 
 ## Node 1
 
@@ -40,14 +48,16 @@ import datetime
 def init_processes(rank, size, fn, backend='gloo'):
     """ Initialize the distributed environment. """
     
-    #alternate way to provice rank 0 IP
-    #os.environ['MASTER_ADDR'] = '12.0.0.1'
+    #Alternate way to provice rank 0 IP and open port
+    #os.environ['MASTER_ADDR'] = '52.250.110.24'
     #os.environ['MASTER_PORT'] = '29500'
     
-    #provide rank 0 IP using init_method
+    
     print('{} : started process for rank : {}'.format(os.getpid(),rank))
+	
+	#Remove init_method if initializing through environment variable
     dist.init_process_group(backend = backend, \
-                            init_method='tcp://52.250.110.24:29500',\
+                            init_method='tcp://52.250.110.24:29500',\ #Provide rank 0 IP and open port
                             rank=rank,\
                             world_size=size,\
                             timeout=datetime.timedelta(0,seconds =  20))
@@ -116,6 +126,14 @@ startprocesses([0,1],3,run)
     28941 exiting process
     28940 exiting process
     finished
+
+There are multiple ways to initialize distributed communication using dist.init_process_group(). I have shown two of them.
+
+1. [Using tcp string](https://pytorch.org/docs/stable/distributed.html#tcp-initialization)
+2. [Using environment variable](https://pytorch.org/docs/stable/distributed.html#environment-variable-initialization)
+
+
+Make sure Rank 0 is always the master node. Otherwise the communication will timeout. This is both experimental and mentioned in pytorch docs.
 
 
 ### 2. Send and recieve data between processes 
