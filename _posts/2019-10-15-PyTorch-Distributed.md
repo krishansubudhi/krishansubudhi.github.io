@@ -2,7 +2,7 @@
 author: krishan
 layout: post
 categories: deeplearning
-title: PyTorch distributed communication : Multi-node
+title: PyTorch distributed communication - Multi node
 ---
 
 ## WRITING DISTRIBUTED APPLICATIONS WITH PYTORCH
