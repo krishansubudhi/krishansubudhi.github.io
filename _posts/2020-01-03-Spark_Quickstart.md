@@ -1,9 +1,13 @@
 ---
 author: krishan
 layout: post
+description: How to install and run spark in local windows 10 machines using two installation methods - binaries and pip.
 categories: deeplearning
 title: Spark Quickstart on Windows 10 Machine
 ---
+
+Apache Spark™ is a unified analytics engine for large-scale data processing.
+
 1. [Install java](https://www.java.com/en/download/win10.jsp)
 2. Install spark (2 ways)
 
@@ -18,7 +22,10 @@ title: Spark Quickstart on Windows 10 Machine
 
     2. Using spark binaries
 
-        1.  download spark binaries from http://spark.apache.org/downloads.html
+        1.  download [spark binaries](http://spark.apache.org/downloads.html)
+
+            ![download spark 2.4](/assets/spark-quickstart/download_spark.jpg)
+            
 
         2. Install 7zip for winodows 64 bit and run this in power shell.
 
@@ -166,7 +173,9 @@ title: Spark Quickstart on Windows 10 Machine
 
         CommandType     Name                                               Version    Source
         -----------     ----                                               -------    ------
-        Application     spark-submit.cmd                                   0.0.0.0    C:\Users\krkusuk\AppData\Local\Continuum\miniconda3\envs\spark\Scripts\spark-submit.cmd
+        Application     spark-submit.cmd                                   0.0.0.0  
+        
+        C:\Users\krkusuk\AppData\Local\Continuum\miniconda3\envs\spark\Scripts\spark-submit.cmd
         ```
 
         Problem with setting loglevel in pyspark
@@ -194,14 +203,14 @@ title: Spark Quickstart on Windows 10 Machine
         2. Through code
 
             ```python
-                spark = (SparkSession
-                        .builder
-                        .appName('PythonEmpAnalysis')
-                        .getOrCreate())
-                spark.sparkContext.setLogLevel('ERROR')
+            spark = (SparkSession
+                    .builder
+                    .appName('PythonEmpAnalysis')
+                    .getOrCreate())
+            spark.sparkContext.setLogLevel('ERROR')
             ```
  
 
         Run
-            
+
             spark-submit.cmd .\emp_analysis.py .\Rural_Atlas_Update20\Jobs.csv 
