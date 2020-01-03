@@ -16,10 +16,10 @@
 title: Krishan's Tech Blog
 email: krishan.subudhi@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
-  I will be covering topics from data science, machine learning, 
+  Tech blog covering topics from data science, machine learning, 
   software development, web development, azure, aws etc. 
-  Topics will be related to my experience with these tools and technologies:
-  explaining how and why of software development.
+  Topics will be related to my experience with these tools and technologies.
+
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: krishanrockz
@@ -30,6 +30,7 @@ markdown: kramdown
 theme: minima
 plugins:
   - jekyll-feed
+  - jekyll-seo-tag
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
