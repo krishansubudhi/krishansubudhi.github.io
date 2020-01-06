@@ -1,8 +1,10 @@
 ---
+comments: true
 author: krishan
 layout: post
 categories: webapp
 title: Python Flask web application in azure linux 
+description: Start a python flask web applicaiton in azure linux machine and understand the basics behind that.
 ---
 
 Even though the tutorial involves azure, the instructions will work in any ubuntu based linux machine.

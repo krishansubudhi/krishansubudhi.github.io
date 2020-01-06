@@ -1,8 +1,9 @@
 ---
 author: krishan
+comments: true
 layout: post
 description: How to install and run spark in local windows 10 machines using two installation methods - binaries and pip.
-categories: deeplearning
+categories: datascience
 title: Spark Quickstart on Windows 10 Machine
 ---
 
