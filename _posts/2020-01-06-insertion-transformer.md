@@ -66,16 +66,13 @@ model (Lee et al., 2018)
 
 1. Left to right
 
-	Only one output is produced at a time and 
-	Normal auto regressive scenarios are unidirectional. Hence gradients are used. 
+	Only one output is produced at a time . It imitates traditional left to right auto regressive models.
 
-	E1 does not intract with E2, D1
+	To do so, given a training example (x, y), we randomly
+	sample a length k ∼ Uniform([0, |y|]) and take the current
+	hypothesis to be the left prefix yˆ = (y1, . . . , yk). We then aim to maximize the probability of the next content in the sequence c = yk in the rightmost slot location l = k, using the negative log-likelihood of this action as our loss to be minimized:
 
-	E1 E2      D1
-
-	In this case the interaction is bidirectional. After producing D1, E1 and E2 need to interact with D1.
-
-	Hence the gradients can not be shared making the training slower than models like GPT.
+	loss(x, yˆ) = − log p(yk+1, k | x, yˆ)
 
 2. Balanced Binary Tree
 
