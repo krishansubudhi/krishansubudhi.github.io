@@ -7,11 +7,11 @@ title: Challenges of using HDInsight for pyspark
 description: Challenges and approaces to submit job in VS code with links, results and opinions
 ---
 
-The goal was to do analysis on the following dataset using Spark. 
+The goal was to do analysis on the following dataset using Spark without download large files to local machine.
 
 https://data.sfgov.org/Public-Safety/Fire-Department-Calls-for-Service/nuek-vuh3
 
-The file size is around 2 GB. I had been running all my analysis in local spark cluster before. I started to search for alternatives. HDInsight is azure's solution to run distributed big data analysis jobs. HDInsight also has spark suport.
+The file size is around 2 GB. I had been running all my analysis in local spark cluster before. I started to search for alternatives. HDInsight is azure's solution to run distributed big data analysis jobs. HDInsight also has spark support.
 
 ## HDI spark job submission ways
 
@@ -50,9 +50,7 @@ The file size is around 2 GB. I had been running all my analysis in local spark 
         
         Also the code does not need to be transferred from local machine to spark cluster manually as vscode will take care of that.
 
-        Considering VScode is cross platform and actively develped and maintained, I will try this today.
-
-## HD Submission : VS Code
+## HDI Submission : VS Code
 So I finally decided to use visual studio to submit my spark job.
 
 1. I created a spark cluster in my azure subscription.
@@ -103,7 +101,7 @@ Followed [this](https://docs.microsoft.com/en-us/azure/hdinsight/spark/apache-sp
         SparkSession available as 'spark'.
         >>>
 
-    Quick testing
+    Quick testing with custom data
         >>> data = [['krishan', 'microsoft']]
         >>> df = spark.createDataFrame(data).show()
 
@@ -113,8 +111,7 @@ Followed [this](https://docs.microsoft.com/en-us/azure/hdinsight/spark/apache-sp
         |krishan|microsoft|
         +-------+---------+
 
-    Testing with files in azure storage.
-    ![default storage](/assets/hdi/default-storage.jpg)
+    Testing with existing files in azure storage.
 
         >>> df = spark.read.parquet('/example/data/people.parquet')
         >>> df.show()
@@ -136,7 +133,7 @@ I opened an azure cloud shell. Logged in to my azure account.
     Error:
     failed to perform copy command due to error: cannot start job due to error: cannot scan the path /home/krishan/https:/data.sfgov.org/api/views/nuek-vuh3/rows.csv?accessType=DOWNLOAD, please verify that it is a valid.
 
-I searched in Bing for ways to transfer data directly from a url to azure storage using the search query *azcopy to download file directly from url* . But I only only found ways to transfer data from s3 to azure. I wonder why such a simple feature is not present in azure while it's present in s3. There might be a way but I could not find it.
+I searched in Bing for ways to transfer data directly from a url to azure storage using the search query *azcopy to download file directly from url* . But I only found ways to transfer data from s3 to azure. I wonder why such a simple feature is not present in azure.
 
 I wanted to avoid download data to my local machine.
 
@@ -163,12 +160,11 @@ I am already owner of the storage account and have all the permissions.
 
 I was able to upload file using the storage account portal though. Hence I am authorized. Somehow I am not able to use azcopy.
 
-The above document mentions using sas token. Sol let's find a way to create a sas token in my container. I had previous knowledge that sas tokens are created at the storage account level. Hence I went to the storage account and created a sas token.
-![sas](/assets/hdi/sas.jpg)
+The above document mentions using SAS token. Sol let's find a way to create a SAS token in my container. I had previous knowledge that SAS tokens are created at the storage account level. Hence I went to the storage account and created a SAS token.
+![SAS](/assets/hdi/SAS.jpg)
 
 
-
-azcopy copy sffiredata.csv "https://krishansparkhdistorage.file.core.windows.net/spark-container1/?**sas_token**"
+azcopy copy sffiredata.csv "https://krishansparkhdistorage.file.core.windows.net/spark-container1/?**SAS_token**"
 
     Elapsed Time (Minutes): 0.0334
     Total Number Of Transfers: 1
@@ -176,6 +172,6 @@ azcopy copy sffiredata.csv "https://krishansparkhdistorage.file.core.windows.net
     Number of Transfers Failed: 1
     Final Job Status: Failed
 
-Now it's time to quit. Next step will be to go through some HDI course before trying to use HDI again. 
+This also didn't work. Now it's time to take pause. Next step will be to go through some HDI course before trying to use HDI again.
 
-I might be doing a lot of things wrong here. I am not an expert in Spark and my experience with azure services are also limited to Azuer ML only. I, however, believe for cloud providers like azure, the documentation should be straigth forward for someone with some knowledge on spark to start using services like HDI and azure storage.
+I might be doing a lot of things wrong here. I am not an expert in Spark and my experience with azure services are also limited to Azure ML only. I, however, believe for cloud providers like azure, the documentation should be straight forward for someone with working knowledge on spark to start using services like HDI and azure storage.
