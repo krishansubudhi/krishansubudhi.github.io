@@ -188,6 +188,7 @@ In either case, please follow the following steps.
 
 1. Close any open notebooks and stop Jupyter service from ambari
 1. ssh into the cluster headnode where jupyter service is running.
+    Make sure to add **-ssh** in the host name *-ssh.azurehdinsight.net*. Or go to your cluster in portal and check the ssh login command. 
 1. Edit the following file /usr/bin/anaconda/lib/python2.7/site-packages/nbformat/_version.py in sudo mode
 1. Existing entry should show something like : version_info = (5, 0, 3)
 1. Modify entry to : version_info = (4, 0, 3)
