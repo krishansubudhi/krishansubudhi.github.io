@@ -22,7 +22,7 @@ description: >- # this means to ignore newlines until "baseurl:"
 
 google_site_verification: w8cqkzRWPp5ffswL8qpilMvJpKsDhq8UKkqWmoGGVbU
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://krishansubudhi.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: krishanrockz
 github_username:  krishansubudhi
 
