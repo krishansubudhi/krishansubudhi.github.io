@@ -175,7 +175,21 @@ azcopy copy sffiredata.csv "https://krishansparkhdistorage.file.core.windows.net
 This also didn't work. Now it's time to take pause. Next step will be to go through some HDI course before trying to use HDI again.
 
 I might be doing a lot of things wrong here. I am not an expert in Spark and my experience with azure services are also limited to Azure ML only. I, however, believe for cloud providers like azure, the documentation should be straight forward for someone with working knowledge on spark to start using services like HDI and azure storage.
-# Analysis using AWS EMR
+## Analysis using AWS EMR
 [@swetashre](https://github.com/swetashre) from Amazon helped me run the analysis using AWS. AWS was relatively easier then Azure. Buth Jupyter notebook and file upload to S3 were very easy and the spark queries ran very very fast.
 
 [Instructions and code](https://github.com/krishansubudhi/sparkparactice/blob/master/SFFireDeptDataAnalysis_AWS.ipynb)
+
+
+## Temporary solution from Microsoft devops
+
+We have identified the issue to be with the _version.py file on the cluster that got updated to 5.x.x instead of 4.4.x.##
+In either case, please follow the following steps.
+
+1. Close any open notebooks and stop Jupyter service from ambari
+1. ssh into the cluster headnode where jupyter service is running.
+1. Edit the following file /usr/bin/anaconda/lib/python2.7/site-packages/nbformat/_version.py in sudo mode
+1. Existing entry should show something like : version_info = (5, 0, 3)
+1. Modify entry to : version_info = (4, 0, 3)
+1. Save file
+1. Go back to Ambari and start Jupyter services
