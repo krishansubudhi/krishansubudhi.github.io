@@ -180,3 +180,18 @@ I might be doing a lot of things wrong here. I am not an expert in Spark and my 
 [@swetashre](https://github.com/swetashre) from Amazon helped me run the analysis using AWS. AWS was relatively easier than Azure. Both Jupyter notebook and file upload to S3 were very easy and the spark queries ran very very fast.
 
 [Instructions and code](https://github.com/krishansubudhi/sparkparactice/blob/master/SFFireDeptDataAnalysis_AWS.ipynb)
+
+
+## Temporary solution from Microsoft devops
+
+We have identified the issue to be with the _version.py file on the cluster that got updated to 5.x.x instead of 4.4.x.##
+In either case, please follow the following steps.
+
+1. Close any open notebooks and stop Jupyter service from ambari
+1. ssh into the cluster headnode where jupyter service is running.
+    Make sure to add **-ssh** in the host name *-ssh.azurehdinsight.net*. Or go to your cluster in portal and check the ssh login command. 
+1. Edit the following file /usr/bin/anaconda/lib/python2.7/site-packages/nbformat/_version.py in sudo mode
+1. Existing entry should show something like : version_info = (5, 0, 3)
+1. Modify entry to : version_info = (4, 0, 3)
+1. Save file
+1. Go back to Ambari and start Jupyter services
