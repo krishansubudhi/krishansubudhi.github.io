@@ -14,7 +14,7 @@ Apache Spark™ is a unified analytics engine for large-scale data processing.
 
 1. Using pyspark (trimmed down version of spark with only python binaries).
     
-    *spark can also be run using java, scala, R and SQL using method 2 while pyspark only supports python.*
+    *spark programs can also be run using java, scala, R and SQL if installed using method 2 while pyspark only supports python.*
 
     ```
     conda create -n "spark"
@@ -77,13 +77,12 @@ SparkSession available as 'spark'.
 ```
 
 
-## Winutils error fix : 
+## Winutils error fix :
+If seeing a bunck of java related errors while starting spark, install winutils using this [link](https://stackoverflow.com/questions/35652665/java-io-ioexception-could-not-locate-executable-null-bin-winutils-exe-in-the-ha) .
 
-https://stackoverflow.com/questions/35652665/java-io-ioexception-could-not-locate-executable-null-bin-winutils-exe-in-the-ha
-
-## Download CSV data in zip format from 
-
-[usda employment website](https://www.ers.usda.gov/data-products/atlas-of-rural-and-small-town-america/download-the-data/)
+## Download data
+Download
+[usda employment website](https://www.ers.usda.gov/data-products/atlas-of-rural-and-small-town-america/download-the-data/) to run analysis.
 
 Unzip the file
 
@@ -220,16 +219,17 @@ Run
 
 [Spark Documentation on submitting applicaitons](https://spark.apache.org/docs/latest/submitting-applications.html)
 
-## Github Practice project
-Follow my [sparkpractice](https://github.com/krishansubudhi/sparkparactice) project in github.  
-
-
-
-## How spark instruction flows 
+## How spark works
 
 ![spark flow](/assets/spark-quickstart/flow.png)
 
 *Base image extracted from [book](https://learning.oreilly.com/library/view/learning-spark-2nd/9781492050032/ch01.html)*
+
+## Github Practice project
+
+To practice more on different functionalities of spark, follow 
+my [sparkpractice](https://github.com/krishansubudhi/sparkparactice) project in github.  
+
 
 ### Other Tutorials
 

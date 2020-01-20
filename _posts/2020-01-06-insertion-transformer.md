@@ -3,7 +3,7 @@ comments: true
 author: krishan
 layout: post
 categories: deeplearning
-title: Insertion transformaer summary
+title: Insertion transformer summary
 description: Insertion transformer paper breif summary
 ---
 

@@ -1,6 +1,7 @@
 ---
 author: krishan
 layout: post
+comments: true
 categories: development
 title: How to create a new docker image
 ---

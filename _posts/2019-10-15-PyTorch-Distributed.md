@@ -1,6 +1,7 @@
 ---
 author: krishan
 layout: post
+comments: true
 categories: deeplearning
 title: PyTorch distributed communication - Multi node
 ---
