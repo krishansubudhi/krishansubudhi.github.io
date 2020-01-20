@@ -198,12 +198,12 @@ Run
 
     Name	| Value| 
     --- | --- |
-    |SPARK_HOME	| D:\spark\spark-2.2.1-bin-hadoop2.7|
+    SPARK_HOME	| D:\spark\spark-2.2.1-bin-hadoop2.7|
     HADOOP_HOME |	D:\spark\spark-2.2.1-bin-hadoop2.7
     PYSPARK_DRIVER_PYTHON|jupyter
     PYSPARK_DRIVER_PYTHON_OPTS |	notebook
 
-    pyspark command will be linked to jupyter notbook.
+    pyspark command will be linked to jupyter notbook now.
 
 ## Adding external JARS
 
@@ -235,3 +235,18 @@ Follow my [sparkpractice](https://github.com/krishansubudhi/sparkparactice) proj
 
 [video course](https://app.pluralsight.com/library/courses/spark-2-getting-started/table-of-contents) , 
 [book](https://learning.oreilly.com/library/view/learning-spark-2nd/9781492050032/ch01.html)
+
+## Troubleshooting
+
+1. When things are not working even if configurations are correct, stop every session, close jupyter notebooks and restart.
+
+2. If facing issues with jars, try downgrading spark version.
+3. I am still facing [hive related issues](https://stackoverflow.com/questions/41611078/spark-sql-using-python-unable-to-instantiate-org-apache-hadoop-hive-ql-metadata) while saving dataframes as managed tables and trying to figure out a solution. The solutions proposed are to restart session and system but nothing works. Probably, it's a windows related issue.
+4. For jobs invoving bigger datasets, working on a cloud deployment of spark cluster is recommended.
+
+    * Currently there are issues with Azure HDInsight. See my blog on [HDInsight challenges](https://krishansubudhi.github.io/datascience/2020/01/12/hdinsight.html).
+    * The above HDInsight blog has a solution which runs on [AWS EMR](https://docs.aws.amazon.com/emr/latest/ReleaseGuide/emr-spark.html).
+    * Another option is to use [databricks](https://databricks.com/try-databricks?utm_source=bing&utm_medium=cpc&utm_campaign=369665331&utm_content=databricks&msclkid=8f53f0a677b31e102f57ae838ff0c71b) who are also the founders of spark. They provide a free community edition to try out.
+    * Azure has a [databricks](https://azure.microsoft.com/en-us/services/databricks/) product which can be explored too.
+
+Feedbacks are welcome. :-)
