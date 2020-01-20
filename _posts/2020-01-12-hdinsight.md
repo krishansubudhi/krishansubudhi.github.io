@@ -175,7 +175,8 @@ azcopy copy sffiredata.csv "https://krishansparkhdistorage.file.core.windows.net
 This also didn't work. Now it's time to take pause. Next step will be to go through some HDI course before trying to use HDI again.
 
 I might be doing a lot of things wrong here. I am not an expert in Spark and my experience with azure services are also limited to Azure ML only. I, however, believe for cloud providers like azure, the documentation should be straight forward for someone with working knowledge on spark to start using services like HDI and azure storage.
-# Analysis using AWS EMR
-[@swetashre](https://github.com/swetashre) from Amazon helped me run the analysis using AWS. AWS was relatively easier then Azure. Buth Jupyter notebook and file upload to S3 were very easy and the spark queries ran very very fast.
+
+## Analysis using AWS EMR
+[@swetashre](https://github.com/swetashre) from Amazon helped me run the analysis using AWS. AWS was relatively easier than Azure. Both Jupyter notebook and file upload to S3 were very easy and the spark queries ran very very fast.
 
 [Instructions and code](https://github.com/krishansubudhi/sparkparactice/blob/master/SFFireDeptDataAnalysis_AWS.ipynb)
