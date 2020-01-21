@@ -10,7 +10,7 @@ Suppose you did a `git rebase` in your local branch but mistakenly rebased to an
 1. Back up all your changes.
 2. Use [git reflog](https://git-scm.com/docs/git-reflog) to see all your previous operations. `git log` will show rebased and squashed changes only.
 3. Find out the commit where you want to go back to. Most probably this will be the commit before your rebase operation.
-You will see commit ids like `HEAD@{16}`
+   You will see commit ids like `HEAD@{16}`
 4. Now reset your local branch to this commit.
     
     `git reset --hard HEAD@{16}`
