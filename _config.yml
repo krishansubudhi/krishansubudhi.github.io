@@ -26,7 +26,7 @@ url: "https://krishansubudhi.github.io" # the base hostname & protocol for your 
 twitter_username: krishanrockz
 github_username:  krishansubudhi
 google_analytics: UA-156964339-1
-
+google_ad_client: ca-pub-3996623493411980
 # Build settings
 markdown: kramdown
 theme: minima
