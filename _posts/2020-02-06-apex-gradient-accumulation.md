@@ -1,23 +1,24 @@
 ---
+comments: true
 author: krishan
 layout: post
 categories: deeplearning
 title: Issue with Gradient accumulation while using apex
 description: Apex with gradient accumulation results in inaccurate gradients if reduction is disabled for steps where optimizer is not stepping.
 ---
-Nvidia Apex is used for mixed precission training. Mixed precission training provides faster computatio using tensor cores and a lower memory footprint.
-Gradient accumulation is used to accomodate a bigger batch size than what the GPU memory supports. If my gradient accumulation is 2, I will be doing optimizer.step() once in every 2 steps. For steps where optimizer is not steppint up, only the gradients are accumulated. 
-In distributed training, gradients are averaged across all the processes at every loss.backward step which is also called the all-reduce step. 
-Apex mixed precission training does the communication in floating point 16. 
-Even with floating point 16, doing reduction at every step can be costly. To avoid reduction at every step, an obvious optimization will be to  avoid reduction when optimizer is not stepping up.
+1. Nvidia Apex is used for mixed precission training. Mixed precission training provides faster computatio using tensor cores and a lower memory footprint.
+2. Gradient accumulation is used to accomodate a bigger batch size than what the GPU memory supports. If my gradient accumulation is 2, I will be doing optimizer.step() once in every 2 steps. For steps where optimizer is not stepping up, only the gradients are accumulated. 
+3. In distributed training, gradients are averaged across all the processes at every loss.backward step which is also called the all-reduce step. 
+4. Apex mixed precission training does the communication in floating point 16.
+5. Even with floating point 16, doing reduction at every step can be costly. To avoid reduction at every step, an obvious optimization will be to  avoid reduction when optimizer is not stepping up.
 
 In latest apex amp library, if reduction is disabled,  it results in inaccurate gradients across processes.
 The following test is only for OPT_LEVEL O2. For OPT_LEVEL O1, there are other issues not highlighted in this blog
 
-O2 maintains two sets of weights and gradients. 
+O2 maintains two sets of weights and gradients.
 
 1. Model weights and gradient (FP16)
-2. Master weights and gradients(FP32). 
+2. Master weights and gradients(FP32)
 
 [More on this official link from NVIDIA](https://nvidia.github.io/apex/amp.html#o2-almost-fp16-mixed-precision)
 
@@ -25,6 +26,9 @@ Model weights are used for gradient calculation using scaled loss. Master weight
 
 The following flowchart explains what is hapening. Because master gradients go out of sync, the models in different processes update their weights differently without using information from other processes. This impacts convergence and leads to bad results while training.
 
+![apex-ga issue](/assets/apex-ga/issue_desc.png)
+
+Source code reproducing the behaviour with a simple linear model.
 
 ```python
 import torch
