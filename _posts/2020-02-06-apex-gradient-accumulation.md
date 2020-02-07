@@ -29,7 +29,7 @@ The following flowchart explains what is hapening. Because master gradients go o
 ![apex-ga issue](/assets/apex-ga/issue_desc.png)
 
 
-# Solution
+## Solution
 
 There are 2 solutions to this problem.
 
@@ -37,7 +37,7 @@ There are 2 solutions to this problem.
 2. Delay unscale. Disable reduction. Just before optimizer steps up, remove delay Add gradients from master to model (FP16). Do all reduce on model parameters. Exit context manager. 
 
 
-## Method 1
+### Method 1
 After looking at the apex code for scale_loss, I found a way to accumulate gradients in model parameter.
 
 The flag delay_unscale , if set to True, model grads are not copied to master grads. 
@@ -74,9 +74,9 @@ def prepare_backward_with_master_weights(self):
 ```
 
 
-# Example code
+## Example code
 
-## Source code reproducing the behaviour with a simple linear model.
+### Source code reproducing the behaviour with a simple linear model.
 
 ```python
 import torch
@@ -97,7 +97,7 @@ print_params(model)
     tensor([-0.9002], requires_grad=True), grad = None
 
 
-### Test basic gradient accumulation without apex
+#### Test basic gradient accumulation without apex
 
 Gradients get accumulated and added up in grad variable of tensors
 
@@ -141,7 +141,7 @@ for i in range(3):
     tensor([0.7514], requires_grad=True), grad = tensor([3.])
 
 
-### FP16 and DDP
+#### FP16 and DDP
 
 Gradients in model parameters(FP16) are reset and are scaled gradients. Gradients in master parameter (FP32) are always accumulated until explicity set to zero.
 During every scaled_loss.backward() step
@@ -274,7 +274,7 @@ for i in range(4):
         optimizer.zero_grad()
 ```
 
-### Process 1
+#### Process 1
     
     ****step = 1, sync = False
     loss scale = 1.0
@@ -333,7 +333,7 @@ for i in range(4):
     tensor([0.3967], device='cuda:0', requires_grad=True) tensor([2.], device='cuda:0') torch.float32
     stepping optimizer
 
-### Process 2
+#### Process 2
     ****step = 1, sync = False
     loss scale = 1.0
 
