@@ -19,6 +19,8 @@ In this example we will download notepad++ and set an alias `vim` to open files 
 
 `vim <filepath>' should open the file in notepad++
 
+## Steps
+
 1. First download notepad++. Google search , download and install. 
 2. Open powershell. Set an alias for notepad++. Here I am setting the alias `vim`
     
