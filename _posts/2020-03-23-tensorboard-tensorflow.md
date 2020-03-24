@@ -3,7 +3,7 @@ comments: true
 author: krishan
 layout: post
 categories: deeplearning
-title: Tensorboard in windows using Tensorflow
+title: Using Tensorboard in Tensorflow-Keras (windows version)
 ---
 
 
