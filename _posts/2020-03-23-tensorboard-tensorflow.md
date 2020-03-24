@@ -186,9 +186,3 @@ https://github.com/tensorflow/tensorflow/issues/7856
 3. localhost refused to connect.
 
 https://github.com/tensorflow/tensorboard/issues/2481
-
-
-
-```python
-
-```
