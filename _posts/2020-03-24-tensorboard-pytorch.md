@@ -3,7 +3,7 @@ comments: true
 author: krishan
 layout: post
 categories: deeplearning
-title: Tensorboard using Pytorch
+title: Using Tensorboard in Pytorch
 description: Using tensorboard in pytorch. This example uses windoes for the system commands. Linux and Mac will need slight modification in the powershell commands
 ---
 Reference : https://pytorch.org/docs/stable/tensorboard.html
