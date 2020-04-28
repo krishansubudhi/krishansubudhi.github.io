@@ -3,7 +3,7 @@ comments: true
 author: krishan
 layout: post
 categories: deeplearning
-title: Using Tensorboard effeciently in AzureML
+title: Using Tensorboard efficiently in AzureML
 description: Using tensorboard client effeciently in azureml
 ---
 
