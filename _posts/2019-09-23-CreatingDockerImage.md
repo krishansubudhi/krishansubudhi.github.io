@@ -9,7 +9,7 @@ title: How to create a new docker image
 # Steps to create, test and push a docker image
 
 1. Download and install [Docker Desktop](https://docker.com/get-started). If on Linux, download Docker Engine - Community.
-2. Create a Docker file or download one. [Example](https://github.com/microsoft/AzureML-BERT/blob/master/pretrain/PyTorch/docker/Dockerfile#L12)
+2. Create a Docker file or download one. [Example](https://github.com/krishansubudhi/gendered-pronoun-resolution/blob/master/dockerfiles/Dockerfile)
     
         >notepad dockerfile
 
