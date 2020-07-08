@@ -9,7 +9,18 @@ title: How to create a new docker image
 # Steps to create, test and push a docker image
 
 1. Download and install [Docker Desktop](https://docker.com/get-started). If on Linux, download Docker Engine - Community.
-2. Create a Docker file with the name **Dockerfile** or download one. [Example](https://github.com/krishansubudhi/gendered-pronoun-resolution/blob/master/dockerfiles/Dockerfile)
+2. Create a Docker file with the name **Dockerfile** or download one.
+
+* Simple docker file example
+
+        FROM ubuntu:18.04
+        RUN apt-get update
+        RUN apt install -y python3
+        RUN python3 --version
+
+* [Official Example](https://hub.docker.com/_/python)
+
+* [Advanced Example](https://github.com/krishansubudhi/gendered-pronoun-resolution/blob/master/dockerfiles/Dockerfile)
     
         >notepad Dockerfile
 
@@ -35,7 +46,7 @@ title: How to create a new docker image
 
 5. Create a repository in [docker hub](https://hub.docker.com/)
 
-6. Tag your image with <username>/<reponame>:<tag>
+6. Tag your image with \<username\>/\<reponame\>:\<tag\>
     
         > docker tag krishan_apex krishansubudhi/pytorch_apex:latest
 
@@ -63,3 +74,5 @@ title: How to create a new docker image
 
 [IBM tutorial](https://developer.ibm.com/tutorials/accessing-dockerhub-repos-in-iks/)
 [Official documentation](https://docs.docker.com/docker-hub/)
+[What is Docker](https://djangostars.com/blog/what-is-docker-and-how-to-use-it-with-python/).
+
