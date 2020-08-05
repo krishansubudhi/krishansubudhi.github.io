@@ -32,7 +32,7 @@ In this example we will download notepad++ and set an alias `vim` to open files 
         > $profile
         C:\Users\<username>\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
         
-        > echo "set-alias vim  'C:\Program Files\Notepad++\notepad++.exe'"
+        > echo "set-alias vim  'C:\Program Files\Notepad++\notepad++.exe'" >> $profile
 
 4. Open another powershell session as administrator.
 
