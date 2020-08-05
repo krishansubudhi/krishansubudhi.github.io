@@ -7,7 +7,7 @@ title: Using PyTorch 1.6 native AMP
 description: Showcasing how to use native amp's autocast() and Gradscaler through simple example model.
 ---
 
-This tutorial provides step by step instruction for using native amp introcuded in PyTorch 1.6. Often times, its good to try stuffs using simple examples especially if they are related to graident updates. Scientists need to be careful while using mixed precission and write proper test cases. A single misstep can result is model divergence or unexpected error. This tutorial uses a simple 1x1 linear layer and converts and FP32 model training to mixed precission model training. Weights and Gradients are printed at every stage to ensure correctness. 
+This tutorial provides step by step instruction for using native amp introduced in PyTorch 1.6. Often times, its good to try stuffs using simple examples especially if they are related to graident updates. Scientists need to be careful while using mixed precission and write proper test cases. A single mis-step can result is model divergence or unexpected error. This tutorial uses a simple 1x1 linear layer and converts an FP32 model training to mixed precission model training. Weights and Gradients are printed at every stage to ensure correctness. 
 
 [PyTorch official documentation](https://pytorch.org/blog/accelerating-training-on-nvidia-gpus-with-pytorch-automatic-mixed-precision/)
 
@@ -235,6 +235,6 @@ train_step_amp(model, x)
     Param Name = linear.bias, value = tensor([-2.9002], device='cuda:0'), gradient = tensor([0.], device='cuda:0')
 
 
-The gradients are scaled and unscaled properly. Also the forward pass and backward pass are run using mixed precission. Although there is no easy verification, the timing difference between both runs will confirm the mixed precission training. This will be showcased in future blogs. 
+The gradients are scaled and unscaled properly. Also the forward pass and backward pass are run using mixed precission. The timing difference between both runs will confirm the mixed precission training. This will be showcased in future blogs. 
 
 Native amp support makes it easy to do fast experimentation without using apex related dependencies. 
