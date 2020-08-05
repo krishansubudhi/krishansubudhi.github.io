@@ -3,7 +3,7 @@ comments: true
 author: krishan
 layout: post
 categories: deeplearning
-title: Native amp support in PyTorch 1.6
+title: Using PyTorch 1.6 native AMP
 description: Showcasing how to use native amp's autocast() and Gradscaler through simple example model.
 ---
 
