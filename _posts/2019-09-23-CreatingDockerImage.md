@@ -75,4 +75,5 @@ title: How to create a new docker image
 [IBM tutorial](https://developer.ibm.com/tutorials/accessing-dockerhub-repos-in-iks/)
 [Official documentation](https://docs.docker.com/docker-hub/)
 [What is Docker](https://djangostars.com/blog/what-is-docker-and-how-to-use-it-with-python/).
+[RUN vs CMD vs ENTRYPOINT](https://goinbigdata.com/docker-run-vs-cmd-vs-entrypoint/)
 
