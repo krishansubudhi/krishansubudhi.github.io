@@ -6,7 +6,7 @@ categories: deeplearning
 title: Using Tensorboard in Pytorch
 description: Using tensorboard in pytorch. This example uses windoes for the system commands. Linux and Mac will need slight modification in the powershell commands
 ---
-Reference : https://pytorch.org/docs/stable/tensorboard.html
+
 
 Clear everything first 
 
@@ -152,15 +152,60 @@ for i in range(3):
 
 ![hyperparameter](/assets/tensorboard-pt/hparams.jpg)
 
+
+# Add embeddings
+
+
+```python
+embedding1 = torch.nn.Embedding(5, 50)
+embedding2 = torch.nn.Embedding(5, 50)
+embedding1
+```
+
+    Embedding(5, 50)
+
+
+* This is needed if tensorflow is installed along with tensorboard
+* Error without this code : module 'tensorflow_core._api.v2.io.gfile' has no attribute 'get_filesystem'
+* Another solution : uninstall tensorflow, keep only tensorboard
+
+    [https://github.com/pytorch/pytorch/issues/30966](https://github.com/pytorch/pytorch/issues/30966)
+
+
+```python
+import tensorflow as tf
+import tensorboard as tb
+tf.io.gfile = tb.compat.tensorflow_stub.io.gfile
+
+
+```
+
+Log embeddings to tensorboard
+
+
+```python
+for i, emb in enumerate([embedding1, embedding2]):
+    writer.add_embedding(emb.weight,
+                         metadata  = np.arange(emb.weight.shape[0]),
+                        tag = f'embedding{i}')
+    
+writer.close()
+```
+![embeddings](/assets/tensorboard-pt/embeddings.jpg)
+
 ```python
 writer.flush()
 ```
 
-
-```python
-# Run in a new anaconda powershell
-
-# ! pwd
-# ! dir runs
-# ! tensorboard --logdir="C:\Users\krkusuk\projects\tensorboard\runs"
+# Run Tensorboard
+In a new anaconda powershell
+```powershell
+    pwd
+    dir runs
+    tensorboard --logdir="C:\Users\..<current_folder_path>\runs"
 ```
+## References : 
+
+1. [https://pytorch.org/docs/stable/tensorboard.html](https://pytorch.org/docs/stable/tensorboard.html)
+1. [https://pytorch.org/tutorials/recipes/recipes/tensorboard_with_pytorch.html](https://pytorch.org/tutorials/recipes/recipes/tensorboard_with_pytorch.html)
+2. [https://pytorch.org/tutorials/intermediate/tensorboard_tutorial.html](https://pytorch.org/tutorials/intermediate/tensorboard_tutorial.html)
