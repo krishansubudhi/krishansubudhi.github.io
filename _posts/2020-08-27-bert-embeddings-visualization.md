@@ -9,7 +9,7 @@ description: Visualize bert word Embeddings, position embeddings and contextual 
 
 Set up tensorboard for pytorch by following this [blog](https://krishansubudhi.github.io/deeplearning/2020/03/24/tensorboard-pytorch.html). 
 
-# Bert Embedding Layer
+
 
 Bert has 3 types of embeddings
 1. Word Embeddings
