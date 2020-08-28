@@ -107,7 +107,7 @@ tensorboard --logdir="C:\Users\...<current notebook folder path>\runs"
 5. In UMAP visualization, positional embeddings from 1-128 are showing one distribution while 128-512 are showing different distribution. This is probably because bert is pretrained in two phases. Phase 1 has 128 sequence length and phase 2 had 512.
 ![pos_umap](/assets/bert-embedding-vis/pos_umap.jpg)
 
-# Contextual Embeddings
+## Contextual Embeddings
 
 The power of BERT lies in it's ability to change representation based on context.
 Now let's take few examples and see if embeddings change based on context.
