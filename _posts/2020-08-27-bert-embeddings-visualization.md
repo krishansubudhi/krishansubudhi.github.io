@@ -9,6 +9,7 @@ description: Visualize bert word Embeddings, position embeddings and contextual 
 
 Set up tensorboard for pytorch by following this [blog](https://krishansubudhi.github.io/deeplearning/2020/03/24/tensorboard-pytorch.html). 
 
+# Bert Embedding Layer
 
 Bert has 3 types of embeddings
 1. Word Embeddings
@@ -32,7 +33,7 @@ Clear everything first
 ```
 
 
-## Create a summary writer
+### Create a summary writer
 
 
 ```python
@@ -46,7 +47,9 @@ Now let's fetch the pretrained bert Embeddings.
 import transformers
 model = transformers.BertModel.from_pretrained('bert-base-uncased')
 ```
-## Word embeddings
+
+
+### Word embeddings
 
 ```python
 tokenizer = transformers.BertTokenizer.from_pretrained('bert-base-uncased')
@@ -56,7 +59,7 @@ writer.add_embedding(word_embedding,
                          metadata  = words,
                         tag = f'word embedding')
 ```
-## Position Embeddings
+### Position Embeddings
 
 ```python
 position_embedding = model.embeddings.position_embeddings.weight
@@ -64,7 +67,7 @@ writer.add_embedding(position_embedding,
                          metadata  = np.arange(position_embedding.shape[0]),
                         tag = f'position embedding')
 ```
-## Token type Embeddings
+### Token type Embeddings
 
 ```python
 token_type_embedding = model.embeddings.token_type_embeddings.weight
@@ -80,13 +83,13 @@ writer.close()
 
 
 
-## Run tensorboard
+### Run tensorboard
 From the same folder as the notebook
 ```powershell 
 tensorboard --logdir="C:\Users\...<current notebook folder path>\runs"
 ```
 
-# Visualizations
+### Visualizations
 
 1. All the country names are closer to *India* embeddings.
     ![word_india](/assets/bert-embedding-vis/word_india.jpg)
@@ -291,7 +294,7 @@ writer.add_embedding(torch.stack(context_embeddings),
 ```python
 writer.close()
 ```
-## Restart tensorboard.
+### Restart tensorboard.
 Delete existing logs if necessary and create the writer again using the instructions on top. This will speed up the loading.
 ```
 ps | Where-Object {$_.ProcessName -eq 'tensorboard'}| %{kill $_}
@@ -301,15 +304,15 @@ Open tensorboard UI in browser. It might take a while to load the embeddings. Ke
 
 [http://localhost:6006/#projector&run=testing_tensorboard_pt](http://localhost:6006/#projector&run=testing_tensorboard_pt)
 
-# Visualize contextual embeddings
+### Visualize contextual embeddings
 Now same words with different meanings should be farther apart. Let's analyze the word **bank**  which has 2 different meanings. example 1-8 refer to banks as *financial institutes*, while example 9-14 use **bank** mostly as *the land alongside or sloping down to a river or lake.*
 
 Let's see if Bert was able to figure this out
 
-## Banks as financial institutes
+### Banks as financial institutes
 ![bank_1](/assets/bert-embedding-vis/bank_1.jpg)
 
 Embeddings of **bank** in examples 9-14 are not close to the **bank** embeddings in 9-14. They are close to **bank** embeddings in example 2-8.
-## Banks as river sides
+### Banks as river sides
 **bank** embedding of example 9 is closer to **bank** embeddings of example 10-14
 ![bank_9](/assets/bert-embedding-vis/bank_9.jpg)
