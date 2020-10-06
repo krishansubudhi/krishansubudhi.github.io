@@ -73,6 +73,13 @@ Make modifications based on your anaconda path and activation command in the pow
 
 The command `conda activate myenv` will be automatically called by the python extension. 
 
+## Debug console
+The terminal arguments are not called in debug console though. Hence python might be called without initializing the conda environment which will result in multiple library erros. [More on this](https://conda.io/activation)
+
+The solution is to let it fail for first time. Then activate conda in the debug console. Another solution will be to revert back to cmd and run debugger.
+    
+    C:\\Users\\<username>\\AppData\\Local\\Continuum\\miniconda3\\shell\\condabin\\conda-hook.ps1 && conda activate 'C:\\Users\\<username>\\AppData\\Local\\Continuum\\miniconda3'
+
 ## References:
 
 https://stackoverflow.com/a/61402982/1513792
