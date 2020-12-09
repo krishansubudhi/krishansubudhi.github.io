@@ -137,7 +137,7 @@ _ = plt.hist(train.Sentiment)
 
 
     
-![png](../assets/bert-tweet/output_3_0.png)
+![png](/assets/bert-tweet/output_3_0.png)
     
 
 
@@ -453,7 +453,7 @@ ax.set_ylabel('learning rate')
 
 
     
-![png](../assets/bert-tweet/output_24_1.png)
+![png](/assets/bert-tweet/output_24_1.png)
     
 
 
