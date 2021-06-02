@@ -67,6 +67,24 @@ Add this line at the bottom before }
         ";conda activate 'C:\\Users\\<username>\\AppData\\Local\\Continuum\\miniconda3'"
     ]
 
+Update:
+
+VScode has deprecated shellArgs. Hence Use this instead.
+
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "terminal.integrated.profiles.windows": {
+        "PowerShell":{
+          "source": "PowerShell",
+          "args": [
+            "-ExecutionPolicy",
+            "ByPass",
+            "-NoExit",
+            "-Command",
+            "& C:\\Users\\<Username>\\Miniconda3\\shell\\condabin\\conda-hook.ps1"
+            ]
+        }
+      },
+      
 Make modifications based on your anaconda path and activation command in the powershell shortcut.
 
 ![Terminal after](/assets/anaconda_powershell_vscode/terminal.jpg)
