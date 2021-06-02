@@ -2,7 +2,7 @@
 comments: true
 author: krishan
 layout: post
-categories: vscode
+categories: deeplearning
 title: Runing ML Training code on a VM
 description: How to move a local machine learning traning code to a virtual machine and develop there.
 ---
