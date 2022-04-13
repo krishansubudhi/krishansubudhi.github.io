@@ -4,8 +4,10 @@ author: krishan
 layout: post
 categories: tensorflow
 title: Installing tensorflow on M1 Macs
-description: Step by step instructions to install tensorflow on M1 Macbooks with Apple Silicon.
+description: Step by step instructions for installing tensorflow on M1 Macbooks with Apple Silicon.
 ---
+This blog provides step by step instructions for installing tensorflow on M1 Macbooks with Apple Silicon.
+
 `pip install tensorflow` does not work on M1 Macs.
 
 ```

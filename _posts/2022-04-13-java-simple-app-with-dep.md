@@ -6,6 +6,7 @@ categories: java
 title: Building a simple java app with external dependencies
 description: This blog describes, how we can build a simple java application using couple of external dependencies. This can help in decopuling certain components from a big corporate application and test it.
 ---
+This blog describes, how we can build a simple java application using couple of external dependencies. This can help in decopuling certain components from a big corporate application and test it.
 
 We will use maven to create the project and the dependency.
 ## Create project:
