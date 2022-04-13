@@ -13,10 +13,7 @@ This blog provides step by step instructions for installing tensorflow on M1 Mac
   <img src="https://www.apple.com/v/mac-mini/o/images/overview/apple_silicon_endframe__fm1b5djq7ziq_large_2x.jpg" width="40%" /> 
 </p>
 
-<!-- ![Tensorflow logo](https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/TensorFlow_logo.svg/1200px-TensorFlow_logo.svg.png)
-
-![M1 Mac](https://www.apple.com/v/mac-mini/o/images/overview/apple_silicon_endframe__fm1b5djq7ziq_large_2x.jpg)
-`pip install tensorflow` does not work on M1 Macs. -->
+`pip install tensorflow` does not work on M1 Macs.
 
 ```
 ERROR: Could not find a version that satisfies the requirement tensorflow (from versions: none)
