@@ -9,24 +9,25 @@ categories: jekyll
 	* [Install a full Ruby development environment](https://jekyllrb.com/docs/installation/)
 	* Install Jekyll and bundler gems
 	
-		`gem install jekyll bundler`
-		`bundle install`
-		
+			gem install jekyll bundler 
+			bundle add jekyll-sitemap
+			bundle install
+			
 	* Create a new Jekyll site at ./myblog
 		
-		`jekyll new myblog`
+			jekyll new myblog
 		
 	* Change into your new directory
 	
-		`cd myblog`
+			cd myblog
 		
 	* Build the site and make it available on a local server
 	
-		`bundle exec jekyll serve`
+			bundle exec jekyll serve
 
 	* Now browse to <http://localhost:4000>
 
-1. ## Getting started (detailed)
+2. ## Getting started (detailed)
 
 	* [Install](https://jekyllrb.com/docs/installation/) the gem
 	* Read up about its [Usage](https://jekyllrb.com/docs/usage/) and [Configuration](https://jekyllrb.com/docs/configuration/)
@@ -48,7 +49,7 @@ categories: jekyll
    
    file location for [minima theme](file:///C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/minima-2.5.0/)
    
-	`bundle show  minima`
+		bundle show  minima
    
    [Add linkedin footer](https://gist.github.com/rashivkp/71a56304fecc6def1fa3)
 

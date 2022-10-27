@@ -7,9 +7,9 @@ title: functools partial
 description: Explains how functools partial works with simple examples. 
 ---
 
-[Official python documentation functools partial](https://docs.python.org/3/library/functools.html#functools.partial)
-
 The `functools` module is for higher-order functions: functions that act on or return other functions. In general, any callable object can be treated as a function for the purposes of this module.
+
+[Official python documentation](https://docs.python.org/3/library/functools.html#functools.partial)
 
 `functools.partial` Return a new partial object which when called will behave like func called with the positional arguments args and keyword arguments keywords.
 - If more arguments are supplied to the call, they are **appended** to args.

@@ -36,7 +36,7 @@ plugins:
   - jekyll-feed
   - jekyll-seo-tag
   - jekyll-sitemap
-show_excerpts: true
+show_excerpts: false
 author:
   name: Krishan Subudhi
   email: "krishan.subudhi@gmail.com"
