@@ -17,7 +17,7 @@ title: Krishan's Tech Blog
 email: krishan.subudhi@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   Tech blog covering topics from data science, machine learning, 
-  software development, web development, azure, aws etc. 
+  software development, python, java etc. 
   Topics will be related to my experience with these tools and technologies.
 
 google_site_verification: w8cqkzRWPp5ffswL8qpilMvJpKsDhq8UKkqWmoGGVbU
@@ -30,11 +30,16 @@ google_ad_client: ca-pub-3996623493411980
 # Build settings
 markdown: kramdown
 theme: minima
+minima:
+  skin: auto
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
   - jekyll-sitemap
-
+show_excerpts: true
+author:
+  name: Krishan Subudhi
+  email: "krishan.subudhi@gmail.com"
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
 # to override the default setting.
