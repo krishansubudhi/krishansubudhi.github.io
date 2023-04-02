@@ -82,7 +82,7 @@ sns.lineplot(x= online_x, y = online_y, color = 'red', linewidth = 3, label = 'T
 ```
 
     
-![png](../assets/Jax_classifier_files/Jax_classifier_2_1.png)
+![png](/assets/Jax_classifier_files/Jax_classifier_2_1.png)
 
 
 
@@ -206,7 +206,7 @@ ax.set_title('Before Training')
 ```
 
     
-![png](../assets/Jax_classifier_files/Jax_classifier_9_1.png)
+![png](/assets/Jax_classifier_files/Jax_classifier_9_1.png)
     
 
 
@@ -227,7 +227,7 @@ plt.tight_layout()
 
 
     
-![png](../assets/Jax_classifier_files/Jax_classifier_10_1.png)
+![png](/assets/Jax_classifier_files/Jax_classifier_10_1.png)
 
 
 ## Conclusion
