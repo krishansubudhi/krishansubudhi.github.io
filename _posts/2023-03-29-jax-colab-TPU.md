@@ -2,7 +2,7 @@
 comments: true
 author: krishan
 layout: post
-categories: python, jax, tpu
+categories: jax
 title: Using TPU runtimes in colab for JAXs
 description: Explains how functools partial works with simple examples. 
 ---
