@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540" role="img" aria-label="Pie chart of 1,169 self-edits by type. Fixing itself 24.8 percent, new capability 20.0 percent, keeping itself running 15.0 percent, everything else 14.1 percent, deleting its own code 9.1 percent, presentation 8.8 percent, measuring itself 8.2 percent.">
+  <style>
+    .t  { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; }
+    .ti { font-size:17px; font-weight:700; fill:#1f2933; }
+    .su { font-size:13px; fill:#6b7785; }
+    .nm { font-size:14.5px; font-weight:600; fill:#1f2933; }
+    .pc { font-size:13px; fill:#6b7785; }
+    .ld { stroke:#a7b0ba; stroke-width:1.2; fill:none; }
+  </style>
+  <rect x="0.5" y="0.5" width="959" height="539" rx="10" fill="#ffffff" stroke="#e2e5e9"/>
+  <text class="t ti" x="40" y="46">1,169 times an agent rewrote itself</text>
+  <text class="t su" x="40" y="68">Seven weeks, four repositories. Every commit the agent wrote about its own source code.</text>
+  <path d="M480.00,268.00 L480.00,126.00 A142.00,142.00 0 0 1 621.99,266.28 Z" fill="#4c72b0" stroke="#ffffff" stroke-width="2.5"/>
+  <path d="M480.00,268.00 L621.99,266.28 A142.00,142.00 0 0 1 525.37,402.56 Z" fill="#dd8452" stroke="#ffffff" stroke-width="2.5"/>
+  <path d="M480.00,268.00 L525.37,402.56 A142.00,142.00 0 0 1 398.02,383.95 Z" fill="#55a868" stroke="#ffffff" stroke-width="2.5"/>
+  <path d="M480.00,268.00 L398.02,383.95 A142.00,142.00 0 0 1 348.43,321.41 Z" fill="#c44e52" stroke="#ffffff" stroke-width="2.5"/>
+  <path d="M480.00,268.00 L348.43,321.41 A142.00,142.00 0 0 1 340.00,244.26 Z" fill="#8172b3" stroke="#ffffff" stroke-width="2.5"/>
+  <path d="M480.00,268.00 L340.00,244.26 A142.00,142.00 0 0 1 369.94,178.28 Z" fill="#937860" stroke="#ffffff" stroke-width="2.5"/>
+  <path d="M480.00,268.00 L369.94,178.28 A142.00,142.00 0 0 1 480.00,126.00 Z" fill="#8e9aaa" stroke="#ffffff" stroke-width="2.5"/>
+  <path class="ld" d="M588.23,158.45 L684.00,171.00 L700.00,171.00"/>
+  <text class="t nm" x="707.00" y="176.00" text-anchor="start">Fixing itself</text>
+  <text class="t pc" x="707.00" y="195.00" text-anchor="start">24.8%  &#183;  290 commits</text>
+  <path class="ld" d="M605.63,357.07 L684.00,263.00 L700.00,263.00"/>
+  <text class="t nm" x="707.00" y="268.00" text-anchor="start">New capability</text>
+  <text class="t pc" x="707.00" y="287.00" text-anchor="start">20.0%  &#183;  234 commits</text>
+  <path class="ld" d="M457.73,420.38 L684.00,355.00 L700.00,355.00"/>
+  <text class="t nm" x="707.00" y="360.00" text-anchor="start">Keeping itself running</text>
+  <text class="t pc" x="707.00" y="379.00" text-anchor="start">15.0%  &#183;  175 commits</text>
+  <path class="ld" d="M413.93,128.89 L276.00,145.00 L260.00,145.00"/>
+  <text class="t nm" x="253.00" y="150.00" text-anchor="end">Everything else</text>
+  <text class="t pc" x="253.00" y="169.00" text-anchor="end">14.1%  &#183;  165 commits</text>
+  <path class="ld" d="M339.76,204.37 L276.00,237.00 L260.00,237.00"/>
+  <text class="t nm" x="253.00" y="242.00" text-anchor="end">Measuring itself</text>
+  <text class="t pc" x="253.00" y="261.00" text-anchor="end">8.2%  &#183;  96 commits</text>
+  <path class="ld" d="M326.91,284.73 L276.00,329.00 L260.00,329.00"/>
+  <text class="t nm" x="253.00" y="334.00" text-anchor="end">Presentation</text>
+  <text class="t pc" x="253.00" y="353.00" text-anchor="end">8.8%  &#183;  103 commits</text>
+  <path class="ld" d="M359.34,363.69 L276.00,421.00 L260.00,421.00"/>
+  <text class="t nm" x="253.00" y="426.00" text-anchor="end">Deleting its own code</text>
+  <text class="t pc" x="253.00" y="445.00" text-anchor="end">9.1%  &#183;  106 commits</text>
+  <text class="t su" x="40" y="496">Labelled from commit subject lines. &#8220;Everything else&#8221; is speed and cost (42),</text>
+  <text class="t su" x="40" y="516">memory (36), docs (35), delegation (26) and the agent editing its own instructions (26).</text>
+</svg>
