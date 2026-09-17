@@ -12,7 +12,7 @@
 
   <line x1="100" y1="330" x2="800" y2="330" stroke="#b9c2cd" stroke-width="2"/>
   <line x1="100" y1="330" x2="100" y2="80"  stroke="#b9c2cd" stroke-width="2"/>
-  <text class="t ax" x="450" y="360" text-anchor="middle">effort you put in &#8594;</text>
+  <text class="t ax" x="255" y="356" text-anchor="middle">effort you put in &#8594;</text>
   <text class="t ax" x="-205" y="72" text-anchor="middle" transform="rotate(-90)">working software delivered &#8594;</text>
 
   <line x1="100" y1="248" x2="800" y2="248" stroke="#9aa3ad" stroke-width="1.4" stroke-dasharray="5 5"/>

@@ -50,8 +50,11 @@
   <line x1="171" y1="256" x2="171" y2="188" stroke="#8a929c" stroke-width="2" marker-end="url(#a)"/>
   <text class="t arw" x="183" y="226">update the intent</text>
 
-  <path d="M814,296 C 856,296 856,152 820,152" fill="none" stroke="#c0392b" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#r)"/>
-  <text class="t arw" x="848" y="228" fill="#a03027" text-anchor="middle" transform="rotate(90 848 228)">fails &#8212; back to the agent, costs you nothing</text>
+  <path d="M814,300 C 838,300 838,148 820,148" fill="none" stroke="#c0392b" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#r)"/>
+
+  <line x1="330" y1="208" x2="366" y2="208" stroke="#c0392b" stroke-width="2" stroke-dasharray="6 4"/>
+  <text class="t arw" x="378" y="212" fill="#a03027">fails the gate &#8212; straight back to the</text>
+  <text class="t arw" x="378" y="230" fill="#a03027">agent, and it costs you nothing</text>
 
   <rect x="46" y="384" width="768" height="58" rx="9" fill="#fdf6ea" stroke="#eadfc9"/>
   <text class="t cap" x="66" y="408">The gate is what makes the loop safe to leave alone: the agent can run the rules, and cannot edit them.</text>
