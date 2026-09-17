@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 360" width="860" height="360" role="img" aria-label="Two replies of the same length. In the downvoted one the verdict sits at the far end, past where a reader has already stopped reading. In the upvoted one the verdict is the first thing on the line.">
+  <style>
+    .t   { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; fill:#1f2933; }
+    .ttl { font-size:17px; font-weight:700; }
+    .lbl { font-size:14px; font-weight:600; }
+    .cap { font-size:13px; fill:#6b7785; }
+    .num { font-size:13px; font-weight:700; }
+  </style>
+
+  <rect x="0.5" y="0.5" width="859" height="359" rx="10" fill="#ffffff" stroke="#e2e5e9"/>
+  <text class="t ttl" x="40" y="42">Same length. Different place for the verdict.</text>
+  <text class="t cap" x="40" y="64">798 rated replies, identical median length either way — 69 words.</text>
+
+  <!-- attention window shading -->
+  <rect x="180" y="88" width="120" height="220" fill="#f3f5f7"/>
+  <text class="t cap" x="240" y="80" text-anchor="middle">what a reader actually reads</text>
+  <line x1="180" y1="88" x2="180" y2="308" stroke="#c7ccd3" stroke-dasharray="3 3"/>
+  <line x1="300" y1="88" x2="300" y2="308" stroke="#c7ccd3" stroke-dasharray="3 3"/>
+
+  <!-- downvoted -->
+  <text class="t lbl" x="40" y="126">Downvoted opener</text>
+  <rect x="180" y="106" width="580" height="34" rx="4" fill="#f6d9d5" stroke="#d99a90"/>
+  <text class="t num" x="192" y="128" fill="#8f3b2e">"Job 6066 is finished. It touched…"</text>
+  <rect x="686" y="106" width="74" height="34" rx="4" fill="#8f3b2e"/>
+  <text class="t num" x="723" y="128" text-anchor="middle" fill="#ffffff">verdict</text>
+  <text class="t cap" x="40" y="150">machinery, named and timestamped, first — the verdict lands after the window closes</text>
+
+  <!-- upvoted -->
+  <text class="t lbl" x="40" y="220">Upvoted opener</text>
+  <rect x="180" y="200" width="74" height="34" rx="4" fill="#2c4a73"/>
+  <text class="t num" x="217" y="222" text-anchor="middle" fill="#ffffff">verdict</text>
+  <rect x="254" y="200" width="506" height="34" rx="4" fill="#dbe7f6" stroke="#9db9de"/>
+  <text class="t num" x="266" y="222" fill="#2c4a73">"Yes — the deploy is live, no follow-up."</text>
+  <text class="t cap" x="40" y="244">same facts, same length, addressed to the reader's question first</text>
+
+  <line x1="40" y1="278" x2="820" y2="278" stroke="#e2e5e9" stroke-width="1.5"/>
+  <text class="t" x="40" y="312" font-size="19" font-weight="700" fill="#8f3b2e">4 of 7 downvotes landed inside 60 seconds — not slow, just narrated</text>
+</svg>
