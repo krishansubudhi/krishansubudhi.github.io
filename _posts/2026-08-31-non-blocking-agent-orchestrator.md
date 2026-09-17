@@ -8,7 +8,7 @@ title: A non-blocking agent orchestrator
 description: Almost every multi-agent framework blocks the orchestrator while its subagents run. Here is what changes when you remove the ability to block instead of managing it.
 ---
 
-I have been building a self-evolving agent called Walle. The single change that improved it most was not a better model or a better prompt. It was deleting the orchestrator's ability to wait.
+I have been building a self-evolving agent. The single change that improved it most was not a better model or a better prompt. It was deleting the orchestrator's ability to wait.
 
 The result: a second message sent while a ten-minute job is running gets answered in seconds instead of queueing behind it, and a worker that is going the wrong way can be stopped and re-aimed mid-flight without losing what it has already read. This post was itself re-aimed that way, 72 seconds in — the log is at the bottom.
 
@@ -24,7 +24,7 @@ The instinct is to fix the prompt — tell it not to do that. That is a policy f
 
 ## What everyone else does
 
-This is not a niche design question. Anthropic's June 2025 [multi-agent research system post](https://www.anthropic.com/engineering/multi-agent-research-system) has a section literally headed *"Synchronous execution creates bottlenecks"*:
+This is not a niche design question. A widely cited multi-agent research write-up from mid-2025 has a section literally headed *"Synchronous execution creates bottlenecks"*:
 
 > Our lead agents execute subagents synchronously, waiting for each set of subagents to complete before proceeding. This simplifies coordination, but creates bottlenecks in the information flow between agents.
 
@@ -35,20 +35,20 @@ The picture in the frameworks is the same, because a subagent is almost always m
 | Framework | Delegation primitive | Orchestrator during the call |
 |---|---|---|
 | LangGraph supervisor | routes to a worker node, waits for the graph edge back | blocked |
-| Google ADK | `AgentTool` / sub-agent invocation returns a result | blocked |
-| OpenAI Agents SDK | `handoff` transfers the turn | blocked (or gone) |
-| Anthropic's research system | synchronous subagent spawn | blocked, by their own description |
-| Walle | `delegate()` returns immediately, callback fires later | free |
+| ADK-style sub-agents | `AgentTool` / sub-agent invocation returns a result | blocked |
+| Hosted agent SDK handoff | `handoff` transfers the turn | blocked (or gone) |
+| The published multi-agent research system above | synchronous subagent spawn | blocked, by their own description |
+| This orchestrator | `delegate()` returns immediately, callback fires later | free |
 
 You can of course build async orchestration in any of these. The point is what the default shape is, and the default shape is a blocking call.
 
 ## The primitive
 
-Walle's workers are called *helper chefs*. Every one is a separate `claude -p` subprocess in its own git worktree on its own branch. The whole contract is in the module docstring:
+This orchestrator's workers are called *helper chefs*. Every one is a separate coding-agent subprocess in its own git worktree on its own branch. The whole contract is in the module docstring:
 
 ```python
 """helper.py -- disposable helper chefs: offload a task to a short-lived
-`claude -p` subprocess so the headchef's dispatcher loop is never blocked
+subprocess so the headchef's dispatcher loop is never blocked
 waiting on it. delegate() returns immediately; on_done(text, error) fires from
 a background thread when the subprocess finishes.
 """
@@ -80,11 +80,11 @@ Because the orchestrator is free, it can watch. And because it can watch, it nee
 def interrupt(hid, reason="", steered=False):
     """Stop chef `hid` now, keeping everything it has learned -> (ok, detail).
 
-    Unlike stop(), which simply calls a chef off, this is a PAUSE: the claude
+    Unlike stop(), which simply calls a chef off, this is a PAUSE: the
     session id is recorded so resume() can pick the same conversation up, and
     the chef's worktree and branch are left exactly where they are instead of
     being handed back. SIGTERM first, SIGKILL after INTERRUPT_GRACE_S, the
-    whole process group both times -- a `claude` mid-tool-call has children.
+    whole process group both times -- a subprocess mid-tool-call has children.
     """
 ```
 
@@ -122,7 +122,7 @@ A second measured caveat: interrupts are only cheap once the session is *warm*. 
 MAX_HELPERS_PER_JOB = 3
 ```
 
-Three per job, four in total across the machine. The reason is not cost, it is that workers are deliberately blind to each other. This lines up with Cognition's [Don't Build Multi-Agents](https://cognition.ai/blog/dont-build-multi-agents), which argues that parallel subagents with independent context reliably produce conflicting work, and that writes should stay single-threaded. Walle's version: workers each get an isolated worktree, and only the orchestrator talks to the human.
+Three per job, four in total across the machine. The reason is not cost, it is that workers are deliberately blind to each other. This lines up with Cognition's [Don't Build Multi-Agents](https://cognition.ai/blog/dont-build-multi-agents), which argues that parallel subagents with independent context reliably produce conflicting work, and that writes should stay single-threaded. This orchestrator's version: workers each get an isolated worktree, and only the orchestrator talks to the human.
 
 The other half of that is compression at the handoff. A worker's report is often two thousand words; passing that through verbatim turns the orchestrator into a proxy. So the rule is explicit:
 
@@ -134,7 +134,7 @@ Halfway through writing this, I changed my mind about what it should be about an
 
 ```json
 {
- "title": "blog post novel walle experiments",
+ "title": "blog post novel agent experiments",
  "ok": true,
  "duration_s": 71.93,
  "outcome": "STEERED -- somebody stopped this chef on purpose, saying:
@@ -148,10 +148,10 @@ Same worker, same session, everything it had already read about the blog's forma
 ## What this does not do
 
 - **In-flight work inside the orchestrator's own turn dies on interrupt.** `aborted_tools` abandons the tool call. Anything the orchestrator was doing itself is lost and has to be re-run. Only work that is already *out of process* survives.
-- **Killed processes can orphan.** Subprocesses outlive their parent, so the interrupt path needs explicit process-group cleanup or you leak `claude` children. Learned the hard way.
+- **Killed processes can orphan.** Subprocesses outlive their parent, so the interrupt path needs explicit process-group cleanup or you leak subprocess children. Learned the hard way.
 - **In-memory state is still in memory.** Which worker holds which job lives in the orchestrator's process. Kill it and that is gone; the durable record that fixes this is a work item, not a finished thing.
 - **It is one orchestrator, not N.** Forking the session to run several heads works (a fork reads the parent's cache at cache-read price) but I have not needed it, so it is not built.
 
-None of the individual pieces are novel. Non-blocking dispatch is 1970s operating systems. Isolated worktrees are what CI does. What seems genuinely underexplored is applying the rule to the *orchestrator of an LLM agent system* and treating it as structural rather than as a prompt instruction — there is no rule telling Walle not to block, because there is no primitive left to block with.
+None of the individual pieces are novel. Non-blocking dispatch is 1970s operating systems. Isolated worktrees are what CI does. What seems genuinely underexplored is applying the rule to the *orchestrator of an LLM agent system* and treating it as structural rather than as a prompt instruction — there is no rule telling it not to block, because there is no primitive left to block with.
 
 If you are building on top of a supervisor pattern, the question worth asking is: when a subagent is 6 minutes into a 10-minute job and you can already see it is wrong, what can you do about it? If the answer is "wait, then start over," that is the thing to fix first.
