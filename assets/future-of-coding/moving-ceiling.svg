@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 400" width="860" height="400" role="img" aria-label="Two curves of working software delivered against effort. The hand-typing curve rises slowly and flattens against a low ceiling labelled how fast one person can type and hold a design in their head. The directing-agents curve rises much faster and flattens against a higher ceiling labelled how fast you can specify the work and check it is right. A note says the ceiling moves, it does not disappear.">
+  <style>
+    .t   { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; fill:#1f2933; }
+    .ttl { font-size:17px; font-weight:700; }
+    .lbl { font-size:14px; font-weight:600; }
+    .cap { font-size:13px; fill:#6b7785; }
+    .ax  { font-size:12px; fill:#6b7785; }
+  </style>
+
+  <rect x="0.5" y="0.5" width="859" height="399" rx="10" fill="#ffffff" stroke="#e2e5e9"/>
+  <text class="t ttl" x="40" y="42">The ceiling moves. It does not disappear.</text>
+
+  <line x1="100" y1="330" x2="800" y2="330" stroke="#b9c2cd" stroke-width="2"/>
+  <line x1="100" y1="330" x2="100" y2="80"  stroke="#b9c2cd" stroke-width="2"/>
+  <text class="t ax" x="255" y="356" text-anchor="middle">effort you put in &#8594;</text>
+  <text class="t ax" x="-205" y="72" text-anchor="middle" transform="rotate(-90)">working software delivered &#8594;</text>
+
+  <line x1="100" y1="248" x2="800" y2="248" stroke="#9aa3ad" stroke-width="1.4" stroke-dasharray="5 5"/>
+  <line x1="100" y1="120" x2="800" y2="120" stroke="#5b8def" stroke-width="1.4" stroke-dasharray="5 5"/>
+
+  <path d="M100,330 C 240,300 330,268 430,256 C 530,248 660,246 800,245"
+        fill="none" stroke="#6b7785" stroke-width="3"/>
+  <path d="M100,330 C 190,238 250,176 350,148 C 470,120 640,118 800,116"
+        fill="none" stroke="#5b8def" stroke-width="3"/>
+
+  <text class="t lbl" x="470" y="288" fill="#4a545f">typing it yourself</text>
+  <text class="t cap" x="470" y="306">walking</text>
+
+  <text class="t lbl" x="430" y="180" fill="#3a6fd8">directing agents</text>
+  <text class="t cap" x="430" y="198" fill="#3a6fd8">driving</text>
+
+  <text class="t cap" x="800" y="240" text-anchor="end">ceiling: how fast one person types and holds a design in their head</text>
+  <text class="t cap" x="800" y="112" text-anchor="end" fill="#3a6fd8">ceiling: how fast you can specify the work and check it came back right</text>
+
+  <rect x="470" y="318" width="330" height="58" rx="9" fill="#f7f8fa" stroke="#dde1e6"/>
+  <text class="t cap" x="486" y="340">Going faster does not remove the limit. It</text>
+  <text class="t cap" x="486" y="358">relocates it &#8212; from your hands to your judgement.</text>
+</svg>

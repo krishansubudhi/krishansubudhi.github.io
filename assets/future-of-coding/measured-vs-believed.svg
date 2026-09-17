@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 440" width="860" height="440" role="img" aria-label="A bar chart of percentage change in task completion time from METR's randomised trials. Early 2025 measured: 19 percent slower, confidence interval plus 2 to plus 39. Early 2025 as the same developers believed it: 20 percent faster. Late 2025 tools, returning developers: 18 percent faster, confidence interval minus 38 to plus 9. Late 2025 tools, newly recruited developers: 4 percent faster, confidence interval minus 15 to plus 9. The confidence intervals for both late 2025 estimates cross zero.">
+  <style>
+    .t   { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; fill:#1f2933; }
+    .ttl { font-size:17px; font-weight:700; }
+    .lbl { font-size:13.5px; font-weight:600; }
+    .cap { font-size:12.5px; fill:#6b7785; }
+    .num { font-size:13px; font-weight:700; }
+  </style>
+
+  <rect x="0.5" y="0.5" width="859" height="439" rx="10" fill="#ffffff" stroke="#e2e5e9"/>
+  <text class="t ttl" x="40" y="40">What the trials measured, and what the developers believed</text>
+  <text class="t cap" x="40" y="62">change in task completion time &#8212; bars left of the line are faster with AI, right of it slower</text>
+
+  <line x1="480" y1="90" x2="480" y2="352" stroke="#8a929c" stroke-width="2"/>
+  <text class="t cap" x="480" y="372" text-anchor="middle">no change</text>
+  <text class="t cap" x="300" y="372" text-anchor="middle">&#8592; faster with AI</text>
+  <text class="t cap" x="660" y="372" text-anchor="middle">slower with AI &#8594;</text>
+
+  <text class="t lbl" x="40" y="116">Early-2025 tools, measured</text>
+  <text class="t cap" x="40" y="133">16 experienced maintainers, own repos</text>
+  <line x1="488" y1="122" x2="636" y2="122" stroke="#c0392b" stroke-width="1.6"/>
+  <line x1="488" y1="116" x2="488" y2="128" stroke="#c0392b" stroke-width="1.6"/>
+  <line x1="636" y1="116" x2="636" y2="128" stroke="#c0392b" stroke-width="1.6"/>
+  <rect x="480" y="112" width="72" height="20" fill="#c0392b"/>
+  <text class="t num" x="646" y="127" fill="#a03027">+19%</text>
+
+  <text class="t lbl" x="40" y="182">Early-2025 tools, as those same</text>
+  <text class="t lbl" x="40" y="199">developers believed it went</text>
+  <rect x="404" y="176" width="76" height="20" fill="#d98b2b"/>
+  <text class="t num" x="394" y="191" text-anchor="end" fill="#a3671a">&#8722;20%</text>
+
+  <text class="t lbl" x="40" y="248">Late-2025 tools, returning developers</text>
+  <text class="t cap" x="40" y="265">interval crosses zero</text>
+  <line x1="328" y1="254" x2="516" y2="254" stroke="#3f9e6a" stroke-width="1.6"/>
+  <line x1="328" y1="248" x2="328" y2="260" stroke="#3f9e6a" stroke-width="1.6"/>
+  <line x1="516" y1="248" x2="516" y2="260" stroke="#3f9e6a" stroke-width="1.6"/>
+  <rect x="412" y="244" width="68" height="20" fill="#3f9e6a"/>
+  <text class="t num" x="402" y="259" text-anchor="end" fill="#2e7d4f">&#8722;18%</text>
+
+  <text class="t lbl" x="40" y="314">Late-2025 tools, newly recruited</text>
+  <text class="t cap" x="40" y="331">interval crosses zero</text>
+  <line x1="420" y1="320" x2="516" y2="320" stroke="#3f9e6a" stroke-width="1.6"/>
+  <line x1="420" y1="314" x2="420" y2="326" stroke="#3f9e6a" stroke-width="1.6"/>
+  <line x1="516" y1="314" x2="516" y2="326" stroke="#3f9e6a" stroke-width="1.6"/>
+  <rect x="464" y="310" width="16" height="20" fill="#3f9e6a"/>
+  <text class="t num" x="454" y="325" text-anchor="end" fill="#2e7d4f">&#8722;4%</text>
+
+  <text class="t cap" x="40" y="400">Source: METR, randomised controlled trials of open-source developers (July 2025 result; February 2026 update, which the authors</text>
+  <text class="t cap" x="40" y="416">themselves call a weak signal because developers now refuse to take tasks without AI).</text>
+</svg>
