@@ -21,7 +21,7 @@
 
   <rect x="40" y="134" width="330" height="70" rx="7" fill="#fdecea" stroke="#d99a90" stroke-width="1.6"/>
   <text class="t lbl" x="205" y="160" text-anchor="middle" fill="#8f3b2e">a second LLM retypes the whole thing</text>
-  <text class="t cap" x="205" y="180" text-anchor="middle">subprocess, sonnet, blocking the funnel</text>
+  <text class="t cap" x="205" y="180" text-anchor="middle">subprocess, blocking the funnel</text>
   <text class="t lbl" x="205" y="197" text-anchor="middle" fill="#8f3b2e">4.7s prose &#183; 11.0s table &#183; 11.3s checklist</text>
   <path class="ar" d="M205,204 L205,228"/>
 

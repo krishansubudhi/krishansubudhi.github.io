@@ -25,7 +25,24 @@ My agent generates at roughly 78 tokens per second. Eight hundred tokens of scaf
 
 **It's slow, and it's slow at the worst moment.** The long replies are the ones that already took thinking time. Layout is a tax applied on top of the expensive turns and never on the cheap ones.
 
-**It's frozen.** A progress bar drawn in markdown is a photograph of one moment. `████░░░░ 4/7` is 90 to 150 tokens, and it can never move again — five minutes later it's still telling you 4/7 and it is now a lie. The equivalent as structured data is about 23 tokens and can update in place.
+**It's frozen.** A progress bar drawn in markdown is a photograph of one moment. Here's an actual one, ~130 tokens:
+
+```
+Progress: ████████░░░░░░░░ 4/7 steps
+  [x] fetch data
+  [x] validate schema
+  [x] run transform
+  [x] write staging table
+  [ ] run tests
+  [ ] promote
+  [ ] notify
+```
+
+It can never move again. Five minutes later it still says 4/7, and now it's lying. The equivalent as structured data is about 23 tokens, and the client draws the bar from live numbers, so it can't go stale:
+
+```json
+{"kind": "progress", "done": 4, "total": 7}
+```
 
 **You have made a reasoning model into a layout engine.** Every token it spends on a table border is a token it did not spend on the answer, and you are paying reasoning-model rates for box-drawing characters.
 
@@ -51,4 +68,4 @@ Formatting buys you legibility. It does not buy you having something worth sayin
 
 ---
 
-*How to do the rendering without paying the token cost is a separate problem, and I got it wrong the first time. [That's the next post]({{ '/blog/formatting-solved-twice/' | relative_url }}).*
+*What that means for the words themselves, not just the tokens, is [its own post]({{ '/blog/the-reply-was-correct-nobody-could-tell/' | relative_url }}). How to do the rendering without paying the token cost is a separate problem again, and I got it wrong the first time. [That's the one after]({{ '/blog/formatting-solved-twice/' | relative_url }}).*
