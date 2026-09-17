@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 360" width="860" height="360" role="img" aria-label="A stacked bar showing that 26 percent of a long agent reply containing a markdown table is layout scaffolding rather than content, costing about ten seconds of generation time.">
+  <style>
+    .t   { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; fill:#1f2933; }
+    .ttl { font-size:17px; font-weight:700; }
+    .lbl { font-size:14px; font-weight:600; }
+    .cap { font-size:13px; fill:#6b7785; }
+    .num { font-size:15px; font-weight:700; }
+  </style>
+
+  <rect x="0.5" y="0.5" width="859" height="359" rx="10" fill="#ffffff" stroke="#e2e5e9"/>
+  <text class="t ttl" x="40" y="42">What is actually in a long agent reply</text>
+  <text class="t cap" x="40" y="64">1,232 assistant messages. The 22% over 1,200 characters, median 1,734 characters.</text>
+
+  <text class="t lbl" x="40" y="118">Any long reply</text>
+  <rect x="180" y="98" width="474" height="34" rx="4" fill="#dbe7f6" stroke="#9db9de"/>
+  <rect x="654" y="98" width="111" height="34" rx="4" fill="#f6d9d5" stroke="#d99a90"/>
+  <text class="t num" x="417" y="120" text-anchor="middle" fill="#2c4a73">81% content</text>
+  <text class="t num" x="709" y="120" text-anchor="middle" fill="#8f3b2e">19%</text>
+
+  <text class="t lbl" x="40" y="186">The ones with a table</text>
+  <rect x="180" y="166" width="433" height="34" rx="4" fill="#dbe7f6" stroke="#9db9de"/>
+  <rect x="613" y="166" width="152" height="34" rx="4" fill="#f6d9d5" stroke="#d99a90"/>
+  <text class="t num" x="396" y="188" text-anchor="middle" fill="#2c4a73">74% content</text>
+  <text class="t num" x="689" y="188" text-anchor="middle" fill="#8f3b2e">26%</text>
+
+  <text class="t cap" x="689" y="222" text-anchor="middle">pipes, dashes, padding</text>
+
+  <line x1="40" y1="256" x2="820" y2="256" stroke="#e2e5e9" stroke-width="1.5"/>
+
+  <text class="t lbl" x="40" y="290">Those scaffolding tokens are generated one at a time, at about 78 tokens/second.</text>
+  <text class="t" x="40" y="326" font-size="21" font-weight="700" fill="#8f3b2e">~800 layout tokens &#8776; 10.3 seconds of a person watching a spinner</text>
+</svg>
