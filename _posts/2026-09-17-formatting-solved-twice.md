@@ -26,7 +26,7 @@ Every outgoing message passes through exactly one function on its way to a human
 
 Here's what it actually does to a real reply. The main model writes ordinary prose, because that's all it knows how to do:
 
-> The deployment for the billing service finished. It touched three files across two commits, ran the test suite before merging, and the gate reported no failures. It went out on the fast lane, no restart needed.
+> The deployment for the billing service finished. It touched three files across two commits, ran the test suite before merging, and nothing failed. The whole thing took about forty seconds.
 
 The formatter reads that and retypes it, same facts, into the grammar it was given:
 
@@ -35,7 +35,7 @@ The formatter reads that and retypes it, same facts, into the grammar it was giv
 status: shipped
 files: 3
 commits: 2
-lane: fast · no restart
+duration: 41s
 ```
 
 That's the trick, and it's a real one: the main model never has to know cards exist. Whatever it can say in prose, the second pass can reshape, because there's a mind on both ends. That is also the entire cost of this approach.
@@ -101,7 +101,7 @@ Same deploy message as before, but now the main model writes the structured vers
 status: shipped
 files: 3
 commits: 2
-lane: fast, no restart
+duration: 41s
 ```
 
 The parser sees a heading, then short `key: value` lines, and draws a card with a header bar and a row of fact tiles — no model, no retyping, just a string being read for the shape it's already in. The catch is right there too: if the model had written the prose version instead, this parser renders prose. It has no way to fix that, because fixing it was never its job.
