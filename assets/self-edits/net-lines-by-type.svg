@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" width="960" height="500" role="img" aria-label="Bar chart of net lines of code per type of self-edit. Every category added lines except deleting its own code, at minus 34,218 lines, the only bar pointing left of zero.">
+  <style>
+    .t  { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; }
+    .ti { font-size:17px; font-weight:700; fill:#1f2933; }
+    .su { font-size:13px; fill:#6b7785; }
+    .cl { font-size:13.5px; font-weight:600; fill:#1f2933; }
+    .vl { font-size:13px; font-weight:700; fill:#4a5561; }
+    .vi { font-size:13px; font-weight:700; fill:#ffffff; }
+  </style>
+  <rect x="0.5" y="0.5" width="959" height="499" rx="10" fill="#ffffff" stroke="#e2e5e9"/>
+  <text class="t ti" x="40" y="46">Net lines of code, by type of self-edit</text>
+  <text class="t su" x="40" y="68">Exactly one category shrinks the codebase. It is the one the agent almost never chose.</text>
+  <rect x="380.00" y="108.00" width="455.44" height="20.0" rx="3" fill="#4c72b0"/>
+  <text class="t cl" x="240.00" y="122.50" text-anchor="end">New capability</text>
+  <text class="t vl" x="845.44" y="122.50" text-anchor="start">+135,664</text>
+  <rect x="380.00" y="140.00" width="193.53" height="20.0" rx="3" fill="#8fa6c6"/>
+  <text class="t cl" x="240.00" y="154.50" text-anchor="end">Fixing itself</text>
+  <text class="t vl" x="583.53" y="154.50" text-anchor="start">+57,646</text>
+  <rect x="380.00" y="172.00" width="181.33" height="20.0" rx="3" fill="#8fa6c6"/>
+  <text class="t cl" x="240.00" y="186.50" text-anchor="end">Keeping itself running</text>
+  <text class="t vl" x="571.33" y="186.50" text-anchor="start">+54,013</text>
+  <rect x="380.00" y="204.00" width="111.44" height="20.0" rx="3" fill="#8fa6c6"/>
+  <text class="t cl" x="240.00" y="218.50" text-anchor="end">Measuring itself</text>
+  <text class="t vl" x="501.44" y="218.50" text-anchor="start">+33,194</text>
+  <rect x="380.00" y="236.00" width="76.60" height="20.0" rx="3" fill="#8fa6c6"/>
+  <text class="t cl" x="240.00" y="250.50" text-anchor="end">Presentation</text>
+  <text class="t vl" x="466.60" y="250.50" text-anchor="start">+22,816</text>
+  <rect x="380.00" y="268.00" width="33.60" height="20.0" rx="3" fill="#8fa6c6"/>
+  <text class="t cl" x="240.00" y="282.50" text-anchor="end">Delegation</text>
+  <text class="t vl" x="423.60" y="282.50" text-anchor="start">+10,009</text>
+  <rect x="380.00" y="300.00" width="33.57" height="20.0" rx="3" fill="#8fa6c6"/>
+  <text class="t cl" x="240.00" y="314.50" text-anchor="end">Memory</text>
+  <text class="t vl" x="423.57" y="314.50" text-anchor="start">+10,000</text>
+  <rect x="380.00" y="332.00" width="31.63" height="20.0" rx="3" fill="#8fa6c6"/>
+  <text class="t cl" x="240.00" y="346.50" text-anchor="end">Speed and cost</text>
+  <text class="t vl" x="421.63" y="346.50" text-anchor="start">+9,423</text>
+  <rect x="380.00" y="364.00" width="11.34" height="20.0" rx="3" fill="#8fa6c6"/>
+  <text class="t cl" x="240.00" y="378.50" text-anchor="end">Docs</text>
+  <text class="t vl" x="401.34" y="378.50" text-anchor="start">+3,377</text>
+  <rect x="380.00" y="396.00" width="6.35" height="20.0" rx="3" fill="#8fa6c6"/>
+  <text class="t cl" x="240.00" y="410.50" text-anchor="end">Editing its own instructions</text>
+  <text class="t vl" x="396.35" y="410.50" text-anchor="start">+1,891</text>
+  <rect x="265.13" y="428.00" width="114.87" height="20.0" rx="3" fill="#c44e52"/>
+  <text class="t cl" x="240.00" y="442.50" text-anchor="end">Deleting its own code</text>
+  <text class="t vi" x="322.56" y="442.50" text-anchor="middle">&#8722;34,218</text>
+  <line x1="380.00" y1="94.0" x2="380.00" y2="464.00" stroke="#4a5561" stroke-width="1.6"/>
+  <text class="t su" x="40" y="474">Across all 1,169 commits: +438,163 lines added, &#8722;134,348 removed, net +303,815.</text>
+</svg>
