@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 400" width="860" height="400" role="img" aria-label="Four computable metrics averaged into a single rising quality score on the left, contrasted with one external question on the right whose answer was zero.">
+  <defs>
+    <marker id="ah2" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto">
+      <path d="M0,0 L7,3.2 L0,6.4 z" fill="#6b7785"/>
+    </marker>
+  </defs>
+  <style>
+    .t   { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; fill:#1f2933; }
+    .hd  { font-size:15px; font-weight:700; fill:#6b7785; letter-spacing:.4px; }
+    .lbl { font-size:14px; font-weight:600; }
+    .big { font-size:19px; font-weight:700; }
+    .cap { font-size:13px; fill:#6b7785; }
+    .sm  { fill:#eef2f7; stroke:#c7d2de; stroke-width:1.5; }
+    .ar  { stroke:#6b7785; stroke-width:1.6; fill:none; marker-end:url(#ah2); }
+  </style>
+
+  <rect x="0.5" y="0.5" width="859" height="399" rx="10" fill="#ffffff" stroke="#e2e5e9"/>
+
+  <text class="t hd" x="40" y="46">WHAT IT COULD COMPUTE</text>
+
+  <rect class="sm" x="40" y="70"  width="146" height="38" rx="7"/>
+  <text class="t lbl" x="113" y="94" text-anchor="middle">Cost per turn</text>
+  <rect class="sm" x="40" y="118" width="146" height="38" rx="7"/>
+  <text class="t lbl" x="113" y="142" text-anchor="middle">Latency</text>
+  <rect class="sm" x="40" y="166" width="146" height="38" rx="7"/>
+  <text class="t lbl" x="113" y="190" text-anchor="middle">Success rate</text>
+  <rect class="sm" x="40" y="214" width="146" height="38" rx="7"/>
+  <text class="t lbl" x="113" y="238" text-anchor="middle">Ships per week</text>
+
+  <path class="ar" d="M190,89  L246,150"/>
+  <path class="ar" d="M190,137 L246,153"/>
+  <path class="ar" d="M190,185 L246,169"/>
+  <path class="ar" d="M190,233 L246,175"/>
+
+  <rect x="254" y="124" width="184" height="72" rx="9" fill="#e8f0fb" stroke="#9db9de" stroke-width="1.6"/>
+  <text class="t big" x="346" y="155" text-anchor="middle">One 0&#8211;1 score</text>
+  <text class="t cap" x="346" y="178" text-anchor="middle">weights nobody chose</text>
+
+  <path class="ar" d="M346,196 L346,240"/>
+  <text class="t big" x="346" y="272" text-anchor="middle" fill="#2e7d4f">0.91 &#8593;</text>
+  <text class="t cap" x="346" y="294" text-anchor="middle">and climbing every week</text>
+
+  <line x1="500" y1="34" x2="500" y2="330" stroke="#d8dee6" stroke-width="1.5" stroke-dasharray="5 5"/>
+
+  <text class="t hd" x="548" y="46">WHAT ACTUALLY MATTERED</text>
+
+  <rect x="548" y="70" width="272" height="102" rx="9" fill="#fff6e6" stroke="#e0b96a" stroke-width="1.6"/>
+  <text class="t lbl" x="684" y="104" text-anchor="middle">Did a human accept something</text>
+  <text class="t lbl" x="684" y="126" text-anchor="middle">the agent started</text>
+  <text class="t lbl" x="684" y="148" text-anchor="middle">on its own initiative?</text>
+
+  <text class="t" x="684" y="266" text-anchor="middle" font-size="72" font-weight="700" fill="#c0392b">0</text>
+  <text class="t cap" x="684" y="294" text-anchor="middle">every week, for months</text>
+
+  <text class="t cap" x="40" y="352">The left-hand number is the one a system can compute about itself, so it is the one that gets optimised.</text>
+  <text class="t cap" x="40" y="372">The right-hand number can only be written by someone else. That is exactly what makes it worth reading.</text>
+</svg>

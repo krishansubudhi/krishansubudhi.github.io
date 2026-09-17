@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 340" width="860" height="340" role="img" aria-label="A timeline showing work dispatched, a long gap in which nothing has happened, a false past-tense claim made inside that gap, and the later point at which the worker actually reports.">
+  <style>
+    .t   { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; fill:#1f2933; }
+    .ttl { font-size:17px; font-weight:700; }
+    .lbl { font-size:14px; font-weight:600; }
+    .cap { font-size:13px; fill:#6b7785; }
+    .zon { font-size:13px; font-weight:600; }
+  </style>
+
+  <rect x="0.5" y="0.5" width="859" height="339" rx="10" fill="#ffffff" stroke="#e2e5e9"/>
+  <text class="t ttl" x="40" y="42">Dispatched is not done</text>
+
+  <rect x="150" y="176" width="420" height="36" fill="#fdecea"/>
+  <rect x="570" y="176" width="240" height="36" fill="#eaf7ee"/>
+  <line x1="60" y1="194" x2="810" y2="194" stroke="#b9c2cd" stroke-width="2"/>
+
+  <text class="t zon" x="360" y="200" text-anchor="middle" fill="#a03027">nothing has happened yet</text>
+  <text class="t zon" x="690" y="200" text-anchor="middle" fill="#2e7d4f">now it is true</text>
+
+  <circle cx="150" cy="194" r="7" fill="#6b7785"/>
+  <text class="t lbl" x="150" y="240" text-anchor="middle">work dispatched</text>
+  <text class="t cap" x="150" y="258" text-anchor="middle">to a worker process</text>
+
+  <circle cx="570" cy="194" r="7" fill="#2e7d4f"/>
+  <text class="t lbl" x="570" y="240" text-anchor="middle">worker reports back</text>
+  <text class="t cap" x="570" y="258" text-anchor="middle">observed, in a log</text>
+
+  <rect x="212" y="78" width="300" height="56" rx="9" fill="#ffffff" stroke="#c0392b" stroke-width="1.8"/>
+  <text class="t lbl" x="362" y="103" text-anchor="middle" fill="#a03027">&#8220;I archived and triaged</text>
+  <text class="t lbl" x="362" y="123" text-anchor="middle" fill="#a03027">those 32 items.&#8221;</text>
+  <path d="M352,134 L362,152 L372,134 z" fill="#ffffff" stroke="#c0392b" stroke-width="1.8"/>
+  <line x1="353" y1="135" x2="371" y2="135" stroke="#ffffff" stroke-width="2.4"/>
+  <line x1="362" y1="152" x2="362" y2="174" stroke="#c0392b" stroke-width="1.6" stroke-dasharray="4 4"/>
+
+  <text class="t cap" x="40" y="302">No component reported anything false. A plan was simply described in the past tense.</text>
+  <text class="t cap" x="40" y="322">The rule that fixes it: dispatched work stays in future tense until something observed it land.</text>
+</svg>
