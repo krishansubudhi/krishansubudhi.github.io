@@ -2,7 +2,8 @@
 comments: true
 author: krishan
 layout: post
-categories: agents, llm, architecture
+permalink: /blog/non-blocking-agent-orchestrator/
+categories: [agents, llm, architecture]
 title: A non-blocking agent orchestrator
 description: Almost every multi-agent framework blocks the orchestrator while its subagents run. Here is what changes when you remove the ability to block instead of managing it.
 ---
