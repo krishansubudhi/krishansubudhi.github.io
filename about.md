@@ -4,4 +4,6 @@ title: About
 permalink: /about/
 ---
 
-This is a documentation of my work. Many times, I found help from the documentation of other developers. I also intent to help other fellow developers through my blog. This will also enable me remember my work in a creative way.
+**{{ site.title }}** is where I write about building autonomous agents — systems that reason, act, and sometimes rewrite their own code.
+
+This is a documentation of my work. Many times, I found help from the documentation of other developers, and I intend to return the favor for other fellow developers through this blog. This also helps me remember my own work in a creative way.

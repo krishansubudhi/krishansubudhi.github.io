@@ -1,0 +1,31 @@
+---
+# Only the main Sass file needs front matter (the dashes are enough)
+---
+
+@import "minima";
+
+/* ----------------------------------------------------------------------
+   Rebrand accent — additive only, does not touch any minima rule above.
+   One accent colour for links and headings, picked to hold WCAG AA
+   contrast (>= 4.5:1) against both a pure-white and a pure-black
+   background, so it holds up on both the light and dark skin.
+   ---------------------------------------------------------------------- */
+:root {
+  --accent-color: #0b7db1;
+}
+
+a,
+.site-title,
+.post-link,
+h1, h2, h3, h4, h5, h6 {
+  color: var(--accent-color);
+}
+
+a:visited {
+  color: var(--accent-color);
+}
+
+a:hover {
+  color: var(--accent-color);
+  opacity: 0.85;
+}
