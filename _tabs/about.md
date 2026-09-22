@@ -1,7 +1,8 @@
 ---
-layout: page
+# the default layout is 'page'
 title: About
-permalink: /about/
+icon: fas fa-info-circle
+order: 4
 ---
 
 I'm Krishan, an engineer, and this is where I write up my own work.
