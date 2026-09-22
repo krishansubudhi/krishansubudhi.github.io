@@ -32,10 +32,12 @@ A large fraction of real work is only settleable by a human eye. Does the layout
 
 I tried making the check mandatory, on the theory that an item without one is an item nobody can verify. That produced the single worst pathology this system has had: **checks invented to look rigorous.** An audit of the board turned up four distinct failure classes.
 
-1. Checks that cannot fail. The literal shell command `true`, dressed as verification.
-2. Checks that named modules which had never existed in the tree.
-3. Checks encoding a moving number as a constant — so they went red on unrelated progress, and everybody learned to ignore them.
-4. Checks whose verb had no backend at all, so they evaluated exactly once, to an error, and never again.
+| The class | What it looked like | Why it is not evidence |
+| --- | --- | --- |
+| Cannot fail | the shell command `true` | no observation can contradict it |
+| Points at nothing | modules that never existed | it is not looking at the work |
+| A frozen constant | a fixed number for a moving one | red on unrelated progress, so ignored |
+| No backend for the verb | evaluated once, to an error | it is not running at all |
 
 Eleven items went green within sixty seconds of being opened.
 
@@ -54,6 +56,8 @@ It also costs almost nothing, because the "before" run happens at the moment you
 A human tapping "yes, that works" is a claim about the world. A machine check going green is a claim about a command. These are not the same kind of fact and storing them in the same boolean loses the distinction that matters.
 
 So: a re-run that goes red on a human-verified item flags it as *"was green, check now red"* and sorts it to the top of my list. It never silently overturns the human. The command is allowed to raise a question; it is not allowed to answer one. And in the other direction, a machine green is permanently provisional — it means the command passed, which is a strictly smaller statement than "the work is done."
+
+![Two lanes: a human yes is a claim about the world and a later red only flags it rather than overturning it, while a machine green is a claim about a command and stays provisional](/assets/ship-evidence/two-greens.svg)
 
 The other state the schema has to admit is the one everybody rounds off: **committed but not yet running.** Every deploy-later merge is in this state, sometimes for days. It is not "done" and it is not "in progress" and if your board only has those two, you will keep being told something is live that is sitting in a branch.
 
@@ -74,6 +78,8 @@ The number that matters is not how long the full gate takes. It is how long its 
 There is a ceiling on source lines and a ceiling on per-file test runtime. Both are stored as data in the repo, and every landing ship *lowers* them to whatever the tree actually measures. Slack that a deletion earns is captured on the spot rather than left lying around for the next change to spend.
 
 The ceilings used to be plain constants in a source file, raisable by whoever needed the room, with a dated comment explaining why. That failed completely, and it failed fast: twenty-one raises in four days, source lines from 12,000 to 23,050 and test lines from 13,000 to 24,800, on a codebase whose entire reason to exist was being a lean rewrite. Every single raise was honest, documented and locally reasonable. The dated comments were the problem wearing the clothes of a record.
+
+![Two panels. Ceilings stored as raisable constants climb in a staircase across twenty-one raises in four days; ceilings stored as a ratchet only ever step down or stay flat](/assets/ship-evidence/ratchet.svg)
 
 What replaced it: the numbers live in one file that is the sole authority, and the rule compares the ceilings *in effect* against the ones recorded in the last commit — read out of git, never out of the tree being shipped. So editing the file moves only the side the rule is checking. There is exactly one way up and it is a human act, an environment variable an agent editing files cannot reach.
 

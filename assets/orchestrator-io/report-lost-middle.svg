@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 336" width="720" height="336" role="img" aria-labelledby="rtitle rdesc">
+  <title id="rtitle">A long report arriving with its middle folded away</title>
+  <desc id="rdesc">A report drawn as a stack of lines. The opening lines and the closing lines survive; the middle is replaced by a dashed fold marker. Two notes point at it: lead with the outcome so it sits in the surviving opening, and at the fold marker say you do not know what was there rather than reconstructing it.</desc>
+  <style>
+    .t{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+    .bg{fill:#ffffff;stroke:#e2e5e9}
+    .ttl{font-size:22px;font-weight:700;fill:#1f2933}
+    .lbl{font-size:16px;font-weight:600;fill:#1f2933}
+    .cap{font-size:14.5px;fill:#6b7785}
+    .pan{fill:#f5f7f9;stroke:#dde3ea;stroke-width:1.4}
+    .line{fill:#d5dbe3}
+    .chip{fill:#4a5561}
+    .chipt{fill:#ffffff;font-size:13.5px;font-weight:700}
+    .fold{fill:none;stroke:#d99a90;stroke-width:1.6;stroke-dasharray:6 5}
+    .acct{fill:#8f3b2e}
+    .lead{stroke:#b9c2cd;stroke-width:1.2}
+    @media (prefers-color-scheme:dark){
+      .bg{fill:#1b1f24;stroke:#3a424b}
+      .ttl,.lbl{fill:#e8ecf1}
+      .cap{fill:#9aa5b1}
+      .pan{fill:#232930;stroke:#3a424b}
+      .line{fill:#39424c}
+      .chip{fill:#9fb0c2}
+      .chipt{fill:#161a1e}
+      .fold{stroke:#8a5248}
+      .acct{fill:#f0a494}
+      .lead{stroke:#5a636d}
+    }
+  </style>
+
+  <rect class="bg" x="0.5" y="0.5" width="719" height="335" rx="10"/>
+  <text class="t ttl" x="28" y="42">A long report arrives without its middle</text>
+
+  <rect class="pan" x="28" y="62" width="380" height="212" rx="8"/>
+
+  <rect class="chip" x="44" y="78" width="108" height="22" rx="4"/>
+  <text class="t chipt" x="98" y="93" text-anchor="middle">outcome</text>
+  <rect class="line" x="44" y="112" width="348" height="8" rx="4"/>
+  <rect class="line" x="44" y="128" width="296" height="8" rx="4"/>
+
+  <rect class="fold" x="44" y="150" width="348" height="52" rx="6"/>
+  <text class="t lbl acct" x="218" y="172" text-anchor="middle">&#8230; folded, N lines hidden &#8230;</text>
+  <text class="t cap" x="218" y="192" text-anchor="middle">the audit&#8217;s survivor list was in here</text>
+
+  <rect class="line" x="44" y="216" width="348" height="8" rx="4"/>
+  <rect class="line" x="44" y="232" width="320" height="8" rx="4"/>
+  <rect class="line" x="44" y="248" width="212" height="8" rx="4"/>
+
+  <line class="lead" x1="412" y1="78" x2="432" y2="78"/>
+  <text class="t lbl" x="440" y="84">Lead with the outcome.</text>
+  <text class="t cap" x="440" y="106">A report that ends with its verdict</text>
+  <text class="t cap" x="440" y="126">arrives with no verdict.</text>
+
+  <line class="lead" x1="412" y1="166" x2="432" y2="166"/>
+  <text class="t lbl acct" x="440" y="172">&#8220;I do not know what was here.&#8221;</text>
+  <text class="t cap" x="440" y="194">Filling the hole is the one input</text>
+  <text class="t cap" x="440" y="214">with no check anywhere behind it.</text>
+
+  <text class="t cap" x="28" y="306">One report arrived as a single sentence from the middle of a thought, with no outcome at all.</text>
+</svg>

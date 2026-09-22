@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" width="720" height="280" role="img" aria-labelledby="dtitle ddesc">
+  <title id="dtitle">Blocking dispatch versus non-blocking dispatch, across one turn</title>
+  <desc id="ddesc">Two timelines of equal length. In the first, dispatch blocks and the whole turn is silent until the report arrives. In the second, dispatch returns immediately: a message is posted first, the orchestrator keeps talking to the human, and the report arrives at the same moment.</desc>
+  <style>
+    .t{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+    .bg{fill:#ffffff;stroke:#e2e5e9}
+    .ttl{font-size:22px;font-weight:700;fill:#1f2933}
+    .lbl{font-size:17px;font-weight:600;fill:#1f2933}
+    .sml{font-size:15.5px;font-weight:600;fill:#1f2933}
+    .cap{font-size:14.5px;fill:#6b7785}
+    .pan{fill:#eef2f7;stroke:#c7d2de;stroke-width:1.4}
+    .bar{fill:#e3e7ec;stroke:#c7d2de;stroke-width:1.4}
+    .chip{fill:#4a5561;stroke:#4a5561}
+    .chipt{fill:#ffffff}
+    .acc{fill:#fdecea;stroke:#d99a90;stroke-width:1.4}
+    .acct{fill:#8f3b2e}
+    @media (prefers-color-scheme:dark){
+      .bg{fill:#1b1f24;stroke:#3a424b}
+      .ttl,.lbl,.sml{fill:#e8ecf1}
+      .cap{fill:#9aa5b1}
+      .pan{fill:#252b32;stroke:#3f4751}
+      .bar{fill:#2b323a;stroke:#3f4751}
+      .chip{fill:#9fb0c2;stroke:#9fb0c2}
+      .chipt{fill:#161a1e}
+      .acc{fill:#3b2724;stroke:#8a5248}
+      .acct{fill:#f0a494}
+    }
+  </style>
+
+  <rect class="bg" x="0.5" y="0.5" width="719" height="279" rx="10"/>
+  <text class="t ttl" x="28" y="42">One turn, two ways to spend the first second</text>
+
+  <text class="t lbl acct" x="28" y="82">if dispatch blocks</text>
+  <rect class="acc" x="28" y="92" width="532" height="36" rx="5"/>
+  <text class="t lbl acct" x="294" y="116" text-anchor="middle">the turn is silent</text>
+  <rect class="pan" x="566" y="92" width="126" height="36" rx="5"/>
+  <text class="t sml" x="629" y="115" text-anchor="middle">report arrives</text>
+  <text class="t cap" x="28" y="150">nothing on the screen until the worker is done &#8212; the one outcome you cannot correct later</text>
+
+  <text class="t lbl" x="28" y="188">if dispatch returns immediately</text>
+  <rect class="chip" x="28" y="198" width="168" height="36" rx="5"/>
+  <text class="t sml chipt" x="112" y="221" text-anchor="middle">post a message</text>
+  <rect class="bar" x="202" y="198" width="358" height="36" rx="5"/>
+  <text class="t sml" x="381" y="221" text-anchor="middle">the orchestrator keeps talking</text>
+  <rect class="pan" x="566" y="198" width="126" height="36" rx="5"/>
+  <text class="t sml" x="629" y="221" text-anchor="middle">report arrives</text>
+  <text class="t cap" x="28" y="256">the rule has no estimate in it: before anything that might run long, post a message</text>
+</svg>

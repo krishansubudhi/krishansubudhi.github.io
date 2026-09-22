@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 318" width="720" height="318" role="img" aria-labelledby="gtitle gdesc">
+  <title id="gtitle">A human yes and a machine green are different kinds of fact</title>
+  <desc id="gdesc">Two lanes. A human tapping yes is a claim about the world, and a later red re-run flags it as was green, check now red rather than overturning it. A check going green is a claim about a command, and stays permanently provisional. Below both, the state a two-column board cannot hold: committed but not yet running.</desc>
+  <style>
+    .t{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+    .bg{fill:#ffffff;stroke:#e2e5e9}
+    .ttl{font-size:22px;font-weight:700;fill:#1f2933}
+    .lbl{font-size:15.5px;font-weight:600;fill:#1f2933}
+    .cap{font-size:14.5px;fill:#6b7785}
+    .pan{fill:#eef2f7;stroke:#c7d2de;stroke-width:1.4}
+    .soft{fill:#f5f7f9;stroke:#dde3ea;stroke-width:1.4}
+    .acc{fill:#fdecea;stroke:#d99a90;stroke-width:1.4}
+    .acct{fill:#8f3b2e}
+    .ar{stroke:#9aa5b1;stroke-width:1.8;fill:none;marker-end:url(#ah)}
+    .rule{stroke:#e2e5e9;stroke-width:1.4}
+    .ahf{fill:#9aa5b1}
+    @media (prefers-color-scheme:dark){
+      .bg{fill:#1b1f24;stroke:#3a424b}
+      .ttl,.lbl{fill:#e8ecf1}
+      .cap{fill:#9aa5b1}
+      .pan{fill:#252b32;stroke:#3f4751}
+      .soft{fill:#232930;stroke:#3a424b}
+      .acc{fill:#3b2724;stroke:#8a5248}
+      .acct{fill:#f0a494}
+      .rule{stroke:#343b43}
+    }
+  </style>
+  <defs>
+    <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0,0 L7,3.2 L0,6.4 z" class="ahf"/></marker>
+  </defs>
+
+  <rect class="bg" x="0.5" y="0.5" width="719" height="317" rx="10"/>
+  <text class="t ttl" x="28" y="42">Two greens. Not the same kind of fact.</text>
+
+  <rect class="pan" x="28" y="66" width="182" height="52" rx="7"/>
+  <text class="t lbl" x="119" y="97" text-anchor="middle">a human taps &#8220;yes&#8221;</text>
+  <path class="ar" d="M216,92 L244,92"/>
+  <rect class="soft" x="252" y="66" width="196" height="52" rx="7"/>
+  <text class="t lbl" x="350" y="97" text-anchor="middle">a claim about the world</text>
+  <path class="ar" d="M454,92 L482,92"/>
+  <rect class="acc" x="490" y="60" width="202" height="64" rx="7"/>
+  <text class="t lbl acct" x="591" y="86" text-anchor="middle">a later red flags it</text>
+  <text class="t cap" x="591" y="108" text-anchor="middle">&#8220;was green, now red&#8221;</text>
+
+  <rect class="pan" x="28" y="152" width="182" height="52" rx="7"/>
+  <text class="t lbl" x="119" y="183" text-anchor="middle">a check goes green</text>
+  <path class="ar" d="M216,178 L244,178"/>
+  <rect class="soft" x="252" y="152" width="196" height="52" rx="7"/>
+  <text class="t lbl" x="350" y="183" text-anchor="middle">a claim about a command</text>
+  <path class="ar" d="M454,178 L482,178"/>
+  <rect class="soft" x="490" y="146" width="202" height="64" rx="7"/>
+  <text class="t lbl" x="591" y="172" text-anchor="middle">still provisional</text>
+  <text class="t cap" x="591" y="194" text-anchor="middle">the command passed</text>
+
+  <text class="t cap" x="28" y="238">The command may raise a question. It may not answer one.</text>
+
+  <line class="rule" x1="28" y1="260" x2="692" y2="260"/>
+  <text class="t lbl" x="28" y="288">The third state: committed but not yet running.</text>
+  <text class="t cap" x="28" y="308">Not done, not in progress. Deploy-later merges sit here for days.</text>
+</svg>

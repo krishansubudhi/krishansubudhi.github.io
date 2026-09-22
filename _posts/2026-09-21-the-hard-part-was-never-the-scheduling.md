@@ -17,6 +17,8 @@ The first one I got right, mostly by accident: [dispatch never blocks]({{ '/blog
 
 But non-blocking dispatch only buys you that if the orchestrator can *say something* before the turn is over. So there is a rule, and the rule is deliberately mechanical: before you start anything that might run long, post a message. Not "if you think this will take a while, say so" — that version delegates the judgement to the component I have watched get it wrong. Agents are bad at predicting which of their turns will run long, and the turns they misjudge are, with depressing reliability, exactly the slow ones. The rule that works is the one with no estimate in it.
 
+![Two timelines of the same turn. With blocking dispatch the whole turn is silent until the report arrives; with non-blocking dispatch a message is posted first and the orchestrator keeps talking while the worker runs](/assets/orchestrator-io/dispatch-and-silence.svg)
+
 ## A standalone brief is an assertion under oath
 
 A worker has its own context. It cannot see the conversation that produced its job. So every fact it needs has to be restated in the brief — which means the brief is not a pointer to the truth, it is a *copy* of it, and copies are where errors breed.
@@ -28,6 +30,8 @@ In both cases the worker's first useful act was to correct its own brief. That i
 ## Reports lose their middles
 
 Worker reports are long, and long messages get folded and truncated on the way through. Several of mine arrived with the middle cut out — in one case the survivor list from an audit, which was the entire point of the audit. One arrived as a single sentence from somewhere in the middle of a thought, with no outcome in it at all.
+
+![A report drawn as a stack of lines with its middle replaced by a fold marker: the opening and the closing lines survive, the middle does not](/assets/orchestrator-io/report-lost-middle.svg)
 
 Two rules fell out of that. The first is the one I [already believed about human readers]({{ '/blog/the-reply-was-correct-nobody-could-tell/' | relative_url }}) and had not applied to machines: the report leads with the outcome rather than building to it. A report that ends with its verdict is a report that arrives with no verdict.
 
@@ -58,6 +62,15 @@ And when the budget does run out, the orchestrator has to say it was cut off. A 
 ## The shape underneath
 
 Read these back and they are one bug at six different layers: a boundary got treated as transparent when it was lossy.
+
+| The boundary | What does not cross | What that cost |
+| --- | --- | --- |
+| Orchestrator → human | a sign of life | an empty screen while the work runs |
+| Orchestrator → worker | context | briefs asserting numbers the tree did not have |
+| Worker → orchestrator | text, intact | an audit's survivor list folded away |
+| Worker → orchestrator | bytes, past a limit | a finished result lost to a 1 MiB buffer |
+| Either direction | time | an overrun read as retry, not as delegate |
+| Worker → orchestrator | a question, at all | an hour of guessing, or an hour of stalling |
 
 Context does not cross — so the brief has to carry it, and can be wrong. Text does not cross intact — so the report has to front-load, and must not paper over the hole. Bytes do not cross past a limit — so the channel needs a budget. Time does not cross — so an overrun means delegate, not retry. And questions do not cross *at all* unless you build a wire for them, which is why "guess or stall" looked like a worker-quality problem for months when it was a missing channel.
 

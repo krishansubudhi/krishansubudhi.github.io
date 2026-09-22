@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" width="720" height="340" role="img" aria-labelledby="rttitle rtdesc">
+  <title id="rttitle">Ceilings as raisable constants versus ceilings as a one-way ratchet</title>
+  <desc id="rtdesc">Two panels. On the left, ceilings stored as constants in a source file climb in a staircase over four days: twenty-one raises, source lines from twelve thousand to twenty-three thousand and fifty, test lines from thirteen thousand to twenty-four thousand eight hundred. On the right, ceilings as a ratchet only ever step down or stay flat, lowered by every landing to whatever the tree actually measures.</desc>
+  <style>
+    .t{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+    .bg{fill:#ffffff;stroke:#e2e5e9}
+    .ttl{font-size:22px;font-weight:700;fill:#1f2933}
+    .hd{font-size:17px;font-weight:700;fill:#1f2933}
+    .lbl{font-size:15.5px;font-weight:600;fill:#1f2933}
+    .cap{font-size:14.5px;fill:#6b7785}
+    .num{font-size:14px;font-weight:700;fill:#6b7785}
+    .ax{stroke:#c7d2de;stroke-width:1.4}
+    .divi{stroke:#dde3ea;stroke-width:1.4;stroke-dasharray:5 5}
+    .stepup{fill:none;stroke:#8f3b2e;stroke-width:2.6}
+    .stepdn{fill:none;stroke:#4a5561;stroke-width:2.6}
+    .acct{fill:#8f3b2e}
+    @media (prefers-color-scheme:dark){
+      .bg{fill:#1b1f24;stroke:#3a424b}
+      .ttl,.hd,.lbl{fill:#e8ecf1}
+      .cap,.num{fill:#9aa5b1}
+      .ax{stroke:#4a535d}
+      .divi{stroke:#343b43}
+      .stepup{stroke:#e8907c}
+      .stepdn{stroke:#a8b6c4}
+      .acct{fill:#f0a494}
+    }
+  </style>
+
+  <rect class="bg" x="0.5" y="0.5" width="719" height="339" rx="10"/>
+  <text class="t ttl" x="28" y="42">A budget nobody can quietly raise</text>
+  <line class="divi" x1="362" y1="62" x2="362" y2="318"/>
+
+  <text class="t hd acct" x="28" y="86">a constant in a source file</text>
+  <text class="t cap" x="28" y="108">raisable by whoever needs the room</text>
+  <line class="ax" x1="36" y1="224" x2="338" y2="224"/>
+  <path class="stepup" d="M40,214 h36 v-14 h36 v-12 h36 v-18 h36 v-12 h36 v-18 h36 v-14 h36 v-16"/>
+  <text class="t num" x="40" y="246">12,000</text>
+  <text class="t num" x="338" y="246" text-anchor="end">23,050</text>
+  <text class="t lbl acct" x="28" y="280">21 raises in four days</text>
+  <text class="t cap" x="28" y="300">test lines 13,000 &#8594; 24,800 too</text>
+  <text class="t cap" x="28" y="320">every raise honest and documented</text>
+
+  <text class="t hd" x="386" y="86">one file, read out of the last commit</text>
+  <text class="t cap" x="386" y="108">the tree being shipped cannot move it</text>
+  <line class="ax" x1="394" y1="224" x2="696" y2="224"/>
+  <path class="stepdn" d="M398,120 h40 v22 h40 v0 h40 v26 h40 v14 h40 v0 h40 v24 h38"/>
+  <text class="t num" x="394" y="246">the ceiling only ever steps down</text>
+  <text class="t lbl" x="386" y="280">every landing lowers it</text>
+  <text class="t cap" x="386" y="300">net line delta must be zero or negative</text>
+  <text class="t cap" x="386" y="320">one way up, and it is a human act</text>
+</svg>
