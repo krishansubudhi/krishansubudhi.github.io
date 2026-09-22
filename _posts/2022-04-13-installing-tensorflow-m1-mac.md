@@ -9,8 +9,8 @@ description: Step by step instructions for installing tensorflow on M1 Macbooks 
 This blog provides step by step instructions for installing tensorflow on M1 Macbooks with Apple Silicon.
 
 <p float="left" align="middle" >
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/TensorFlow_logo.svg/1200px-TensorFlow_logo.svg.png" width="40%" />
-  <img src="https://www.apple.com/v/mac-mini/o/images/overview/apple_silicon_endframe__fm1b5djq7ziq_large_2x.jpg" width="40%" /> 
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/TensorFlow_logo.svg/1200px-TensorFlow_logo.svg.png" width="40%" alt="The TensorFlow logo" />
+  <img src="https://www.apple.com/v/mac-mini/o/images/overview/apple_silicon_endframe__fm1b5djq7ziq_large_2x.jpg" width="40%" alt="An Apple silicon chip" /> 
 </p>
 
 `pip install tensorflow` does not work on M1 Macs.

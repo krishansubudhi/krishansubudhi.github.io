@@ -161,7 +161,7 @@ I am already owner of the storage account and have all the permissions.
 I was able to upload file using the storage account portal though. Hence I am authorized. Somehow I am not able to use azcopy.
 
 The above document mentions using SAS token. Sol let's find a way to create a SAS token in my container. I had previous knowledge that SAS tokens are created at the storage account level. Hence I went to the storage account and created a SAS token.
-![SAS](/assets/hdi/SAS.jpg)
+![SAS](/assets/hdi/sas.jpg)
 
 
 azcopy copy sffiredata.csv "https://krishansparkhdistorage.file.core.windows.net/spark-container1/?**SAS_token**"

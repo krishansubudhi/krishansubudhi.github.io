@@ -47,7 +47,7 @@ categories: jekyll
 
    [stackoverflow](https://stackoverflow.com/questions/43670690/suppress-blog-footer-in-jekyll-kramdown)
    
-   file location for [minima theme](file:///C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/minima-2.5.0/)
+   file location for the [minima theme](https://github.com/jekyll/minima) (run `bundle show minima` to print the local path)
    
 		bundle show  minima
    

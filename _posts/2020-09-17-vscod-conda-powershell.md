@@ -40,7 +40,7 @@ Out of the two commands mentioned at the very beginning,
 
 this command activates conda and adds it to system path. For powershell, the command can be found in the powershell shortcut for anaconda which can be searched from windows start menu.
 
-<img src="/assets/anaconda_powershell_vscode/anaconda_powershel_shortcut.jpg" width="400">
+<img src="/assets/anaconda_powershell_vscode/anaconda_powershel_shortcut.jpg" width="400" alt="Properties of the Anaconda PowerShell shortcut from the Windows start menu, showing the initial commands it runs to set conda up">
 
 Properties of the shortcut contain the initial commands to set up anaconda in powershell.
 

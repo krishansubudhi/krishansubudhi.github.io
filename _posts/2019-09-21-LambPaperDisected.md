@@ -26,20 +26,20 @@ Notations:  xt are parameters and st are samples
 
 **Loss function**
 
-<img src="/assets/lamb/loss.png" width="400">
+<img src="/assets/lamb/loss.png" width="400" alt="The loss function written as the expected value of the per-sample loss over the data distribution">
 
 **Simple SGD**
 
-<img src="/assets/lamb/sgd1.png" width="400">
+<img src="/assets/lamb/sgd1.png" width="400" alt="The stochastic gradient descent update: the parameters minus the learning rate times the mean gradient over a random batch of samples">
 
 where St is set of b random samples drawn from the distribution P. This can be simplified to
 
-<img src="/assets/lamb/sgd2.png" width="200">
+<img src="/assets/lamb/sgd2.png" width="200" alt="The same stochastic gradient descent update in its simplified form">
 
 ## General Strategy
 For adaptive layerwise learning
 
-<img src="/assets/lamb/generalstrategy.png" width="400">
+<img src="/assets/lamb/generalstrategy.png" width="400" alt="The general adaptive layerwise strategy: every layer is updated from its own parameters and its own gradients at the current time step">
 
 for all layers i∈[h] and where x^(i)^  and g^(i)^  are the parameters and the gradients of the i th layer at time step t.
 
