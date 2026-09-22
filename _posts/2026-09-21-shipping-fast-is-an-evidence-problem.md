@@ -3,7 +3,7 @@ comments: true
 author: krishan
 layout: post
 categories: agents
-title: Shipping fast is an evidence problem
+title: My agents proved eleven items done in sixty seconds. None of them were.
 description: Two things make agents ship quickly — a work board a human can actually verify, and a gate cheap enough that everybody runs it. Both turned out to be the same problem, and it is a design problem rather than a discipline problem.
 ---
 

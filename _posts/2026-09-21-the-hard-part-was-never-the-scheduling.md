@@ -3,7 +3,7 @@ comments: true
 author: krishan
 layout: post
 categories: agents
-title: The hard part was never the scheduling
+title: My worker agent finished the job. A 1 MiB buffer ate the answer.
 description: An orchestrator that talks to a human and dispatches long-running workers has an IO problem that is harder than its scheduling problem. Every design mistake I can point at turned out to be an IO mistake.
 ---
 
