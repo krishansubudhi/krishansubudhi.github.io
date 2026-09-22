@@ -1,21 +1,22 @@
 source "https://rubygems.org"
 
-# Hello! This is where you manage which Jekyll version is used to run.
-# When you want to use a different version, change it below, save the
-# file and run `bundle install`. Run Jekyll with `bundle exec`, like so:
+# This site is published by the *default* GitHub Pages builder. That builder
+# ignores this Gemfile and its lockfile entirely and builds server-side with its
+# own `github-pages` gem set; these files exist for local builds and for the
+# dependency scanner. So the Jekyll pin below is deliberately set to the exact
+# version github-pages currently ships (jekyll 3.10.0), which keeps local output
+# matching production without dragging in the ~65 extra gems the meta-gem pulls
+# for features this site does not use (remote themes, GitHub API clients,
+# CommonMark, html-pipeline). Those extras were the entire source of the
+# dependency alerts; see the note at the bottom of this file.
 #
-#     bundle exec jekyll serve
-#
-# This will help ensure the proper Jekyll version is running.
-# Happy Jekylling!
-gem "jekyll", "~> 3.8.5"
+# Run `bundle update` to pick up patch releases. If you ever need a Jekyll 4.x
+# feature, be aware it requires switching publishing to a GitHub Actions
+# workflow, because the default Pages builder does not support Jekyll 4.
+gem "jekyll", "~> 3.10.0"
 
 # This is the default theme for new Jekyll sites. You may change this to anything you like.
 gem "minima", "~> 2.0"
-
-# If you want to use GitHub Pages, remove the "gem "jekyll"" above and
-# uncomment the line below. To upgrade, run `bundle update github-pages`.
-# gem "github-pages", group: :jekyll_plugins
 
 # If you have any plugins, put them here!
 group :jekyll_plugins do
@@ -31,3 +32,14 @@ gem "wdm", "~> 0.1.0" if Gem.win_platform?
 gem 'jekyll-seo-tag'
 
 gem "jekyll-sitemap", "~> 1.4"
+
+# Jekyll defaults kramdown's input to GFM, and kramdown 2.x moved that parser
+# out into its own gem. kramdown 1.x bundled it, so this was an implicit
+# dependency before and has to be explicit now or the build dies on the first
+# post. Same version the github-pages gem set pins.
+gem "kramdown-parser-gfm", "~> 1.1"
+
+# Why not `gem "github-pages"`? It was tried. Because it hard-depends on
+# jekyll-remote-theme (which caps rubyzip < 3.0) and html-pipeline (nokogiri),
+# resolving through the meta-gem reintroduces more advisories than it clears.
+# The direct pins above resolve to a clean dependency tree on the same Jekyll.
