@@ -1,19 +1,14 @@
 ---
-layout: page
+layout: default
 title: Blog
-permalink: /blog.html
 ---
+<h1>Latest Posts</h1>
 
-<!--
-  Kept only so the pre-existing /blog.html URL keeps working. The themed post list
-  lives on the home page and in /archives/.
--->
-<ul class="post-list">
+<ul>
   {% for post in site.posts %}
-    <li class="mt-3">
-      <h3 class="mb-1"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
-      <p class="text-muted small mb-0">{{ post.date | date: "%b %e, %Y" }}</p>
-      {% if post.description %}<p class="mb-0">{{ post.description }}</p>{% endif %}
+    <li>
+      <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+      <p>{{ post.excerpt }}</p>
     </li>
   {% endfor %}
 </ul>

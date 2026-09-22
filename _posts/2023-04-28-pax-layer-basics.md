@@ -2,13 +2,7 @@
 comments: true
 author: krishan
 layout: post
-categories: [python, jax, pax]
-# Jekyll splits a bare `categories:` string on whitespace, so the old
-# `python, jax, pax` above parsed as the three categories "python," "jax," "pax"
-# -- and those first two slugify to python/jax, colliding with the real python and
-# jax category pages. The list form fixes that, but it also changes the generated
-# URL, so the original published URL is pinned explicitly below.
-permalink: /python,/jax,/pax/2023/04/28/pax-layer-basics.html
+categories: python, jax, pax
 title: Pax Layer Basics
 description: This lab describes the basics for authoring a new Pax layer. 
 ---
