@@ -52,9 +52,20 @@ jobs:
 
       - name: Test site
         run: |
-          bundle exec htmlproofer _site \
-            \-\-disable-external \
-            \-\-ignore-urls "/^http:\/\/127.0.0.1/,/^http:\/\/0.0.0.0/,/^http:\/\/localhost/"
+          # Downloading this job's log needs admin rights on the repository, so on
+          # failure the htmlproofer output is echoed back as workflow annotations,
+          # which are readable by anyone who can read the repository.
+          set +e
+          out="$(bundle exec htmlproofer "_site${{ steps.pages.outputs.base_path }}" \
+            --disable-external \
+            --ignore-urls "/^http:\/\/127.0.0.1/,/^http:\/\/0.0.0.0/,/^http:\/\/localhost/" 2>&1)"
+          code=$?
+          printf '%s\n' "$out"
+          if [ "$code" -ne 0 ]; then
+            printf '%s\n' "$out" | grep -v '^[[:space:]]*$' | head -n 40 \
+              | while IFS= read -r line; do echo "::error::${line}"; done
+          fi
+          exit "$code"
 
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v5
