@@ -23,7 +23,7 @@ Apache Spark™ is a unified analytics engine for large-scale data processing.
 
 2. Using spark binaries
 
-    1.  download [spark binaries](http://spark.apache.org/downloads.html)
+    1.  download [spark binaries](https://spark.apache.org/downloads.html)
 
         ![download spark 2.4](/assets/spark-quickstart/download_spark.jpg)
         

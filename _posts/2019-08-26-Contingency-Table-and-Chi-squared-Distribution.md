@@ -311,7 +311,7 @@ Our example has only 2 degree of freedoms as all the other values can be derived
 
 The green line (k=2) from the above graph constitutes the distribution for 2 degrees of freedom. As evident, the probability of getting a chi squared distance >= 0.9544 will be the area under the green line for x>0.9544. 
 
-To calculate the exact number, a library called [scipy](http://scipy.github.io/devdocs/generated/scipy.stats.chi2.html?highlight=chi2%20cdf) can be used.
+To calculate the exact number, a library called [scipy](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.chi2.html) can be used.
 
 
 ```

@@ -77,7 +77,7 @@ You should get
 ## Access flask application from your browser
 By default ports  are not accessible from hosts other than local host.
 Try accessing _http://\<server-IP\>:5000_ from local browser. You should not be able to access the page yet. The flask app is configured to accept connections from localhost only.
-[This post](http://dixu.me/2015/10/26/How_to_Allow_Remote_Connections_to_Flask_Web_Service/) helped me understand the concept.
+[This post](https://dixu.me/2015/10/26/How_to_Allow_Remote_Connections_to_Flask_Web_Service/) helped me understand the concept.
 
 
 

@@ -62,8 +62,11 @@ jobs:
           code=$?
           printf '%s\n' "$out"
           if [ "$code" -ne 0 ]; then
-            printf '%s\n' "$out" | grep -v '^[[:space:]]*$' | head -n 40 \
-              | while IFS= read -r line; do echo "::error::${line}"; done
+            # One annotation holding the whole report: a step is capped at ten
+            # annotations, which silently truncates a list of failures.
+            encoded="$(printf '%s' "$out" | sed -e 's/%/%25/g' -e 's/\r//g' \
+              | awk '{printf "%s%%0A", $0}')"
+            echo "::error::${encoded}"
           fi
           exit "$code"
 
