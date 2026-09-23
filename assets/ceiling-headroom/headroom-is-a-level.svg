@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 400" width="700" height="400" role="img" aria-labelledby="hlttl hldesc">
+  <title id="hlttl">Headroom is a level over the low-water mark, not a balance that accumulates</title>
+  <desc id="hldesc">A chart of nine consecutive ships. The measured tree oscillates hard — 800, 300, 800, 250, 900, 250, 900, 260, 700 lines — as code is deleted and added back again. The ceiling in effect starts at 1,000, steps down to 600 after the first big deletion and to 550 after the tree reaches its smallest measurement of 250, and then never moves again for the remaining six ships. The final ceiling of 550 is 300 lines of slack above 250, the smallest tree ever measured, and no amount of deleting and re-adding walks it upward.</desc>
+  <style>
+    .t{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+    .bg{fill:#ffffff;stroke:#e2e5e9}
+    .ttl{font-size:23px;font-weight:700;fill:#1f2933}
+    .sub{font-size:16px;fill:#6b7785}
+    .lbl{font-size:16px;font-weight:600;fill:#1f2933}
+    .cap{font-size:15px;fill:#6b7785}
+    .num{font-size:14px;fill:#6b7785}
+    .ax{stroke:#c7d2de;stroke-width:1.4}
+    .low{stroke:#c7d2de;stroke-width:1.4;stroke-dasharray:4 5}
+    .tree{fill:none;stroke:#4a5561;stroke-width:2.4}
+    .ceil{fill:none;stroke:#8f3b2e;stroke-width:3}
+    .acct{fill:#8f3b2e}
+    .dot{fill:#4a5561}
+    .brk{stroke:#8f3b2e;stroke-width:1.6;fill:none}
+    @media (prefers-color-scheme:dark){
+      .bg{fill:#1b1f24;stroke:#3a424b}
+      .ttl,.lbl{fill:#e8ecf1}
+      .sub,.cap,.num{fill:#9aa5b1}
+      .ax,.low{stroke:#4a535d}
+      .tree{stroke:#a8b6c4}
+      .ceil{stroke:#e8907c}
+      .acct{fill:#f0a494}
+      .dot{fill:#a8b6c4}
+      .brk{stroke:#e8907c}
+    }
+  </style>
+
+  <rect class="bg" x="0.5" y="0.5" width="699" height="399" rx="10"/>
+
+  <text class="t ttl" x="26" y="40">Headroom is a level, not a balance</text>
+  <text class="t sub" x="26" y="65">nine ships that delete and add the same lines back, over and over</text>
+
+  <line class="ceil" x1="26" y1="88" x2="58" y2="88"/>
+  <text class="t cap" x="66" y="93">ceiling in effect</text>
+  <line class="tree" x1="186" y1="88" x2="218" y2="88"/>
+  <text class="t cap" x="226" y="93">tree measured</text>
+
+  <line class="ax" x1="70" y1="300" x2="600" y2="300"/>
+  <line class="low" x1="70" y1="253.75" x2="600" y2="253.75"/>
+
+  <path class="ceil" d="M78,115 H143.25 V189 H273.75 V198.25 H600"/>
+  <polyline class="tree" points="78,152 143.25,244.5 208.5,152 273.75,253.75 339,133.5 404.25,253.75 469.5,133.5 534.75,251.9 600,170.5"/>
+
+  <circle class="dot" cx="273.75" cy="253.75" r="4"/>
+  <circle class="dot" cx="404.25" cy="253.75" r="4"/>
+
+  <text class="t num" x="62" y="119" text-anchor="end">1,000</text>
+  <text class="t num" x="62" y="258" text-anchor="end">250</text>
+  <text class="t num" x="62" y="304" text-anchor="end">0</text>
+
+  <path class="brk" d="M612,198.25 h8 v55.5 h-8"/>
+  <text class="t lbl acct" x="626" y="222">300</text>
+  <text class="t cap" x="626" y="240">slack</text>
+
+  <text class="t num" x="78" y="320" text-anchor="middle">1</text>
+  <text class="t num" x="143" y="320" text-anchor="middle">2</text>
+  <text class="t num" x="208" y="320" text-anchor="middle">3</text>
+  <text class="t num" x="274" y="320" text-anchor="middle">4</text>
+  <text class="t num" x="339" y="320" text-anchor="middle">5</text>
+  <text class="t num" x="404" y="320" text-anchor="middle">6</text>
+  <text class="t num" x="470" y="320" text-anchor="middle">7</text>
+  <text class="t num" x="535" y="320" text-anchor="middle">8</text>
+  <text class="t num" x="600" y="320" text-anchor="middle">9</text>
+
+  <text class="t lbl" x="26" y="352">The ceiling settles twice, then stops.</text>
+  <text class="t cap" x="26" y="373">Ships 5 to 9 add hundreds of lines back and buy nothing: the cap is</text>
+  <text class="t cap" x="26" y="391">min(the cap it started at, 300 + the smallest tree ever measured).</text>
+</svg>
