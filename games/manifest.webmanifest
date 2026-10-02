@@ -1,7 +1,7 @@
 {
   "name": "Games",
   "short_name": "Games",
-  "description": "Six small games that work offline.",
+  "description": "Seven small games that work offline.",
   "id": "/games/",
   "start_url": "/games/",
   "scope": "/games/",
