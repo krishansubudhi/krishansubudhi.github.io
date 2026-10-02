@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>(function(){function v(){var h=(window.visualViewport&&visualViewport.height)||innerHeight;document.documentElement.style.setProperty('--vh',h*0.01+'px');}v();addEventListener('resize',v);addEventListener('orientationchange',v);if(window.visualViewport)visualViewport.addEventListener('resize',v);})();</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#0e1116">
 <link rel="manifest" href="/games/manifest.webmanifest">
@@ -15,11 +16,19 @@
 #say{font-size:22px;font-weight:700;margin-top:4px;min-height:32px}
 #hint{color:var(--dim);font-size:16px;min-height:22px}
 #ch{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:12px}
-#ch button{border-radius:22px;border:2px solid var(--line);background:var(--card2);color:var(--ink);font-size:min(22vw,96px);font-weight:800;line-height:1;touch-action:manipulation;min-height:90px}
+#ch button{border-radius:22px;border:2px solid var(--line);background:var(--card2);color:var(--ink);font-size:min(22vw,8vh,96px);font-weight:800;line-height:1;touch-action:manipulation;min-height:44px}
 #ch button.ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
 #ch button.no{background:var(--bad-bg);border-color:var(--bad)}
 .row{display:flex;gap:8px;align-items:center;justify-content:space-between}
 #again{min-height:48px;padding:6px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:16px}
+@media (max-height:420px){
+#emo{font-size:40px;min-height:44px}
+#say{font-size:18px;min-height:24px}
+#hint{min-height:18px}
+#q{padding:6px;margin:4px 0 8px}
+#ch{gap:8px}
+#ch button{min-height:36px}
+}
 </style>
 </head>
 <body class="play">

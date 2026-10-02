@@ -1,7 +1,7 @@
 :root{color-scheme:dark;--bg:#0e1116;--card:#161b22;--card2:#1b212b;--ink:#e6edf3;--dim:#8b96a5;--line:#242c37;--accent:#f2c94c;--ok:#5fd97f;--ok-bg:rgba(63,185,80,.13);--warn:#f2c94c;--warn-bg:rgba(242,201,76,.14);--bad:#ff8b82;--bad-bg:rgba(248,81,73,.13);--info:#8ab4f8;--info-bg:rgba(138,180,248,.13)}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
-body{min-height:100vh;min-height:100dvh;padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom))}
+body{min-height:100vh;min-height:100dvh;min-height:calc(var(--vh,1vh) * 100);padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom))}
 main{max-width:560px;margin:0 auto}
 a{color:var(--accent)}
 .top{display:flex;align-items:center;gap:12px;margin:4px 0 16px}
@@ -17,7 +17,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}
 .game span{color:var(--dim);font-size:15px}
 .foot{color:var(--dim);font-size:13px;margin-top:20px;text-align:center}
 .mute{margin-left:auto;min-width:48px;height:48px;border-radius:12px;background:var(--card);border:1px solid var(--line);color:var(--ink);font-size:22px;padding:0}
-body.play{overflow:hidden;height:100vh;height:100dvh;overscroll-behavior:none;padding-bottom:max(10px,env(safe-area-inset-bottom))}
+body.play{overflow:hidden;height:100vh;height:100dvh;height:calc(var(--vh,1vh) * 100);overscroll-behavior:none;padding-bottom:max(10px,env(safe-area-inset-bottom))}
 body.play main{height:100%;display:flex;flex-direction:column}
 body.play .top{margin:0 0 10px;flex:none}
 .stats{display:flex;justify-content:space-between;gap:8px;font-size:16px;color:var(--dim)}

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>(function(){function v(){var h=(window.visualViewport&&visualViewport.height)||innerHeight;document.documentElement.style.setProperty('--vh',h*0.01+'px');}v();addEventListener('resize',v);addEventListener('orientationchange',v);if(window.visualViewport)visualViewport.addEventListener('resize',v);})();</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#0e1116">
 <link rel="manifest" href="/games/manifest.webmanifest">
@@ -9,16 +10,13 @@
 <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="/games/games.css">
 <title>Dino Run</title>
-<style>#g{width:100%;height:auto;aspect-ratio:2/1;display:block;background:var(--card2);border-radius:10px;touch-action:manipulation;cursor:pointer;user-select:none;-webkit-user-select:none}</style>
+<style>#area{flex:1;min-height:0;margin:8px 0;position:relative}#g{display:block;width:100%;height:100%;background:var(--card2);border-radius:10px;touch-action:manipulation;cursor:pointer;user-select:none;-webkit-user-select:none}</style>
 </head>
 <body class="play">
 <main>
 <div class="top"><a class="back" href="/games/" aria-label="Back to games">‹</a><h1>🦖 Dino Run</h1><button id="mute" class="mute" aria-label="Sound on or off">🔊</button></div>
-<div class="card">
-<div style="color:var(--dim);font-size:15px;margin-bottom:10px">Tap the game (or press space) to jump. Dodge the cacti and the pterodactyls.</div>
-<canvas id="g" width="360" height="180"></canvas>
-<div style="display:flex;justify-content:space-between;font-size:16px;margin-top:10px;color:var(--dim)"><span>Score <b id="s" style="color:var(--ink)">0</b></span><span>Best <b id="b" style="color:var(--accent)">0</b></span></div>
-</div>
+<div class="stats"><span>Score <b id="s" style="color:var(--ink)">0</b></span><span>Best <b id="b" style="color:var(--accent)">0</b></span></div>
+<div id="area"><canvas id="g"></canvas></div>
 </main>
 <script>
 // Gentle sounds via WebAudio, with a mute toggle shared by every game.
@@ -33,18 +31,30 @@ return{tone,notes,get muted(){return muted;}};})();
 </script>
 <script>
 (function(){
-const c=document.getElementById('g'),x=c.getContext('2d'),S=document.getElementById('s'),B=document.getElementById('b');
-const R=Math.min(3,Math.max(1,Math.round(window.devicePixelRatio||1)));c.width=360*R;c.height=180*R;x.scale(R,R);
+const area=document.getElementById('area'),c=document.getElementById('g'),x=c.getContext('2d'),S=document.getElementById('s'),B=document.getElementById('b');
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim()||'#ccc';
 const INK=css('--ink'),DIM=css('--dim'),ACC=css('--accent'),BAD=css('--bad'),OK=css('--ok'),LINE=css('--line');
 const KEY='games.dino.best';
 let saved=0;try{saved=parseInt(localStorage.getItem(KEY),10)||0;}catch(e){}
-const G=150;let d,obs,t,speed,score,best=saved,state='ready',clouds;B.textContent=best;
-function reset(){d={x:40,y:G-30,vy:0,w:24,h:30,duck:false};obs=[];t=0;speed=4;score=0;clouds=[{x:80,y:30},{x:250,y:50}];}
-reset();
+// Logical coordinate space is always 360 units wide; height (and so ground Y) grows
+// with however tall #area actually is, so a portrait phone gets a tall sky instead
+// of a squashed strip, while every sprite and the physics stay the same size/feel.
+const W=360;let H=180,G=150,scaleF=1;
+let d,obs,t,speed,score,best=saved,state='ready',clouds;B.textContent=best;
+function size(){
+ const R=Math.min(3,window.devicePixelRatio||1);
+ const w=Math.max(1,area.clientWidth),h=Math.max(1,area.clientHeight);
+ scaleF=w/W;H=h/scaleF;G=H-30;
+ c.width=Math.round(w*R);c.height=Math.round(h*R);
+ x.setTransform(scaleF*R,0,0,scaleF*R,0,0);
+ if(d)d.y=Math.min(d.y,G-d.h);
+}
+function reset(){d={x:40,y:G-30,vy:0,w:24,h:30,duck:false};obs=[];t=0;speed=4;score=0;clouds=[{x:80,yf:0.2},{x:250,yf:0.333}];}
+size();reset();
 function jump(){if(state!=='run'){reset();state='run';SFX.tone(440,0.1,'triangle');return;}if(d.y>=G-d.h-0.5){d.vy=-9.5;SFX.tone(520,0.14,'square',0.035,820);}}
 c.addEventListener('pointerdown',e=>{e.preventDefault();jump();});
 addEventListener('keydown',e=>{if(e.code==='Space'||e.code==='ArrowUp'){e.preventDefault();jump();}});
+addEventListener('resize',size);addEventListener('orientationchange',size);
 function spawn(){const r=Math.random();
  if(score>300&&r<0.25)obs.push({x:380,y:G-55-Math.random()*20,w:26,h:14,bird:1});
  else{const n=1+(Math.random()<0.35?1:0);obs.push({x:380,y:G-28,w:12*n+(n-1)*4,h:28,n});}}
@@ -55,19 +65,20 @@ function drawDino(){x.fillStyle=INK;const{x:X,y:Y}=d;
 function drawObs(o){if(o.bird){x.fillStyle=BAD;x.fillRect(o.x,o.y+5,o.w,5);const f=Math.floor(t/10)%2;x.fillRect(o.x+8,f?o.y:o.y+9,10,5);x.fillRect(o.x+o.w-4,o.y+3,6,4);}
  else{x.fillStyle=OK;for(let i=0;i<o.n;i++){const cx=o.x+i*16;x.fillRect(cx+3,o.y,6,o.h);x.fillRect(cx,o.y+8,3,8);x.fillRect(cx+9,o.y+5,3,8);}}}
 function hit(a,b){return a.x+4<b.x+b.w&&a.x+a.w-4>b.x&&a.y+4<b.y+b.h&&a.y+a.h>b.y;}
-function frame(){x.clearRect(0,0,360,180);
- x.fillStyle=LINE;clouds.forEach(k=>{x.fillRect(k.x,k.y,30,6);x.fillRect(k.x+8,k.y-5,14,5);if(state==='run'){k.x-=speed*0.2;if(k.x<-40)k.x=380;}});
- x.strokeStyle=DIM;x.beginPath();x.moveTo(0,G+0.5);x.lineTo(360,G+0.5);x.stroke();
+function frame(){x.clearRect(0,0,W,H);
+ x.fillStyle=LINE;clouds.forEach(k=>{const ky=k.yf*G;x.fillRect(k.x,ky,30,6);x.fillRect(k.x+8,ky-5,14,5);if(state==='run'){k.x-=speed*0.2;if(k.x<-40)k.x=380;}});
+ x.strokeStyle=DIM;x.beginPath();x.moveTo(0,G+0.5);x.lineTo(W,G+0.5);x.stroke();
  for(let i=0;i<12;i++){x.fillStyle=DIM;x.fillRect(((i*37-t*speed)%400+400)%400-20,G+6+(i%3)*5,3,1);}
  if(state==='run'){t++;d.vy+=0.55;d.y=Math.min(G-d.h,d.y+d.vy);if(d.y>=G-d.h)d.vy=0;
-  if(!obs.length||obs[obs.length-1].x<360-(150+Math.random()*120)*(speed/5))if(Math.random()<0.04||!obs.length)spawn();
+  if(!obs.length||obs[obs.length-1].x<W-(150+Math.random()*120)*(speed/5))if(Math.random()<0.04||!obs.length)spawn();
   obs.forEach(o=>o.x-=speed);obs=obs.filter(o=>o.x>-40);
   for(const o of obs)if(hit(d,o)){state='over';SFX.notes([392,330,262],0.12,'triangle');best=Math.max(best,Math.floor(score));B.textContent=best;try{localStorage.setItem(KEY,String(best));}catch(e){}}
   {const p=Math.floor(score/100);score+=0.15;if(Math.floor(score/100)>p)SFX.notes([660,880],0.07,'sine');}speed=4+score/150;S.textContent=Math.floor(score);}
  obs.forEach(drawObs);drawDino();
- if(state!=='run'){x.fillStyle=state==='over'?BAD:ACC;x.font='bold 16px -apple-system,sans-serif';x.textAlign='center';
-  x.fillText(state==='over'?'GAME OVER':'TAP TO START',180,70);
-  if(state==='over'){x.fillStyle=DIM;x.font='14px -apple-system,sans-serif';x.fillText('tap to try again',180,92);}}
+ if(state!=='run'){const ty=Math.min(G*0.45,G-24);x.fillStyle=state==='over'?BAD:ACC;x.font='bold 16px -apple-system,sans-serif';x.textAlign='center';
+  x.fillText(state==='over'?'GAME OVER':'TAP TO START',W/2,ty);
+  x.fillStyle=DIM;x.font='14px -apple-system,sans-serif';
+  x.fillText(state==='over'?'tap to try again':'dodge cacti and pterodactyls',W/2,ty+22);}
  c.dataset.state=state;
  requestAnimationFrame(frame);}
 frame();

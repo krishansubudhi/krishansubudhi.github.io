@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>(function(){function v(){var h=(window.visualViewport&&visualViewport.height)||innerHeight;document.documentElement.style.setProperty('--vh',h*0.01+'px');}v();addEventListener('resize',v);addEventListener('orientationchange',v);if(window.visualViewport)visualViewport.addEventListener('resize',v);})();</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#0e1116">
 <link rel="manifest" href="/games/manifest.webmanifest">
@@ -13,9 +14,9 @@
 <body class="play">
 <main>
 <div class="top"><a class="back" href="/games/" aria-label="Back to games">‹</a><h1>⭕ Tic Tac Toe ❌</h1><button id="mute" class="mute" aria-label="Sound on or off">🔊</button></div>
-<div class="card" style="max-width:420px;margin:0 auto">
+<div class="card" style="max-width:420px;margin:0 auto;flex:1;min-height:0;display:flex;flex-direction:column">
 <div id="st" style="font-size:17px;color:var(--dim);margin-bottom:12px">You're X. Your move.</div>
-<div id="bd" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px"></div>
+<div id="bd" style="flex:1;min-height:0;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:8px;margin-bottom:14px"></div>
 <div style="display:flex;gap:8px;margin-bottom:12px">
 <button id="m" style="flex:1;min-height:48px;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font-size:15px">Mode: vs CPU</button>
 <button id="r" style="flex:1;min-height:48px;padding:10px;border-radius:12px;border:none;background:var(--accent);color:var(--bg);font-size:15px;font-weight:600">New game</button>
@@ -45,7 +46,7 @@ let b,turn,over,ai=true,sc={X:0,O:0,D:0},cells=[],streak=0,bestStreak=0;
 try{bestStreak=parseInt(localStorage.getItem('games.ttt.best'),10)||0;}catch(e){}
 const SK=document.getElementById('sk'),BK=document.getElementById('bk');BK.textContent=bestStreak;
 for(let i=0;i<9;i++){const d=document.createElement('button');d.setAttribute('aria-label','Square '+(i+1));
- d.style.cssText='aspect-ratio:1;border-radius:12px;border:1px solid var(--line);background:var(--card2);font-size:48px;font-weight:700;color:var(--ink);display:flex;align-items:center;justify-content:center;padding:0;transition:background .2s';
+ d.style.cssText='border-radius:12px;border:1px solid var(--line);background:var(--card2);font-size:min(48px,7vh);font-weight:700;color:var(--ink);display:flex;align-items:center;justify-content:center;padding:0;transition:background .2s';
  d.onclick=()=>{if(!over&&!b[i]&&!(ai&&turn==='O'))SFX.tone(turn==='X'?520:392,0.1,'triangle');play(i);};bd.appendChild(d);cells.push(d);}
 function win(s){for(const l of L)if(s[l[0]]&&s[l[0]]===s[l[1]]&&s[l[0]]===s[l[2]])return{w:s[l[0]],l};return s.every(Boolean)?{w:'D'}:null;}
 function mm(s,p){const r=win(s);if(r)return{v:r.w==='O'?10:r.w==='X'?-10:0};
