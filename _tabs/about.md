@@ -5,6 +5,8 @@ icon: fas fa-info-circle
 order: 4
 ---
 
+<img src="/assets/img/about.jpg" alt="Krishan standing on a city sidewalk on a sunny day, wearing a brown quarter-zip sweater and khakis" width="720" height="987" style="display: block; width: 100%; max-width: 360px; height: auto; margin: 0 auto 1.5rem; border-radius: 8px;">
+
 I'm Krishan, an engineer, and this is where I write up my own work.
 
 Almost everything I have learned at a keyboard, I learned from someone else's write-up — a post by a developer who had already hit the bug I was staring at and wrote down what actually fixed it. This blog is my half of that exchange.
