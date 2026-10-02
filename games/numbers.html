@@ -37,11 +37,21 @@
 </main>
 <script>
 // Gentle sounds via WebAudio, with a mute toggle shared by every game.
-const SFX=(function(){let ac=null,muted=false;try{muted=localStorage.getItem('games.muted')==='1';}catch(e){}
+const SFX=(function(){let ac=null,muted=false,unlocked=false;try{muted=localStorage.getItem('games.muted')==='1';}catch(e){}
 const btn=document.getElementById('mute');function paint(){if(btn){btn.textContent=muted?'🔇':'🔊';btn.setAttribute('aria-pressed',muted?'true':'false');}}paint();
-function tone(f,d,type,vol,slide){if(muted)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();
- const t=ac.currentTime,o=ac.createOscillator(),g=ac.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);
- g.gain.setValueAtTime(vol||0.06,t);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+0.02);}catch(e){}}
+function ctx(){ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();return ac;}
+// iOS Safari only allows WebAudio/speech after a real user gesture. Unlock both
+// the first time the player taps anywhere, so later automatic (setTimeout-driven)
+// sounds and speech are allowed to play for the rest of the session.
+function unlock(){if(unlocked)return;unlocked=true;
+ try{if(navigator.audioSession)navigator.audioSession.type='playback';}catch(e){}
+ try{const a=ctx(),b=a.createBuffer(1,1,22050),s=a.createBufferSource();s.buffer=b;s.connect(a.destination);s.start(0);}catch(e){}
+ try{if('speechSynthesis' in window){const u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u);}}catch(e){}}
+document.addEventListener('touchend',unlock,{once:true,passive:true});
+document.addEventListener('click',unlock,{once:true});
+function tone(f,d,type,vol,slide){if(muted)return;try{const a=ctx();
+ const t=a.currentTime,o=a.createOscillator(),g=a.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);
+ g.gain.setValueAtTime(vol||0.06,t);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d+0.02);}catch(e){}}
 function notes(list,step,type){list.forEach((f,i)=>setTimeout(()=>tone(f,step*1.4,type),i*step*1000));}
 if(btn)btn.addEventListener('click',()=>{muted=!muted;try{localStorage.setItem('games.muted',muted?'1':'0');}catch(e){}paint();if(muted&&window.speechSynthesis)try{speechSynthesis.cancel();}catch(e){}tone(660,0.08);});
 return{tone,notes,get muted(){return muted;}};})();
@@ -53,7 +63,7 @@ const NAMES=['zero','one','two','three','four','five','six','seven','eight','nin
 const CH=document.getElementById('ch'),PICS=document.getElementById('pics'),ASK=document.getElementById('ask'),SUM=document.getElementById('sum'),HINT=document.getElementById('hint'),ST=document.getElementById('st'),BS=document.getElementById('bs'),Q=document.getElementById('q');
 let mode='count',stars=0,streak=0,ans=0,lock=false,prevKey='',best={count:0,add:0};
 try{best.count=parseInt(localStorage.getItem('games.num.count.best'),10)||0;best.add=parseInt(localStorage.getItem('games.num.add.best'),10)||0;}catch(e){}
-function speak(t){if(SFX.muted||!('speechSynthesis' in window))return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=0.85;u.pitch=1.15;u.lang='en-US';speechSynthesis.speak(u);}catch(e){}}
+function speak(t){if(SFX.muted||!('speechSynthesis' in window))return;try{const ss=speechSynthesis;if(ss.speaking||ss.pending)ss.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=0.85;u.pitch=1.15;u.lang='en-US';ss.speak(u);}catch(e){}}
 const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
 function group(e,n){const g=document.createElement('div');g.className='grp';g.textContent=e.repeat(n);return g;}
 function round(){lock=false;HINT.innerHTML='&nbsp;';SUM.textContent='';PICS.innerHTML='';const th=THINGS[rnd(0,THINGS.length-1)];let key;

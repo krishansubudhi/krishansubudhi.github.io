@@ -40,11 +40,21 @@
 </main>
 <script>
 // Gentle sounds via WebAudio, with a mute toggle shared by every game.
-const SFX=(function(){let ac=null,muted=false;try{muted=localStorage.getItem('games.muted')==='1';}catch(e){}
+const SFX=(function(){let ac=null,muted=false,unlocked=false;try{muted=localStorage.getItem('games.muted')==='1';}catch(e){}
 const btn=document.getElementById('mute');function paint(){if(btn){btn.textContent=muted?'🔇':'🔊';btn.setAttribute('aria-pressed',muted?'true':'false');}}paint();
-function tone(f,d,type,vol,slide){if(muted)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();
- const t=ac.currentTime,o=ac.createOscillator(),g=ac.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);
- g.gain.setValueAtTime(vol||0.06,t);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+0.02);}catch(e){}}
+function ctx(){ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();return ac;}
+// iOS Safari only allows WebAudio/speech after a real user gesture. Unlock both
+// the first time the player taps anywhere, so later automatic (setTimeout-driven)
+// sounds and speech are allowed to play for the rest of the session.
+function unlock(){if(unlocked)return;unlocked=true;
+ try{if(navigator.audioSession)navigator.audioSession.type='playback';}catch(e){}
+ try{const a=ctx(),b=a.createBuffer(1,1,22050),s=a.createBufferSource();s.buffer=b;s.connect(a.destination);s.start(0);}catch(e){}
+ try{if('speechSynthesis' in window){const u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u);}}catch(e){}}
+document.addEventListener('touchend',unlock,{once:true,passive:true});
+document.addEventListener('click',unlock,{once:true});
+function tone(f,d,type,vol,slide){if(muted)return;try{const a=ctx();
+ const t=a.currentTime,o=a.createOscillator(),g=a.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);
+ g.gain.setValueAtTime(vol||0.06,t);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d+0.02);}catch(e){}}
 function notes(list,step,type){list.forEach((f,i)=>setTimeout(()=>tone(f,step*1.4,type),i*step*1000));}
 if(btn)btn.addEventListener('click',()=>{muted=!muted;try{localStorage.setItem('games.muted',muted?'1':'0');}catch(e){}paint();if(muted&&window.speechSynthesis)try{speechSynthesis.cancel();}catch(e){}tone(660,0.08);});
 return{tone,notes,get muted(){return muted;}};})();
@@ -54,7 +64,7 @@ return{tone,notes,get muted(){return muted;}};})();
 const WORDS=[['A','Apple','🍎'],['B','Ball','⚽'],['C','Cat','🐱'],['D','Dog','🐶'],['E','Elephant','🐘'],['F','Fish','🐟'],['G','Grapes','🍇'],['H','House','🏠'],['I','Ice cream','🍦'],['J','Juice','🧃'],['K','Kite','🪁'],['L','Lion','🦁'],['M','Moon','🌙'],['N','Nose','👃'],['O','Orange','🍊'],['P','Pig','🐷'],['Q','Queen','👑'],['R','Rabbit','🐰'],['S','Sun','☀️'],['T','Tree','🌳'],['U','Umbrella','☂️'],['V','Violin','🎻'],['W','Whale','🐳'],['X','Xylophone','🎶'],['Y','Yo-yo','🪀'],['Z','Zebra','🦓']];
 const CH=document.getElementById('ch'),EMO=document.getElementById('emo'),SAY=document.getElementById('say'),HINT=document.getElementById('hint'),ST=document.getElementById('st'),BS=document.getElementById('bs'),Q=document.getElementById('q');
 let stars=0,streak=0,best=0,cur=null,lock=false,prev=-1;try{best=parseInt(localStorage.getItem('games.abc.best'),10)||0;}catch(e){}BS.textContent=best;
-function speak(t){if(SFX.muted||!('speechSynthesis' in window))return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=0.85;u.pitch=1.15;u.lang='en-US';speechSynthesis.speak(u);}catch(e){}}
+function speak(t){if(SFX.muted||!('speechSynthesis' in window))return;try{const ss=speechSynthesis;if(ss.speaking||ss.pending)ss.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=0.85;u.pitch=1.15;u.lang='en-US';ss.speak(u);}catch(e){}}
 function round(){lock=false;let i;do{i=Math.floor(Math.random()*26);}while(i===prev);prev=i;cur=WORDS[i];
  const opts=[i];while(opts.length<4){const k=Math.floor(Math.random()*26);if(!opts.includes(k))opts.push(k);}opts.sort(()=>Math.random()-.5);
  EMO.textContent='❓';SAY.textContent='Find the letter '+cur[0];HINT.innerHTML='&nbsp;';CH.innerHTML='';
