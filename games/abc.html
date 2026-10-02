@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0e1116">
+<link rel="manifest" href="/games/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="/games/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/games/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="/games/games.css">
+<title>ABC</title>
+<style>
+#q{flex:none;text-align:center;padding:12px;margin:6px 0 12px}
+#emo{font-size:64px;line-height:1.1;min-height:72px}
+#say{font-size:22px;font-weight:700;margin-top:4px;min-height:32px}
+#hint{color:var(--dim);font-size:16px;min-height:22px}
+#ch{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:12px}
+#ch button{border-radius:22px;border:2px solid var(--line);background:var(--card2);color:var(--ink);font-size:min(22vw,96px);font-weight:800;line-height:1;touch-action:manipulation;min-height:90px}
+#ch button.ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+#ch button.no{background:var(--bad-bg);border-color:var(--bad)}
+.row{display:flex;gap:8px;align-items:center;justify-content:space-between}
+#again{min-height:48px;padding:6px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:16px}
+</style>
+</head>
+<body class="play">
+<main>
+<div class="top"><a class="back" href="/games/" aria-label="Back to games">‹</a><h1>🔤 ABC</h1><button id="mute" class="mute" aria-label="Sound on or off">🔊</button></div>
+<div class="row"><div class="stats" style="gap:16px"><span>⭐ <b id="st">0</b></span><span>Best <b id="bs" style="color:var(--accent)">0</b> in a row</span></div><button id="again" aria-label="Say it again">🔈 Again</button></div>
+<div class="card" id="q"><div id="emo">🍎</div><div id="say">Find the letter A</div><div id="hint">&nbsp;</div></div>
+<div id="ch"></div>
+</main>
+<script>
+// Gentle sounds via WebAudio, with a mute toggle shared by every game.
+const SFX=(function(){let ac=null,muted=false;try{muted=localStorage.getItem('games.muted')==='1';}catch(e){}
+const btn=document.getElementById('mute');function paint(){if(btn){btn.textContent=muted?'🔇':'🔊';btn.setAttribute('aria-pressed',muted?'true':'false');}}paint();
+function tone(f,d,type,vol,slide){if(muted)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();
+ const t=ac.currentTime,o=ac.createOscillator(),g=ac.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);
+ g.gain.setValueAtTime(vol||0.06,t);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+0.02);}catch(e){}}
+function notes(list,step,type){list.forEach((f,i)=>setTimeout(()=>tone(f,step*1.4,type),i*step*1000));}
+if(btn)btn.addEventListener('click',()=>{muted=!muted;try{localStorage.setItem('games.muted',muted?'1':'0');}catch(e){}paint();if(muted&&window.speechSynthesis)try{speechSynthesis.cancel();}catch(e){}tone(660,0.08);});
+return{tone,notes,get muted(){return muted;}};})();
+</script>
+<script>
+(function(){
+const WORDS=[['A','Apple','🍎'],['B','Ball','⚽'],['C','Cat','🐱'],['D','Dog','🐶'],['E','Elephant','🐘'],['F','Fish','🐟'],['G','Grapes','🍇'],['H','House','🏠'],['I','Ice cream','🍦'],['J','Juice','🧃'],['K','Kite','🪁'],['L','Lion','🦁'],['M','Moon','🌙'],['N','Nose','👃'],['O','Orange','🍊'],['P','Pig','🐷'],['Q','Queen','👑'],['R','Rabbit','🐰'],['S','Sun','☀️'],['T','Tree','🌳'],['U','Umbrella','☂️'],['V','Violin','🎻'],['W','Whale','🐳'],['X','Xylophone','🎶'],['Y','Yo-yo','🪀'],['Z','Zebra','🦓']];
+const CH=document.getElementById('ch'),EMO=document.getElementById('emo'),SAY=document.getElementById('say'),HINT=document.getElementById('hint'),ST=document.getElementById('st'),BS=document.getElementById('bs'),Q=document.getElementById('q');
+let stars=0,streak=0,best=0,cur=null,lock=false,prev=-1;try{best=parseInt(localStorage.getItem('games.abc.best'),10)||0;}catch(e){}BS.textContent=best;
+function speak(t){if(SFX.muted||!('speechSynthesis' in window))return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=0.85;u.pitch=1.15;u.lang='en-US';speechSynthesis.speak(u);}catch(e){}}
+function round(){lock=false;let i;do{i=Math.floor(Math.random()*26);}while(i===prev);prev=i;cur=WORDS[i];
+ const opts=[i];while(opts.length<4){const k=Math.floor(Math.random()*26);if(!opts.includes(k))opts.push(k);}opts.sort(()=>Math.random()-.5);
+ EMO.textContent='❓';SAY.textContent='Find the letter '+cur[0];HINT.innerHTML='&nbsp;';CH.innerHTML='';
+ opts.forEach(k=>{const b=document.createElement('button');b.textContent=WORDS[k][0];b.setAttribute('aria-label','Letter '+WORDS[k][0]);b.onclick=()=>pick(b,k);CH.appendChild(b);});
+ speak('Find the letter '+cur[0]);}
+function pick(b,k){if(lock)return;const w=WORDS[k];
+ if(w===cur){lock=true;b.classList.add('ok','pop');stars++;streak++;ST.textContent=stars;
+  if(streak>best){best=streak;BS.textContent=best;try{localStorage.setItem('games.abc.best',String(best));}catch(e){}}
+  EMO.textContent=cur[2];SAY.textContent=cur[0]+' is for '+cur[1];HINT.textContent=['Great job!','You got it!','Super!','Well done!'][stars%4];Q.classList.remove('pop');void Q.offsetWidth;Q.classList.add('pop');
+  SFX.notes([523,659,784],0.09,'triangle');speak(cur[0]+' is for '+cur[1]);setTimeout(round,2200);}
+ else{streak=0;b.classList.add('no','shake');setTimeout(()=>b.classList.remove('shake'),350);SFX.tone(260,0.18,'sine',0.05,220);
+  HINT.textContent='That is '+w[0]+' for '+w[1]+' '+w[2]+'. Try again!';speak('That is '+w[0]+'. Find '+cur[0]);}}
+document.getElementById('again').onclick=()=>speak(lock?cur[0]+' is for '+cur[1]:'Find the letter '+cur[0]);
+round();CH.dataset.ready='1';
+})();
+</script>
+<script src="/games/register.js"></script>
+</body>
+</html>

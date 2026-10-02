@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0e1116">
+<link rel="manifest" href="/games/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="/games/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/games/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="/games/games.css">
+<title>Tic Tac Toe</title>
+</head>
+<body class="play">
+<main>
+<div class="top"><a class="back" href="/games/" aria-label="Back to games">‹</a><h1>⭕ Tic Tac Toe ❌</h1><button id="mute" class="mute" aria-label="Sound on or off">🔊</button></div>
+<div class="card" style="max-width:420px;margin:0 auto">
+<div id="st" style="font-size:17px;color:var(--dim);margin-bottom:12px">You're X. Your move.</div>
+<div id="bd" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px"></div>
+<div style="display:flex;gap:8px;margin-bottom:12px">
+<button id="m" style="flex:1;min-height:48px;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font-size:15px">Mode: vs CPU</button>
+<button id="r" style="flex:1;min-height:48px;padding:10px;border-radius:12px;border:none;background:var(--accent);color:var(--bg);font-size:15px;font-weight:600">New game</button>
+</div>
+<div style="display:flex;justify-content:space-around;font-size:16px;color:var(--dim)">
+<span>X <b id="sx" style="color:var(--info)">0</b></span><span>Draw <b id="sd" style="color:var(--ink)">0</b></span><span>O <b id="so" style="color:var(--warn)">0</b></span>
+</div>
+<div style="text-align:center;font-size:15px;color:var(--dim);margin-top:10px">Wins in a row vs CPU <b id="sk" style="color:var(--ink)">0</b> · Best <b id="bk" style="color:var(--accent)">0</b></div>
+</div>
+</main>
+<script>
+// Gentle sounds via WebAudio, with a mute toggle shared by every game.
+const SFX=(function(){let ac=null,muted=false;try{muted=localStorage.getItem('games.muted')==='1';}catch(e){}
+const btn=document.getElementById('mute');function paint(){if(btn){btn.textContent=muted?'🔇':'🔊';btn.setAttribute('aria-pressed',muted?'true':'false');}}paint();
+function tone(f,d,type,vol,slide){if(muted)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();
+ const t=ac.currentTime,o=ac.createOscillator(),g=ac.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);
+ g.gain.setValueAtTime(vol||0.06,t);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+0.02);}catch(e){}}
+function notes(list,step,type){list.forEach((f,i)=>setTimeout(()=>tone(f,step*1.4,type),i*step*1000));}
+if(btn)btn.addEventListener('click',()=>{muted=!muted;try{localStorage.setItem('games.muted',muted?'1':'0');}catch(e){}paint();if(muted&&window.speechSynthesis)try{speechSynthesis.cancel();}catch(e){}tone(660,0.08);});
+return{tone,notes,get muted(){return muted;}};})();
+</script>
+<script>
+(function(){
+const bd=document.getElementById('bd'),st=document.getElementById('st'),M=document.getElementById('m');
+const L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+let b,turn,over,ai=true,sc={X:0,O:0,D:0},cells=[],streak=0,bestStreak=0;
+try{bestStreak=parseInt(localStorage.getItem('games.ttt.best'),10)||0;}catch(e){}
+const SK=document.getElementById('sk'),BK=document.getElementById('bk');BK.textContent=bestStreak;
+for(let i=0;i<9;i++){const d=document.createElement('button');d.setAttribute('aria-label','Square '+(i+1));
+ d.style.cssText='aspect-ratio:1;border-radius:12px;border:1px solid var(--line);background:var(--card2);font-size:48px;font-weight:700;color:var(--ink);display:flex;align-items:center;justify-content:center;padding:0;transition:background .2s';
+ d.onclick=()=>{if(!over&&!b[i]&&!(ai&&turn==='O'))SFX.tone(turn==='X'?520:392,0.1,'triangle');play(i);};bd.appendChild(d);cells.push(d);}
+function win(s){for(const l of L)if(s[l[0]]&&s[l[0]]===s[l[1]]&&s[l[0]]===s[l[2]])return{w:s[l[0]],l};return s.every(Boolean)?{w:'D'}:null;}
+function mm(s,p){const r=win(s);if(r)return{v:r.w==='O'?10:r.w==='X'?-10:0};
+ let best={v:p==='O'?-99:99,i:-1};
+ for(let i=0;i<9;i++)if(!s[i]){s[i]=p;const v=mm(s,p==='O'?'X':'O').v*0.9;s[i]=null;
+  if(p==='O'?v>best.v:v<best.v)best={v,i};}
+ return best;}
+function draw(r){cells.forEach((c,i)=>{c.textContent=b[i]||'';c.style.color=b[i]==='X'?'var(--info)':'var(--warn)';
+ c.style.background=r&&r.l&&r.l.includes(i)?'var(--ok-bg)':'var(--card2)';});}
+function end(r){over=true;SFX.notes(r.w==='D'?[440,440]:(ai&&r.w==='O')?[392,330,262]:[523,659,784,1047],0.1,'triangle');sc[r.w]++;['X','O','D'].forEach(k=>document.getElementById('s'+k.toLowerCase()).textContent=sc[k]);
+ if(ai){streak=r.w==='X'?streak+1:r.w==='O'?0:streak;SK.textContent=streak;if(streak>bestStreak){bestStreak=streak;BK.textContent=bestStreak;try{localStorage.setItem('games.ttt.best',String(bestStreak));}catch(e){}}}
+ st.style.color=r.w==='D'?'var(--dim)':'var(--ok)';
+ st.textContent=r.w==='D'?"Draw. Nobody wins.":ai?(r.w==='X'?'You beat the computer! 🎉':'The computer wins. 🤖'):r.w+' wins! 🎉';}
+function play(i){if(over||b[i]||(ai&&turn==='O'))return;b[i]=turn;turn=turn==='X'?'O':'X';
+ let r=win(b);draw(r);if(r)return end(r);
+ if(ai){st.textContent='The computer is thinking…';setTimeout(()=>{
+  const free=b.map((v,k)=>v?null:k).filter(v=>v!==null);
+  const k=Math.random()<0.15?free[Math.floor(Math.random()*free.length)]:mm(b,'O').i;
+  b[k]='O';SFX.tone(392,0.1,'triangle');turn='X';r=win(b);draw(r);if(r)return end(r);st.textContent='Your move.';},350);}
+ else st.textContent=turn+"'s move.";}
+function reset(){b=Array(9).fill(null);turn='X';over=false;st.style.color='var(--dim)';
+ st.textContent=ai?"You're X. Your move.":"X's move.";draw();}
+document.getElementById('r').onclick=reset;
+M.onclick=()=>{ai=!ai;M.textContent='Mode: '+(ai?'vs CPU':'2 players');reset();};
+reset();
+})();
+</script>
+<script src="/games/register.js"></script>
+</body>
+</html>

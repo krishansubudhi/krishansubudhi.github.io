@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0e1116">
+<link rel="manifest" href="/games/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="/games/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/games/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="/games/games.css">
+<title>Blocks</title>
+<style>
+#area{flex:1;min-height:0;display:flex;gap:10px;justify-content:center;align-items:flex-start;margin:8px 0}
+#wrap{position:relative}
+#bd{display:block;background:var(--card2);border-radius:10px;touch-action:none;border:1px solid var(--line)}
+#side{display:flex;flex-direction:column;gap:10px;width:84px;flex:none}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px;text-align:center;color:var(--dim);font-size:13px}
+.panel b{display:block;color:var(--ink);font-size:20px}
+#nx{display:block;margin:4px auto 0}
+.ctrls{grid-template-columns:repeat(5,1fr)}
+</style>
+</head>
+<body class="play">
+<main>
+<div class="top"><a class="back" href="/games/" aria-label="Back to games">‹</a><h1>🧱 Blocks</h1><button id="mute" class="mute" aria-label="Sound on or off">🔊</button></div>
+<div class="stats"><span>Score <b id="sc">0</b></span><span>Lines <b id="ln">0</b></span><span>Best <b id="bs" style="color:var(--accent)">0</b></span></div>
+<div id="area">
+<div id="wrap"><canvas id="bd"></canvas>
+<div class="overlay" id="ov"><h2 id="ovt">Blocks</h2><div id="ovs" style="color:var(--dim);padding:0 12px">Swipe to move, tap to turn, swipe down to drop.</div><button class="big" id="go">Play</button></div>
+</div>
+<div id="side">
+<div class="panel">Next<canvas id="nx" width="64" height="64"></canvas></div>
+<div class="panel">Level<b id="lv">1</b></div>
+<button class="panel" id="pause" style="font-size:22px;min-height:52px;color:var(--ink)" aria-label="Pause">⏸</button>
+</div>
+</div>
+<div class="ctrls">
+<button data-k="left" aria-label="Move left">◀</button>
+<button data-k="rot" aria-label="Rotate">⟳</button>
+<button data-k="right" aria-label="Move right">▶</button>
+<button data-k="down" aria-label="Move down">▼</button>
+<button data-k="drop" aria-label="Drop">⤓</button>
+</div>
+</main>
+<script>
+// Gentle sounds via WebAudio, with a mute toggle shared by every game.
+const SFX=(function(){let ac=null,muted=false;try{muted=localStorage.getItem('games.muted')==='1';}catch(e){}
+const btn=document.getElementById('mute');function paint(){if(btn){btn.textContent=muted?'🔇':'🔊';btn.setAttribute('aria-pressed',muted?'true':'false');}}paint();
+function tone(f,d,type,vol,slide){if(muted)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();
+ const t=ac.currentTime,o=ac.createOscillator(),g=ac.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);
+ g.gain.setValueAtTime(vol||0.06,t);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+0.02);}catch(e){}}
+function notes(list,step,type){list.forEach((f,i)=>setTimeout(()=>tone(f,step*1.4,type),i*step*1000));}
+if(btn)btn.addEventListener('click',()=>{muted=!muted;try{localStorage.setItem('games.muted',muted?'1':'0');}catch(e){}paint();if(muted&&window.speechSynthesis)try{speechSynthesis.cancel();}catch(e){}tone(660,0.08);});
+return{tone,notes,get muted(){return muted;}};})();
+</script>
+<script>
+(function(){
+const W=10,H=20,bd=document.getElementById('bd'),x=bd.getContext('2d'),nx=document.getElementById('nx'),nxc=nx.getContext('2d');
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const COL={I:'#8ab4f8',O:'#f2c94c',T:'#c792ea',S:'#5fd97f',Z:'#ff8b82',J:'#6fa8ff',L:'#ffb46b'};
+const SH={I:[[0,1],[1,1],[2,1],[3,1]],O:[[1,0],[2,0],[1,1],[2,1]],T:[[1,0],[0,1],[1,1],[2,1]],S:[[1,0],[2,0],[0,1],[1,1]],Z:[[0,0],[1,0],[1,1],[2,1]],J:[[0,0],[0,1],[1,1],[2,1]],L:[[2,0],[0,1],[1,1],[2,1]]};
+const SIZE={I:4,O:4,T:3,S:3,Z:3,J:3,L:3};
+const SC=document.getElementById('sc'),LN=document.getElementById('ln'),BS=document.getElementById('bs'),LV=document.getElementById('lv');
+const OV=document.getElementById('ov'),OVT=document.getElementById('ovt'),OVS=document.getElementById('ovs');
+let best=0;try{best=parseInt(localStorage.getItem('games.blocks.best'),10)||0;}catch(e){}BS.textContent=best;
+let grid,cur,next,bag=[],score,lines,level,state='ready',acc=0,last=0,cell=24,flash=null;
+function fromBag(){if(!bag.length){bag='IOTSZJL'.split('');for(let i=bag.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[bag[i],bag[j]]=[bag[j],bag[i]];}}return bag.pop();}
+function piece(t){return{t,cells:SH[t].map(c=>c.slice()),x:3,y:t==='I'?-1:0};}
+function fits(cells,px,py){for(const[cx,cy]of cells){const gx=px+cx,gy=py+cy;if(gx<0||gx>=W||gy>=H)return false;if(gy>=0&&grid[gy][gx])return false;}return true;}
+function rotate(){if(cur.t==='O')return;const n=SIZE[cur.t];const r=cur.cells.map(([cx,cy])=>[n-1-cy,cx]);
+ for(const k of[0,-1,1,-2,2])if(fits(r,cur.x+k,cur.y)){cur.cells=r;cur.x+=k;SFX.tone(600,0.05,'triangle',0.04);return;}}
+function move(dx){if(fits(cur.cells,cur.x+dx,cur.y)){cur.x+=dx;SFX.tone(300,0.03,'sine',0.03);}}
+function soft(){if(fits(cur.cells,cur.x,cur.y+1)){cur.y++;score+=1;acc=0;upd();}else lock();}
+function drop(){let n=0;while(fits(cur.cells,cur.x,cur.y+1)){cur.y++;n++;}score+=2*n;SFX.tone(220,0.12,'triangle',0.06,140);lock();}
+function lock(){for(const[cx,cy]of cur.cells){const gy=cur.y+cy;if(gy<0){return over();}grid[gy][cur.x+cx]=cur.t;}
+ const full=[];for(let y=0;y<H;y++)if(grid[y].every(Boolean))full.push(y);
+ if(full.length){full.forEach(y=>{grid.splice(y,1);grid.unshift(Array(W).fill(null));});lines+=full.length;score+=[0,100,300,500,800][full.length]*level;level=1+Math.floor(lines/10);
+  flash={rows:full,t:performance.now()};SFX.notes(full.length>=4?[523,659,784,1047]:[523,784],0.07,'triangle');}
+ cur=piece(next);next=fromBag();acc=0;if(!fits(cur.cells,cur.x,cur.y))return over();upd();drawNext();}
+function upd(){SC.textContent=score;LN.textContent=lines;LV.textContent=level;}
+function over(){state='over';SFX.notes([392,330,262,196],0.13,'triangle');
+ if(score>best){best=score;BS.textContent=best;try{localStorage.setItem('games.blocks.best',String(best));}catch(e){}OVS.textContent='New best: '+score+'!';}else OVS.textContent='Score '+score+' · Best '+best;
+ OVT.textContent='Game over';document.getElementById('go').textContent='Play again';OV.hidden=false;bd.dataset.state=state;}
+function start(){grid=Array.from({length:H},()=>Array(W).fill(null));bag=[];cur=piece(fromBag());next=fromBag();score=0;lines=0;level=1;acc=0;state='run';OV.hidden=true;upd();drawNext();SFX.tone(440,0.1,'triangle');bd.dataset.state=state;}
+function pause(){if(state==='run'){state='paused';OVT.textContent='Paused';OVS.textContent='';document.getElementById('go').textContent='Resume';OV.hidden=false;}}
+document.getElementById('go').onclick=()=>{if(state==='paused'){state='run';OV.hidden=true;last=performance.now();}else start();};
+document.getElementById('pause').onclick=pause;
+document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();});
+function size(){const a=document.getElementById('area');const ah=a.clientHeight,aw=a.clientWidth-94;
+ cell=Math.max(10,Math.floor(Math.min(ah/H,aw/W)));const R=Math.min(3,window.devicePixelRatio||1);
+ bd.style.width=cell*W+'px';bd.style.height=cell*H+'px';bd.width=Math.round(cell*W*R);bd.height=Math.round(cell*H*R);x.setTransform(R,0,0,R,0,0);
+ nx.width=64*R;nx.height=64*R;nx.style.width='64px';nx.style.height='64px';nxc.setTransform(R,0,0,R,0,0);drawNext();}
+function block(c,px,py,s,col){c.fillStyle=col;c.fillRect(px+1,py+1,s-2,s-2);c.fillStyle='rgba(255,255,255,.18)';c.fillRect(px+1,py+1,s-2,Math.max(2,s/6));}
+function drawNext(){nxc.clearRect(0,0,64,64);if(!next)return;const s=14,n=SIZE[next],off=(64-n*s)/2;SH[next].forEach(([cx,cy])=>block(nxc,off+cx*s,off+cy*s+(next==='I'?0:s/2),s,COL[next]));}
+function draw(){const w=cell*W,h=cell*H;x.clearRect(0,0,w,h);x.strokeStyle=css('--line');x.lineWidth=1;
+ for(let i=1;i<W;i++){x.beginPath();x.moveTo(i*cell+.5,0);x.lineTo(i*cell+.5,h);x.stroke();}
+ for(let j=1;j<H;j++){x.beginPath();x.moveTo(0,j*cell+.5);x.lineTo(w,j*cell+.5);x.stroke();}
+ if(!grid)return;
+ for(let y=0;y<H;y++)for(let gx=0;gx<W;gx++)if(grid[y][gx])block(x,gx*cell,y*cell,cell,COL[grid[y][gx]]);
+ if(state!=='over'&&cur){let gy=cur.y;while(fits(cur.cells,cur.x,gy+1))gy++;x.globalAlpha=.22;cur.cells.forEach(([cx,cy])=>{if(gy+cy>=0)block(x,(cur.x+cx)*cell,(gy+cy)*cell,cell,COL[cur.t]);});x.globalAlpha=1;
+  cur.cells.forEach(([cx,cy])=>{if(cur.y+cy>=0)block(x,(cur.x+cx)*cell,(cur.y+cy)*cell,cell,COL[cur.t]);});}
+ if(flash){const k=(performance.now()-flash.t)/250;if(k>1)flash=null;else{x.fillStyle='rgba(255,255,255,'+(0.35*(1-k))+')';x.fillRect(0,0,w,h);}}}
+function loop(t){const dt=t-(last||t);last=t;if(state==='run'){acc+=dt;const iv=Math.max(90,800-(level-1)*70);if(acc>=iv){acc=0;if(fits(cur.cells,cur.x,cur.y+1))cur.y++;else lock();}}draw();requestAnimationFrame(loop);}
+// Buttons with hold-to-repeat for move and soft drop.
+const ACT={left:()=>move(-1),right:()=>move(1),rot:rotate,down:soft,drop:drop};
+document.querySelectorAll('.ctrls button').forEach(b=>{let tm=null;const k=b.dataset.k;
+ const stop=()=>{clearTimeout(tm);clearInterval(tm);tm=null;};
+ b.addEventListener('pointerdown',e=>{e.preventDefault();if(state!=='run')return;ACT[k]();if(k==='left'||k==='right'||k==='down'){tm=setTimeout(()=>{tm=setInterval(()=>{if(state==='run')ACT[k]();},55);},180);}});
+ ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,stop));});
+// Swipe on the board: drag sideways to move, tap to rotate, flick down to drop.
+let sw=null;
+bd.addEventListener('pointerdown',e=>{if(state!=='run')return;e.preventDefault();sw={x0:e.clientX,y0:e.clientY,lx:e.clientX,moved:false,t:performance.now()};bd.setPointerCapture(e.pointerId);});
+bd.addEventListener('pointermove',e=>{if(!sw||state!=='run')return;const step=Math.max(18,cell);let d=e.clientX-sw.lx;while(Math.abs(d)>=step){move(d>0?1:-1);sw.lx+=d>0?step:-step;d=e.clientX-sw.lx;sw.moved=true;}});
+bd.addEventListener('pointerup',e=>{if(!sw||state!=='run'){sw=null;return;}const dx=e.clientX-sw.x0,dy=e.clientY-sw.y0;
+ if(!sw.moved&&Math.abs(dx)<12&&Math.abs(dy)<12)rotate();else if(dy>50&&dy>Math.abs(dx)*1.5)drop();sw=null;});
+addEventListener('keydown',e=>{if(state!=='run')return;const m={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'rot',ArrowDown:'down',Space:'drop'}[e.code];if(m){e.preventDefault();ACT[m]();}});
+addEventListener('resize',size);size();requestAnimationFrame(loop);
+})();
+</script>
+<script src="/games/register.js"></script>
+</body>
+</html>
