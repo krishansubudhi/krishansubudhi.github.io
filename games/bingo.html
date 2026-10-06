@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>(function(){function v(){var h=(window.visualViewport&&visualViewport.height)||innerHeight;document.documentElement.style.setProperty('--vh',h*0.01+'px');}v();addEventListener('resize',v);addEventListener('orientationchange',v);if(window.visualViewport)visualViewport.addEventListener('resize',v);})();</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0e1116">
+<link rel="manifest" href="/games/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="/games/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/games/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="/games/games.css">
+<title>Road Trip Bingo</title>
+<style>
+.top h1{font-size:min(24px,5.6vw);white-space:nowrap}
+.row{display:flex;gap:8px;align-items:center;justify-content:space-between;flex:none;margin-bottom:10px}
+.row .stats{gap:14px}
+.sm{min-height:48px;padding:6px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:16px}
+.sm.on{border-color:var(--accent);color:var(--accent)}
+#wrap{position:relative;flex:1;min-height:0;display:flex;flex-direction:column}
+#bd{flex:1;min-height:0;display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(5,1fr);gap:6px}
+#bd button{position:relative;min-width:0;min-height:0;padding:2px;border-radius:14px;border:2px solid var(--line);background:var(--card2);color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;overflow:hidden;touch-action:manipulation;user-select:none;-webkit-user-select:none;transition:background .15s,border-color .15s}
+#bd .e{font-size:min(9.5vw,5.6vh,44px);line-height:1}
+#bd .l{font-size:min(2.75vw,1.7vh,14px);line-height:1.1;color:var(--dim);text-align:center;-webkit-hyphens:auto;hyphens:auto;max-width:100%}
+#bd button.m{background:var(--ok-bg);border-color:var(--ok)}
+#bd button.m .l{color:var(--ok)}
+#bd button.m::after{content:'✓';position:absolute;top:2px;right:5px;font-size:min(3.6vw,2vh,16px);font-weight:800;color:var(--ok)}
+#bd button.w{background:rgba(242,201,76,.22);border-color:var(--accent)}
+#bd button.w .l,#bd button.w::after{color:var(--accent)}
+#bd button.free .e{font-size:min(8vw,4.6vh,38px)}
+#msg{flex:none;text-align:center;color:var(--dim);font-size:15px;min-height:22px;margin-top:8px}
+#ov h2{font-size:40px}
+#ov .em{font-size:64px;line-height:1}
+#ov p{margin:0;color:var(--dim);padding:0 20px}
+.cfl{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:5}
+.cf{position:absolute;top:-40px;font-size:28px;pointer-events:none;animation:fall linear forwards;z-index:5}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+@media (max-height:500px){#ov{gap:6px}#ov .em{font-size:34px}#ov h2{font-size:22px}#ov .big{min-height:48px}.row{margin-bottom:6px}#msg{display:none}#bd{gap:4px}}
+</style>
+</head>
+<body class="play">
+<main>
+<div class="top"><a class="back" href="/games/" aria-label="Back to games">‹</a><h1>🚗 Road Trip Bingo</h1><button id="mute" class="mute" aria-label="Sound on or off">🔊</button></div>
+<div class="row"><div class="stats"><span>✓ <b id="cnt">1</b>/25</span><span>Bingos <b id="bg" style="color:var(--accent)">0</b></span></div><div style="display:flex;gap:8px"><button id="tts" class="sm on" aria-label="Read items aloud">🗣️</button><button id="new" class="sm">🔄 New card</button></div></div>
+<div id="wrap">
+<div id="bd" aria-label="Bingo card"></div>
+<div id="ov" class="overlay" hidden><div class="em" id="ovem">🏆</div><h2 id="ovh">Full card!</h2><p id="ovp">You spotted everything!</p><button class="big" id="ovnew">🔄 New card</button><button class="sm" id="ovkeep">Keep looking</button></div>
+</div>
+<div id="msg">Spot it out the window, then tap it!</div>
+</main>
+<script>
+// Gentle sounds via WebAudio, with a mute toggle shared by every game.
+const SFX=(function(){let ac=null,muted=false,unlocked=false;try{muted=localStorage.getItem('games.muted')==='1';}catch(e){}
+const btn=document.getElementById('mute');function paint(){if(btn){btn.textContent=muted?'🔇':'🔊';btn.setAttribute('aria-pressed',muted?'true':'false');}}paint();
+function ctx(){ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();return ac;}
+// iOS Safari only allows WebAudio/speech after a real user gesture. Unlock both
+// the first time the player taps anywhere, so later automatic (setTimeout-driven)
+// sounds and speech are allowed to play for the rest of the session.
+function unlock(){if(unlocked)return;unlocked=true;
+ try{if(navigator.audioSession)navigator.audioSession.type='playback';}catch(e){}
+ try{const a=ctx(),b=a.createBuffer(1,1,22050),s=a.createBufferSource();s.buffer=b;s.connect(a.destination);s.start(0);}catch(e){}
+ try{if('speechSynthesis' in window){const u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u);}}catch(e){}}
+document.addEventListener('touchend',unlock,{once:true,passive:true});
+document.addEventListener('click',unlock,{once:true});
+function tone(f,d,type,vol,slide){if(muted)return;try{const a=ctx();
+ const t=a.currentTime,o=a.createOscillator(),g=a.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);
+ g.gain.setValueAtTime(vol||0.06,t);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d+0.02);}catch(e){}}
+function notes(list,step,type){list.forEach((f,i)=>setTimeout(()=>tone(f,step*1.4,type),i*step*1000));}
+if(btn)btn.addEventListener('click',()=>{muted=!muted;try{localStorage.setItem('games.muted',muted?'1':'0');}catch(e){}paint();if(muted&&window.speechSynthesis)try{speechSynthesis.cancel();}catch(e){}tone(660,0.08);});
+return{tone,notes,get muted(){return muted;}};})();
+</script>
+<script>
+(function(){
+function cfl(){let l=document.getElementById('cfl');if(!l){l=document.createElement('div');l.id='cfl';l.className='cfl';document.body.appendChild(l);}return l;}
+const POOL=[['🚗','Red car'],['🚚','Truck'],['🐄','Cow'],['🌉','Bridge'],['✈️','Airplane'],['🛑','Stop sign'],['⛽','Gas station'],['🐕','Dog'],['🏍️','Motorcycle'],['🚌','Bus'],['🚓','Police car'],['🚑','Ambulance'],['🚒','Fire truck'],['🚜','Tractor'],['🐎','Horse'],['🐑','Sheep'],['🚲','Bicycle'],['🚦','Traffic light'],['🚧','Road work'],['🏠','House'],['🌳','Big tree'],['🌻','Flowers'],['⛰️','Mountain'],['🌊','River or lake'],['🚂','Train'],['🚕','Taxi'],['🚐','Van'],['🏕️','Tent'],['🐦','Bird'],['🌈','Rainbow'],['☁️','Fluffy cloud'],['🏭','Factory'],['⛪','Church'],['🚁','Helicopter'],['🏁','Flag'],['🛻','Pickup truck'],['🚙','Blue car'],['🍔','Restaurant'],['🅿️','Parking lot'],['🚸','Kids crossing'],['🐐','Goat'],['🛣️','Highway sign']];
+const FREE=['⭐','Free'];
+const LINES=[];for(let i=0;i<5;i++){LINES.push([0,1,2,3,4].map(j=>i*5+j));LINES.push([0,1,2,3,4].map(j=>j*5+i));}
+LINES.push([0,6,12,18,24]);LINES.push([4,8,12,16,20]);
+const BD=document.getElementById('bd'),CNT=document.getElementById('cnt'),BG=document.getElementById('bg'),MSG=document.getElementById('msg'),OV=document.getElementById('ov'),TTS=document.getElementById('tts');
+const KEY='games.bingo.card';
+let card=[],marked=[],seen=0,full=false,cells=[],talk=true;
+try{talk=localStorage.getItem('games.bingo.tts')!=='0';}catch(e){}
+function paintTts(){TTS.classList.toggle('on',talk);TTS.textContent=talk?'🗣️':'🤐';TTS.setAttribute('aria-pressed',talk?'true':'false');}paintTts();
+TTS.onclick=()=>{talk=!talk;try{localStorage.setItem('games.bingo.tts',talk?'1':'0');}catch(e){}paintTts();if(talk)speak('Talking on');else try{speechSynthesis.cancel();}catch(e){}};
+function speak(t){if(!talk||SFX.muted||!('speechSynthesis' in window))return;try{const ss=speechSynthesis;if(ss.speaking||ss.pending)ss.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=0.9;u.pitch=1.1;u.lang='en-US';ss.speak(u);}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({card,marked,seen,full}));}catch(e){}}
+function done(){return LINES.filter(l=>l.every(i=>marked[i]));}
+function fresh(){const p=POOL.map((_,i)=>i);for(let i=p.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[p[i],p[j]]=[p[j],p[i]];}
+ card=p.slice(0,24);card.splice(12,0,-1);marked=card.map(i=>i<0);seen=0;full=false;OV.hidden=true;save();build();MSG.textContent='Spot it out the window, then tap it!';}
+function item(i){return i<0?FREE:POOL[i];}
+function build(){BD.innerHTML='';cells=card.map((ix,k)=>{const it=item(ix),b=document.createElement('button');
+ b.innerHTML='<span class="e"></span><span class="l"></span>';b.firstChild.textContent=it[0];b.lastChild.textContent=it[1];
+ b.setAttribute('aria-label',it[1]);if(ix<0)b.classList.add('free');b.onclick=()=>tap(k);BD.appendChild(b);return b;});paint();}
+function paint(){const win=new Set();done().forEach(l=>l.forEach(i=>win.add(i)));
+ cells.forEach((b,k)=>{b.classList.toggle('m',marked[k]);b.classList.toggle('w',win.has(k));b.setAttribute('aria-pressed',marked[k]?'true':'false');});
+ CNT.textContent=marked.filter(Boolean).length;BG.textContent=done().length;}
+function tap(k){if(card[k]<0){speak('Free space!');return;}
+ const it=item(card[k]);marked[k]=!marked[k];const b=cells[k];b.classList.remove('pop');void b.offsetWidth;
+ if(marked[k]){b.classList.add('pop');SFX.tone(660,0.09,'triangle');speak(it[1]);}else{SFX.tone(330,0.08,'sine',0.04);}
+ const n=done().length,all=marked.every(Boolean);paint();
+ if(all&&!full){full=true;celebrate(true);}
+ else if(n>seen)celebrate(false,n);
+ else MSG.textContent=marked[k]?'You spotted: '+it[0]+' '+it[1]:'Unmarked '+it[1];
+ seen=n;if(!all)full=false;save();}
+function confetti(n){const W=['🎉','🎊','⭐','🌟','🚗','🎈'];for(let i=0;i<n;i++){const s=document.createElement('span');s.className='cf';s.textContent=W[i%W.length];
+ s.style.left=Math.random()*95+'vw';s.style.animationDuration=(1.6+Math.random()*1.6)+'s';s.style.animationDelay=(Math.random()*0.5)+'s';cfl().appendChild(s);setTimeout(()=>s.remove(),4000);}}
+function celebrate(all,n){
+ if(all){document.getElementById('ovem').textContent='🏆';document.getElementById('ovh').textContent='Full card!';document.getElementById('ovp').textContent='You spotted everything! Amazing eyes!';
+  OV.hidden=false;confetti(40);SFX.notes([523,659,784,1047,784,1047],0.12,'triangle');speak('Full card! You spotted everything!');MSG.textContent='🏆 Full card!';}
+ else{confetti(22);SFX.notes([523,659,784,1047],0.1,'triangle');speak(n>1?'Bingo again!':'Bingo!');MSG.textContent=n>1?'🎉 BINGO again! '+n+' lines':'🎉 BINGO! Keep going for a full card';
+  BD.classList.remove('pop');void BD.offsetWidth;BD.classList.add('pop');}}
+function newCard(){if(marked.filter(Boolean).length>1&&!full&&OV.hidden&&!confirm('Start a new card?'))return;SFX.tone(520,0.08);fresh();}
+document.getElementById('new').onclick=newCard;
+document.getElementById('ovnew').onclick=()=>{SFX.tone(520,0.08);fresh();};
+document.getElementById('ovkeep').onclick=()=>{OV.hidden=true;};
+try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&Array.isArray(s.card)&&s.card.length===25&&s.card.every(i=>i===-1||(i>=0&&i<POOL.length))){card=s.card;marked=s.marked;seen=s.seen||0;full=!!s.full;build();}else fresh();}catch(e){fresh();}
+BD.dataset.ready='1';
+})();
+</script>
+<script src="/games/register.js"></script>
+</body>
+</html>
