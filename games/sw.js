@@ -1,5 +1,5 @@
 // Offline cache for /games/. Bump VERSION whenever any file below changes.
-const VERSION = 'games-v6';
+const VERSION = 'games-v7';
 const FILES = [
   '/games/',
   '/games/index.html',
@@ -12,6 +12,7 @@ const FILES = [
   '/games/numbers.html',
   '/games/bingo.html',
   '/games/memory.html',
+  '/games/flappy.html',
   '/games/games.css',
   '/games/register.js',
   '/games/manifest.webmanifest',

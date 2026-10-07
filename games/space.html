@@ -11,8 +11,8 @@
 <link rel="stylesheet" href="/games/games.css">
 <title>Space Fight</title>
 <style>
-#area{flex:1;min-height:0;position:relative;margin:8px 0}
-#cv{display:block;width:100%;height:100%;background:#070a10;border-radius:12px;border:1px solid var(--line);touch-action:none}
+#area{flex:1;min-height:0;position:relative;margin:8px 0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#cv{display:block;background:#070a10;border-radius:12px;border:1px solid var(--line);touch-action:none}
 .ctrls{grid-template-columns:1fr 1fr}
 </style>
 </head>
@@ -43,8 +43,15 @@ const SC=document.getElementById('sc'),WV=document.getElementById('wv'),LF=docum
 const OV=document.getElementById('ov'),OVT=document.getElementById('ovt'),OVS=document.getElementById('ovs');
 const COLS=['#ff8b82','#f2c94c','#5fd97f','#8ab4f8','#c792ea','#ffb46b'];
 let W=360,H=480,best=0;try{best=parseInt(localStorage.getItem('games.space.best'),10)||0;}catch(e){}BS.textContent=best;
+// Letterbox the play field to a 3:4-ish range so a short, wide desktop window
+// doesn't turn the formation into an unplayable horizontal sliver.
+const MIN_AR=360/640,MAX_AR=360/320;
 let ship=null,shots=[],enemies=[],bombs=[],parts=[],stars=[],score,wave,lives,state='ready',fireT=0,banner=0,dir=0,form,last=0;
-function size(){const R=Math.min(3,window.devicePixelRatio||1);W=A.clientWidth;H=A.clientHeight;cv.width=Math.round(W*R);cv.height=Math.round(H*R);x.setTransform(R,0,0,R,0,0);
+function size(){const R=Math.min(3,window.devicePixelRatio||1);
+ let w=Math.max(1,A.clientWidth),h=Math.max(1,A.clientHeight);const ar=w/h;
+ if(ar<MIN_AR)h=w/MIN_AR;else if(ar>MAX_AR)w=h*MAX_AR;
+ W=w;H=h;cv.style.width=Math.round(w)+'px';cv.style.height=Math.round(h)+'px';
+ cv.width=Math.round(W*R);cv.height=Math.round(H*R);x.setTransform(R,0,0,R,0,0);
  if(ship){ship.y=H-46;ship.x=Math.min(W-20,Math.max(20,ship.x));}stars=Array.from({length:60},()=>({x:Math.random()*W,y:Math.random()*H,s:Math.random()*1.6+.4}));}
 function makeWave(){const rows=Math.min(2+Math.floor(wave/2),5),cols=Math.max(4,Math.min(4+Math.floor(wave/2),Math.floor((W-40)/44)));
  enemies=[];const gap=Math.min(46,(W-40)/cols);const ox=(W-gap*(cols-1))/2;

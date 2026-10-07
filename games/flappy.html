@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>(function(){function v(){var h=(window.visualViewport&&visualViewport.height)||innerHeight;document.documentElement.style.setProperty('--vh',h*0.01+'px');}v();addEventListener('resize',v);addEventListener('orientationchange',v);if(window.visualViewport)visualViewport.addEventListener('resize',v);})();</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0e1116">
+<link rel="manifest" href="/games/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="/games/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/games/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="/games/games.css">
+<title>Flappy Bird</title>
+<style>
+#area{flex:1;min-height:0;margin:8px 0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#g{display:block;background:var(--card2);border-radius:10px;touch-action:manipulation;cursor:pointer;user-select:none;-webkit-user-select:none}
+</style>
+</head>
+<body class="play">
+<main>
+<div class="top"><a class="back" href="/games/" aria-label="Back to games">‹</a><h1>🐦 Flappy Bird</h1><button id="mute" class="mute" aria-label="Sound on or off">🔊</button></div>
+<div class="stats"><span>Score <b id="s" style="color:var(--ink)">0</b></span><span>Best <b id="b" style="color:var(--accent)">0</b></span></div>
+<div id="area"><canvas id="g"></canvas></div>
+</main>
+<script>
+// Gentle sounds via WebAudio, with a mute toggle shared by every game.
+const SFX=(function(){let ac=null,muted=false,unlocked=false;try{muted=localStorage.getItem('games.muted')==='1';}catch(e){}
+const btn=document.getElementById('mute');function paint(){if(btn){btn.textContent=muted?'🔇':'🔊';btn.setAttribute('aria-pressed',muted?'true':'false');}}paint();
+function ctx(){ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();return ac;}
+// iOS Safari only allows WebAudio/speech after a real user gesture. Unlock both
+// the first time the player taps anywhere, so later automatic (setTimeout-driven)
+// sounds and speech are allowed to play for the rest of the session.
+function unlock(){if(unlocked)return;unlocked=true;
+ try{if(navigator.audioSession)navigator.audioSession.type='playback';}catch(e){}
+ try{const a=ctx(),b=a.createBuffer(1,1,22050),s=a.createBufferSource();s.buffer=b;s.connect(a.destination);s.start(0);}catch(e){}
+ try{if('speechSynthesis' in window){const u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u);}}catch(e){}}
+document.addEventListener('touchend',unlock,{once:true,passive:true});
+document.addEventListener('click',unlock,{once:true});
+function tone(f,d,type,vol,slide){if(muted)return;try{const a=ctx();
+ const t=a.currentTime,o=a.createOscillator(),g=a.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);
+ g.gain.setValueAtTime(vol||0.06,t);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d+0.02);}catch(e){}}
+function notes(list,step,type){list.forEach((f,i)=>setTimeout(()=>tone(f,step*1.4,type),i*step*1000));}
+if(btn)btn.addEventListener('click',()=>{muted=!muted;try{localStorage.setItem('games.muted',muted?'1':'0');}catch(e){}paint();if(muted&&window.speechSynthesis)try{speechSynthesis.cancel();}catch(e){}tone(660,0.08);});
+return{tone,notes,get muted(){return muted;}};})();
+</script>
+<script>
+(function(){
+const area=document.getElementById('area'),c=document.getElementById('g'),x=c.getContext('2d'),S=document.getElementById('s'),B=document.getElementById('b');
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim()||'#ccc';
+const INK=css('--ink'),DIM=css('--dim'),ACC=css('--accent'),BAD=css('--bad'),OK=css('--ok'),LINE=css('--line'),CARD2=css('--card2');
+const KEY='games.flappy.best';
+let saved=0;try{saved=parseInt(localStorage.getItem(KEY),10)||0;}catch(e){}
+// Logical coordinate space is always 288 units wide; height grows with however
+// tall #area actually is (like Dino Run), so a phone screen is used edge to
+// edge. Only a short, wide desktop window gets clamped, so the pipes don't
+// turn into a flat, unplayable strip.
+const W=288;let H=512,scaleF=1;
+const MIN_AR=W/740,MAX_AR=W/380;
+let bird,pipes,t,speed,score,best=saved,state='ready',gapH,spawnEvery;
+B.textContent=best;
+function size(){
+ const R=Math.min(3,window.devicePixelRatio||1);
+ let w=Math.max(1,area.clientWidth),h=Math.max(1,area.clientHeight);
+ const ar=w/h;
+ if(ar<MIN_AR)h=w/MIN_AR;else if(ar>MAX_AR)w=h*MAX_AR;
+ scaleF=w/W;H=h/scaleF;
+ c.style.width=Math.round(w)+'px';c.style.height=Math.round(h)+'px';
+ c.width=Math.round(w*R);c.height=Math.round(h*R);
+ x.setTransform(scaleF*R,0,0,scaleF*R,0,0);
+ if(bird)bird.y=Math.min(bird.y,H-bird.r);
+}
+function reset(){bird={x:W*0.28,y:H*0.45,vy:0,r:13};pipes=[];t=0;speed=2.4;score=0;gapH=H*0.29;spawnEvery=95;}
+size();reset();
+function flap(){
+ if(state!=='run'){reset();state='run';SFX.tone(440,0.1,'triangle');return;}
+ bird.vy=-6.4;SFX.tone(560,0.09,'square',0.035,780);
+}
+function act(e){if(e)e.preventDefault();flap();}
+c.addEventListener('pointerdown',act);
+addEventListener('keydown',e=>{if(e.code==='Space'||e.code==='ArrowUp'){e.preventDefault();flap();}});
+addEventListener('resize',size);addEventListener('orientationchange',size);
+function spawn(){
+ const margin=H*0.12,top=margin+Math.random()*(H-2*margin-gapH);
+ pipes.push({x:W+30,top,bot:top+gapH,w:42,passed:false});
+}
+function hit(){
+ if(bird.y-bird.r<0||bird.y+bird.r>H)return true;
+ for(const p of pipes){
+  if(bird.x+bird.r>p.x&&bird.x-bird.r<p.x+p.w){
+   if(bird.y-bird.r<p.top||bird.y+bird.r>p.bot)return true;
+  }
+ }
+ return false;
+}
+function drawBird(){
+ const a=Math.max(-0.5,Math.min(0.9,bird.vy/10));
+ x.save();x.translate(bird.x,bird.y);x.rotate(a);
+ x.fillStyle=ACC;x.beginPath();x.arc(0,0,bird.r,0,7);x.fill();
+ x.fillStyle=css('--bg');x.beginPath();x.arc(bird.r*0.4,-bird.r*0.3,3,0,7);x.fill();
+ x.fillStyle=BAD;x.beginPath();x.moveTo(bird.r*0.7,0);x.lineTo(bird.r*1.5,-3);x.lineTo(bird.r*1.5,4);x.closePath();x.fill();
+ x.restore();
+}
+function drawPipe(p){
+ x.fillStyle=OK;
+ x.fillRect(p.x,0,p.w,p.top);
+ x.fillRect(p.x,p.bot,p.w,H-p.bot);
+ x.fillStyle=css('--card2');
+ x.fillRect(p.x-3,p.top-14,p.w+6,14);
+ x.fillRect(p.x-3,p.bot,p.w+6,14);
+}
+function frame(){
+ x.clearRect(0,0,W,H);
+ x.fillStyle=LINE;
+ for(let i=0;i<6;i++){const cx=((i*70-t*0.3)%340+340)%340-30;x.fillRect(cx,60+(i%3)*40,36,16);}
+ if(state==='run'){
+  t++;bird.vy+=0.32;bird.y+=bird.vy;
+  if(t%spawnEvery===0)spawn();
+  pipes.forEach(p=>{p.x-=speed;if(!p.passed&&p.x+p.w<bird.x){p.passed=true;score++;S.textContent=score;SFX.tone(700,0.06,'sine');spawnEvery=Math.max(70,95-Math.floor(score/8));gapH=Math.max(H*0.22,H*0.29-Math.floor(score/10)*H*0.004);speed=Math.min(4.2,2.4+score*0.03);}});
+  pipes=pipes.filter(p=>p.x>-60);
+  if(hit()){state='over';SFX.notes([392,330,262],0.12,'triangle');best=Math.max(best,score);B.textContent=best;try{localStorage.setItem(KEY,String(best));}catch(e){}}
+ }
+ pipes.forEach(drawPipe);drawBird();
+ if(state!=='run'){
+  // Sit well above the bird's resting spot (0.45H) so the two never overlap.
+  const ty=H*0.22;x.fillStyle=state==='over'?BAD:ACC;x.font='bold 22px -apple-system,sans-serif';x.textAlign='center';
+  x.fillText(state==='over'?'GAME OVER':'TAP TO START',W/2,ty);
+  x.fillStyle=DIM;x.font='15px -apple-system,sans-serif';
+  x.fillText(state==='over'?'score '+score+' · tap to try again':'tap, click or space to flap',W/2,ty+22);
+ }
+ c.dataset.state=state;
+ requestAnimationFrame(frame);
+}
+frame();
+window.__flappyFlap=flap; // exposed for automated verification only
+window.__flappyState=()=>({state,score,best,birdY:bird.y,pipes:pipes.map(p=>({x:p.x,top:p.top,bot:p.bot,w:p.w}))}); // exposed for automated verification only
+})();
+</script>
+<script src="/games/register.js"></script>
+</body>
+</html>

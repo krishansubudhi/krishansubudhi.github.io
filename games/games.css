@@ -33,3 +33,16 @@ body.play .top{margin:0 0 10px;flex:none}
 .shake{animation:shake .3s}
 @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
 .pop{animation:pop .35s}
+.board-wrap{max-width:420px;margin:0 auto;width:100%}
+/* Desktop / wide screens: the mobile-first layout above already centers and
+   caps everything so it never stretches edge to edge, but at this width
+   there is room to scale the whole card up instead of leaving it pinned at
+   phone size in the middle of the window. Canvas games keep sizing
+   themselves (via their own resize handlers) to whatever box this gives
+   them, so they grow too without needing per-game media queries. */
+@media (min-width:900px){
+  main{max-width:760px}
+  .board-wrap{max-width:560px}
+  .back,.mute{min-width:52px;height:52px;font-size:24px}
+  .game{min-height:104px}
+}

@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="/games/games.css">
 <title>Dino Run</title>
-<style>#area{flex:1;min-height:0;margin:8px 0;position:relative}#g{display:block;width:100%;height:100%;background:var(--card2);border-radius:10px;touch-action:manipulation;cursor:pointer;user-select:none;-webkit-user-select:none}</style>
+<style>#area{flex:1;min-height:0;margin:8px 0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}#g{display:block;background:var(--card2);border-radius:10px;touch-action:manipulation;cursor:pointer;user-select:none;-webkit-user-select:none}</style>
 </head>
 <body class="play">
 <main>
@@ -39,12 +39,18 @@ let saved=0;try{saved=parseInt(localStorage.getItem(KEY),10)||0;}catch(e){}
 // Logical coordinate space is always 360 units wide; height (and so ground Y) grows
 // with however tall #area actually is, so a portrait phone gets a tall sky instead
 // of a squashed strip, while every sprite and the physics stay the same size/feel.
+// On a very tall narrow area or a very short wide one, the box is letterboxed and
+// centered within #area instead of stretching to an extreme shape.
 const W=360;let H=180,G=150,scaleF=1;
+const MIN_AR=W/700,MAX_AR=W/240;
 let d,obs,t,speed,score,best=saved,state='ready',clouds;B.textContent=best;
 function size(){
  const R=Math.min(3,window.devicePixelRatio||1);
- const w=Math.max(1,area.clientWidth),h=Math.max(1,area.clientHeight);
+ let w=Math.max(1,area.clientWidth),h=Math.max(1,area.clientHeight);
+ const ar=w/h;
+ if(ar<MIN_AR)h=w/MIN_AR;else if(ar>MAX_AR)w=h*MAX_AR;
  scaleF=w/W;H=h/scaleF;G=H-30;
+ c.style.width=Math.round(w)+'px';c.style.height=Math.round(h)+'px';
  c.width=Math.round(w*R);c.height=Math.round(h*R);
  x.setTransform(scaleF*R,0,0,scaleF*R,0,0);
  if(d)d.y=Math.min(d.y,G-d.h);
