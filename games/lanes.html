@@ -63,7 +63,16 @@ const LANES=4,W0=320,HFLOOR=300;let W=W0,laneW=W/LANES,H=560,scaleF=1;
 const MIN_AR=W0/820,MAX_AR=W0/HFLOOR;
 const CARW=50,CARH=78,START_LANE=1;
 const BASE_SPEED=140,MAX_SPEED=520;
-let carX,carY=H-110,lane=START_LANE,t=0,roadScroll=0,speed=BASE_SPEED,score=0,best=saved,state='ready';
+// Fairness model: changing lanes costs LANE_CHANGE_TIME seconds per extra lane crossed
+// (one input plus the settle animation) on top of a fixed REACT reaction time before the
+// player moves at all. MAX_CROSS_TIME is the worst case: lane 0 all the way to lane
+// LANES-1. requiredGap(speed) turns that into the vertical pixel gap a spawner must keep
+// at the given speed, with a MARGIN cushion so a mid-transit speed increase (speed only
+// ramps up) can never eat into the reaction window. Every obstacle row and coin is gated
+// on this so the guarantee holds by construction, not by tuning.
+const LANE_CHANGE_TIME=0.22,REACT=0.15,MAX_CROSS_TIME=(LANES-1)*LANE_CHANGE_TIME+REACT,MARGIN=1.15;
+function requiredGap(sp){return sp*MAX_CROSS_TIME*MARGIN;}
+let carX,carY=H-110,lane=START_LANE,t=0,roadScroll=0,lastRowScroll=-1e6,speed=BASE_SPEED,score=0,best=saved,state='ready';
 let obstacles=[],coins=[],spawnTimer=0,coinTimer=0,last=0;
 B.textContent=best;
 function laneX(l){return (l+0.5)*laneW;}
@@ -81,7 +90,7 @@ function size(){
  carY=H-Math.max(70,H*0.14);
  if(carX)carX=laneX(lane);
 }
-function reset(){lane=START_LANE;carX=laneX(lane);obstacles=[];coins=[];t=0;roadScroll=0;speed=BASE_SPEED;score=0;spawnTimer=0.6;coinTimer=0.9;}
+function reset(){lane=START_LANE;carX=laneX(lane);obstacles=[];coins=[];t=0;roadScroll=0;lastRowScroll=-1e6;speed=BASE_SPEED;score=0;spawnTimer=0.6;coinTimer=0.9;}
 size();reset();
 function changeLane(d){if(state!=='run')return;const n=lane+d;if(n<0||n>=LANES)return;lane=n;SFX.tone(520,0.05,'square',0.03);}
 function start(){reset();state='run';SFX.tone(440,0.1,'triangle');}
@@ -108,20 +117,70 @@ addEventListener('keydown',e=>{
 });
 addEventListener('resize',size);addEventListener('orientationchange',size);
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+// Obstacle hitboxes are inset (smaller than the sprite) so grazing a corner forgives the
+// player; the coin catch radius is padded well past the coin's own radius so a coin that
+// visually touches the car always registers. type->{x,y} inset in px per side.
+const OBST_INSET={car:{x:6,y:7},cone:{x:4,y:5},pothole:{x:6,y:5}};
+const COIN_CATCH=CARW*0.5+6;
+// Spawns one row of obstacles. Never uses more than LANES-1 lanes, so at least one lane
+// is always open, and never uses a lane a coin is currently guarding (see spawnCoin) so a
+// coin can never be boxed in after the fact. Returns false if every lane is guarded right
+// now (vanishingly rare), in which case the caller just retries next tick.
 function spawnWave(){
- const lanes=shuffle([...Array(LANES).keys()]);
- const n=1+Math.floor(Math.random()*(LANES-1)); // leaves at least one lane open
- lanes.slice(0,n).forEach(l=>{
+ const buf=requiredGap(speed);
+ const open=[...Array(LANES).keys()].filter(l=>!coins.some(k=>k.lane===l&&Math.abs(k.y-(-CARH))<buf));
+ if(!open.length)return false;
+ const pool=shuffle(open);
+ const n=1+Math.floor(Math.random()*Math.min(LANES-1,pool.length)); // always <= LANES-1 blocked
+ pool.slice(0,n).forEach(l=>{
   const r=Math.random();let type='car',w=50,h=78,color=OK;
   if(r<0.28){type='cone';w=24;h=30;color=WARN;}
   else if(r<0.48){type='pothole';w=42;h=26;color=LINE;}
   else{color=[BAD,OK,DIM][Math.floor(Math.random()*3)];}
   obstacles.push({lane:l,x:laneX(l),y:-h,w,h,type,color});
  });
+ return true;
 }
-function spawnCoin(){const l=Math.floor(Math.random()*LANES);coins.push({lane:l,x:laneX(l),y:-20,r:10,dead:false});}
+// Spawns a coin only in a lane that has no obstacle within requiredGap(speed) of it, so
+// collecting it never means crashing, and only once requiredGap(speed) has passed since
+// the last obstacle row, so the player has had time to reach any lane including this one.
+// Returns false (spawns nothing) if no lane is currently safe.
+function spawnCoin(){
+ const buf=requiredGap(speed);
+ if(roadScroll-lastRowScroll<buf)return false;
+ const y=-20;
+ for(const l of shuffle([...Array(LANES).keys()])){
+  if(!obstacles.some(o=>o.lane===l&&Math.abs(o.y-y)<buf)){coins.push({lane:l,x:laneX(l),y,r:10,dead:false});return true;}
+ }
+ return false;
+}
 function rectHit(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;}
 function crash(){state='over';SFX.notes([392,330,262],0.12,'triangle');best=Math.max(best,Math.floor(score));B.textContent=best;try{localStorage.setItem(KEY,String(best));}catch(e){}}
+// Desired time between obstacle rows. The gap check in spawnWave() is the hard floor; this
+// is just the *preferred* cadence on top of it, kept comfortably above the floor (1.3x) so
+// there's always a real window after a row where a coin can also get through - otherwise,
+// at high speed where the floor alone would dominate, coins and rows would become eligible
+// at the exact same instant and coins would (correctly, but uselessly) never win the race.
+function rowCadence(sp){return Math.max(MAX_CROSS_TIME*MARGIN*1.3,1.5-sp/450);}
+// Both the live loop and the self-test drive spawning through these two functions, so the
+// test is exercising the exact code path players do, not a reimplementation of it.
+function trySpawnRow(dt){
+ spawnTimer-=dt;
+ if(spawnTimer>0||roadScroll-lastRowScroll<requiredGap(speed))return null;
+ const before=obstacles.length;
+ const added=spawnWave();
+ spawnTimer=rowCadence(speed);
+ if(!added)return null;
+ lastRowScroll=roadScroll;
+ return obstacles.slice(before);
+}
+function trySpawnCoin(dt){
+ coinTimer-=dt;
+ if(coinTimer>0)return null; // not due yet
+ const added=spawnCoin();
+ coinTimer=added?1+Math.random()*1.2:0.08; // retry fast on a miss instead of losing a whole cycle
+ return added; // true = spawned, false = attempted but no safe lane/timing yet
+}
 function step(dt){
  roadScroll+=speed*dt;
  if(state!=='run')return;
@@ -129,17 +188,17 @@ function step(dt){
  carX+=(laneX(lane)-carX)*Math.min(1,dt*12);
  score+=speed*0.03*dt;
  speed=Math.min(MAX_SPEED,BASE_SPEED+score*1.1);
- spawnTimer-=dt;if(spawnTimer<=0){spawnWave();spawnTimer=Math.max(0.55,1.5-speed/450);}
- coinTimer-=dt;if(coinTimer<=0){spawnCoin();coinTimer=1+Math.random()*1.2;}
+ trySpawnRow(dt);
+ trySpawnCoin(dt);
  obstacles.forEach(o=>o.y+=speed*dt);obstacles=obstacles.filter(o=>o.y<H+80);
  coins.forEach(k=>k.y+=speed*dt);coins=coins.filter(k=>!k.dead&&k.y<H+40);
  const pr={x:carX-CARW/2+6,y:carY-CARH/2+6,w:CARW-12,h:CARH-12};
  for(const o of obstacles){
-  const inX=o.type==='pothole'?6:4,inY=o.type==='pothole'?6:4;
-  const or={x:o.x-o.w/2+inX,y:o.y-o.h/2+inY,w:o.w-inX*2,h:o.h-inY*2};
+  const ins=OBST_INSET[o.type]||OBST_INSET.car;
+  const or={x:o.x-o.w/2+ins.x,y:o.y-o.h/2+ins.y,w:o.w-ins.x*2,h:o.h-ins.y*2};
   if(rectHit(pr,or)){crash();break;}
  }
- for(const k of coins){if(!k.dead&&Math.hypot(k.x-carX,k.y-carY)<k.r+CARW*0.3){k.dead=true;score+=15;SFX.tone(988,0.08,'triangle',0.05);}}
+ for(const k of coins){if(!k.dead&&Math.hypot(k.x-carX,k.y-carY)<k.r+COIN_CATCH){k.dead=true;score+=15;SFX.tone(988,0.08,'triangle',0.05);}}
  coins=coins.filter(k=>!k.dead);
  S.textContent=Math.floor(score);
 }
@@ -180,7 +239,66 @@ function draw(){
  c.dataset.state=state;
 }
 function loop(now){const dt=Math.min(0.05,last?(now-last)/1000:0);last=now;step(dt);draw();requestAnimationFrame(loop);}
-requestAnimationFrame(loop);
+// Headless fairness proof, run via ?selftest=1 (in a real browser, or in Node/Playwright
+// with document/window/location stubbed). It drives spawning through trySpawnRow()/
+// trySpawnCoin() - the exact functions the live loop calls - across the whole speed range
+// and independently asserts, on every single spawn, against the bare requirement
+// (MAX_CROSS_TIME, not the generator's own cushioned MARGIN, so the test can't just be
+// checking the generator agrees with itself): (1) a row never closes all lanes, (2) the
+// gap since the previous row is >= the worst-case full-width crossing time at that speed,
+// (3) no coin ever lands within that same crossing-time window of an obstacle in its lane,
+// and (4) no coin spawns before that much time has passed since the last row. Exposes the
+// tally on window.__laneDashSelfTest for an external harness to read.
+function runSelfTest(){
+ const TRIALS=120,DUR=15,DT=0.05,STEPS=Math.round(DUR/DT);
+ const speeds=[];for(let i=0;i<10;i++)speeds.push(Math.round(BASE_SPEED+(MAX_SPEED-BASE_SPEED)*i/9));
+ const res={trials:0,rows:0,coinsSpawned:0,coinSkips:0,violations:[],bySpeed:{}};
+ const flag=(type,info)=>res.violations.push(Object.assign({type},info));
+ for(const sp of speeds){
+  const bucket=res.bySpeed[sp]={rows:0,coinsSpawned:0};
+  for(let trial=0;trial<TRIALS;trial++){
+   obstacles=[];coins=[];roadScroll=0;lastRowScroll=-1e6;speed=sp;spawnTimer=0.3;coinTimer=0.5;
+   for(let i=0;i<STEPS;i++){
+    roadScroll+=speed*DT;
+    const prevRowScroll=lastRowScroll;
+    const added=trySpawnRow(DT);
+    if(added){
+     const lanesUsed=new Set(added.map(o=>o.lane));
+     if(lanesUsed.size>=LANES)flag('all-lanes-closed',{speed,scroll:roadScroll});
+     if(prevRowScroll>-1e5){
+      const gap=lastRowScroll-prevRowScroll;
+      if(gap+1e-6<speed*MAX_CROSS_TIME)flag('row-gap-too-small',{speed,gap,need:speed*MAX_CROSS_TIME});
+     }
+     for(const o of added)for(const k of coins)if(k.lane===o.lane&&Math.abs(k.y-o.y)<speed*MAX_CROSS_TIME)flag('obstacle-crowds-coin',{speed});
+     res.rows++;bucket.rows++;
+    }
+    const coinResult=trySpawnCoin(DT);
+    if(coinResult===true){
+     const k=coins[coins.length-1];
+     for(const o of obstacles)if(o.lane===k.lane&&Math.abs(o.y-k.y)<speed*MAX_CROSS_TIME)flag('coin-overlaps-obstacle',{speed});
+     if(lastRowScroll>-1e5&&roadScroll-lastRowScroll<speed*MAX_CROSS_TIME)flag('coin-unreachable-timing',{speed});
+     res.coinsSpawned++;bucket.coinsSpawned++;
+    }else if(coinResult===false)res.coinSkips++;
+    obstacles.forEach(o=>o.y+=speed*DT);obstacles=obstacles.filter(o=>o.y<4000);
+    coins.forEach(k=>k.y+=speed*DT);coins=coins.filter(k=>!k.dead&&k.y<4000);
+   }
+   res.trials++;
+  }
+ }
+ return res;
+}
+const SELFTEST=/[?&]selftest=1\b/.test(location.search);
+if(SELFTEST){
+ const res=runSelfTest();
+ const ok=res.violations.length===0;
+ window.__laneDashSelfTest=res;
+ try{console.log('[lanes selftest]',ok?'PASS':'FAIL',res);}catch(e){}
+ try{document.body.innerHTML='<pre style="padding:16px;white-space:pre-wrap;font:13px monospace;color:'+(ok?'#4caf50':'#ff5252')+'">'+(ok?'PASS':'FAIL')+'\n'+
+  JSON.stringify({trials:res.trials,rows:res.rows,coinsSpawned:res.coinsSpawned,coinSkips:res.coinSkips,violations:res.violations.length},null,2)+
+  (res.violations.length?'\n\nfirst violations:\n'+JSON.stringify(res.violations.slice(0,10),null,2):'')+'</pre>';}catch(e){}
+}else{
+ requestAnimationFrame(loop);
+}
 })();
 </script>
 <script src="/games/register.js"></script>
