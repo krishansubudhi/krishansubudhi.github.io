@@ -50,14 +50,17 @@ const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim
 const INK=css('--ink'),DIM=css('--dim'),ACC=css('--accent'),BAD=css('--bad'),OK=css('--ok'),WARN=css('--warn'),LINE=css('--line'),CARD2=css('--card2');
 const KEY='games.lanes.best';
 let saved=0;try{saved=parseInt(localStorage.getItem(KEY),10)||0;}catch(e){}
-// Logical coordinate space is always 320 units wide split into 4 lanes; height
-// (and so how much road is visible) grows with however tall #area actually is,
-// like Dino Run and Flappy Bird. Only a short, wide window gets its width
-// clamped so the road stays a sensible lane-sized strip instead of smearing
-// edge to edge, with the leftover space on the sides still live as tap zones
-// because pointer listeners are bound to #area, not the canvas.
-const LANES=4,W=320,laneW=W/LANES;let H=560,scaleF=1;
-const MIN_AR=W/820,MAX_AR=W/380;
+// Logical coordinate space is 320 units wide at rest, split into 4 lanes;
+// height grows with however tall #area actually is, like Dino Run and
+// Flappy Bird. On a short, wide screen — a landscape phone, or a short
+// desktop window — clamping the canvas width to protect a minimum road
+// height used to leave a narrow lane strip stranded in the middle with dead
+// space either side (tap zones still worked there, bound to #area, but the
+// road itself looked cropped). Instead the logical height is pinned at a
+// floor and the logical WIDTH (and so lane width) grows to fill the full
+// physical width, spreading the 4 lanes across the extra room.
+const LANES=4,W0=320,HFLOOR=300;let W=W0,laneW=W/LANES,H=560,scaleF=1;
+const MIN_AR=W0/820,MAX_AR=W0/HFLOOR;
 const CARW=50,CARH=78,START_LANE=1;
 const BASE_SPEED=140,MAX_SPEED=520;
 let carX,carY=H-110,lane=START_LANE,t=0,roadScroll=0,speed=BASE_SPEED,score=0,best=saved,state='ready';
@@ -68,12 +71,15 @@ function size(){
  const R=Math.min(3,window.devicePixelRatio||1);
  let w=Math.max(1,area.clientWidth),h=Math.max(1,area.clientHeight);
  const ar=w/h;
- if(ar<MIN_AR)h=w/MIN_AR;else if(ar>MAX_AR)w=h*MAX_AR;
- scaleF=w/W;H=h/scaleF;
+ if(ar<MIN_AR){h=w/MIN_AR;scaleF=w/W0;W=W0;H=h/scaleF;}
+ else if(ar>MAX_AR){H=HFLOOR;scaleF=h/H;W=w/scaleF;}
+ else{scaleF=w/W0;W=W0;H=h/scaleF;}
+ laneW=W/LANES;
  c.style.width=Math.round(w)+'px';c.style.height=Math.round(h)+'px';
  c.width=Math.round(w*R);c.height=Math.round(h*R);
  x.setTransform(scaleF*R,0,0,scaleF*R,0,0);
  carY=H-Math.max(70,H*0.14);
+ if(carX)carX=laneX(lane);
 }
 function reset(){lane=START_LANE;carX=laneX(lane);obstacles=[];coins=[];t=0;roadScroll=0;speed=BASE_SPEED;score=0;spawnTimer=0.6;coinTimer=0.9;}
 size();reset();
