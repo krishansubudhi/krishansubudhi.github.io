@@ -12,7 +12,7 @@
 <title>Flappy Bird</title>
 <style>
 #area{flex:1;min-height:0;margin:8px 0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
-#g{display:block;background:var(--card2);border-radius:10px;touch-action:manipulation;cursor:pointer;user-select:none;-webkit-user-select:none}
+#g{display:block;background:var(--card2);border-radius:10px;touch-action:none;cursor:pointer;user-select:none;-webkit-user-select:none}
 </style>
 </head>
 <body class="play">
@@ -49,20 +49,25 @@ const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim
 const INK=css('--ink'),DIM=css('--dim'),ACC=css('--accent'),BAD=css('--bad'),OK=css('--ok'),LINE=css('--line'),CARD2=css('--card2');
 const KEY='games.flappy.best';
 let saved=0;try{saved=parseInt(localStorage.getItem(KEY),10)||0;}catch(e){}
-// Logical coordinate space is always 288 units wide; height grows with however
-// tall #area actually is (like Dino Run), so a phone screen is used edge to
-// edge. Only a short, wide desktop window gets clamped, so the pipes don't
-// turn into a flat, unplayable strip.
-const W=288;let H=512,scaleF=1;
-const MIN_AR=W/740,MAX_AR=W/380;
+// Logical coordinate space is 288 units wide at rest; height grows with
+// however tall #area actually is (so a portrait phone is used edge to edge).
+// On a short, wide screen — a landscape phone, or a short desktop window —
+// clamping the canvas width to protect the pipes' flight height used to
+// leave a small, dully-scaled strip of canvas with dead space on both
+// sides. Instead the logical height is pinned at a floor and the logical
+// WIDTH grows to fill the full physical width, so the canvas always fills
+// #area and the bird/pipes render at a consistent, non-shrunk scale.
+const W0=288,HFLOOR=260;let W=W0,H=512,scaleF=1;
+const MIN_AR=W0/740,MAX_AR=W0/HFLOOR;
 let bird,pipes,t,speed,score,best=saved,state='ready',gapH,spawnEvery;
 B.textContent=best;
 function size(){
  const R=Math.min(3,window.devicePixelRatio||1);
  let w=Math.max(1,area.clientWidth),h=Math.max(1,area.clientHeight);
  const ar=w/h;
- if(ar<MIN_AR)h=w/MIN_AR;else if(ar>MAX_AR)w=h*MAX_AR;
- scaleF=w/W;H=h/scaleF;
+ if(ar<MIN_AR){h=w/MIN_AR;scaleF=w/W0;W=W0;H=h/scaleF;}
+ else if(ar>MAX_AR){H=HFLOOR;scaleF=h/H;W=w/scaleF;}
+ else{scaleF=w/W0;W=W0;H=h/scaleF;}
  c.style.width=Math.round(w)+'px';c.style.height=Math.round(h)+'px';
  c.width=Math.round(w*R);c.height=Math.round(h*R);
  x.setTransform(scaleF*R,0,0,scaleF*R,0,0);

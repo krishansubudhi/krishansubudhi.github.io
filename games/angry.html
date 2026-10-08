@@ -51,13 +51,19 @@ const KEY='games.angry.best';
 let bestSaved=0;try{bestSaved=parseInt(localStorage.getItem(KEY),10)||0;}catch(e){}
 let best=bestSaved;B.textContent=best;
 function saveBest(){if(score>best){best=score;B.textContent=best;try{localStorage.setItem(KEY,String(best));}catch(e){}}}
-// Logical coordinate space: fixed 360 wide (same as the original level
-// layouts), height grows with however tall #area actually is (like Dino
-// Run / Flappy), so a phone screen is used edge to edge and a short, wide
-// desktop window gets clamped so the arc doesn't turn into a flat strip.
-const W=360,GROUND_MARGIN=32,SLING_LIFT=68,DESIGN_G=268;
-let H=300,G=268,SX=62,SY=200,scaleF=1,R=10,g=0.22,PW=0.13;
-const MIN_AR=W/620,MAX_AR=W/230;
+// Logical coordinate space: W0=360 is the width the level layouts (LV below)
+// were designed at. In portrait that stays the canvas width and height grows
+// with however tall #area is (like Dino Run / Flappy), so a phone screen is
+// used edge to edge. In landscape, a phone's #area is short and very wide —
+// instead of clamping canvas width down to protect a minimum logical height
+// (which used to leave a tiny, barely-scaled board stranded in the middle
+// with dead space either side), the logical HEIGHT is pinned at a floor and
+// the logical WIDTH grows to fill the full physical width. The level
+// re-centers into that extra width in start() below, using the wide space
+// and giving the slingshot real thumb room instead of crowding the edge.
+const W0=360,GROUND_MARGIN=32,SLING_LIFT=68,DESIGN_G=268,HFLOOR=230,ZONE_R=95;
+let W=W0,H=300,G=268,SX=62,SY=200,scaleF=1,R=10,g=0.22,PW=0.13;
+const MIN_AR=W0/620,MAX_AR=W0/HFLOOR;
 const LV=[
 {b:[[235,228,12,40],[295,228,12,40],[229,216,84,12]],p:[[265,257],[271,205]]},
 {b:[[220,218,12,50],[260,218,12,50],[300,218,12,50],[214,206,52,12],[266,206,52,12],[255,166,12,40],[235,154,52,12]],p:[[246,257],[286,257],[261,143]]},
@@ -69,15 +75,18 @@ function size(){
  const DPR=Math.min(3,window.devicePixelRatio||1);
  let w=Math.max(1,area.clientWidth),h=Math.max(1,area.clientHeight);
  const ar=w/h;
- if(ar<MIN_AR)h=w/MIN_AR;else if(ar>MAX_AR)w=h*MAX_AR;
- scaleF=w/W;H=h/scaleF;G=H-GROUND_MARGIN;SY=G-SLING_LIFT;
+ if(ar<MIN_AR){h=w/MIN_AR;scaleF=w/W0;W=W0;H=h/scaleF;}
+ else if(ar>MAX_AR){H=HFLOOR;scaleF=h/H;W=w/scaleF;}
+ else{scaleF=w/W0;W=W0;H=h/scaleF;}
+ G=H-GROUND_MARGIN;SY=G-SLING_LIFT;
+ SX=Math.max(62,W*0.12);
  cv.style.width=Math.round(w)+'px';cv.style.height=Math.round(h)+'px';
  cv.width=Math.round(w*DPR);cv.height=Math.round(h*DPR);
  x.setTransform(scaleF*DPR,0,0,scaleF*DPR,0,0);
 }
-function start(){base=score;const L=LV[lvl];const delta=G-DESIGN_G;
- bodies=L.b.map(a=>({x:a[0],y:a[1]+delta,w:a[2],h:a[3],vx:0,vy:0,hp:a[2]*a[3]/12,m:a[2]*a[3]/12,pig:0,aw:0,st:0}));
- L.p.forEach(p=>bodies.push({x:p[0]-11,y:p[1]-11+delta,w:22,h:22,vx:0,vy:0,hp:15,m:15,pig:1,aw:0,st:0}));
+function start(){base=score;const L=LV[lvl];const dy=G-DESIGN_G,dx=W-W0>4?(W-W0)/2:0;
+ bodies=L.b.map(a=>({x:a[0]+dx,y:a[1]+dy,w:a[2],h:a[3],vx:0,vy:0,hp:a[2]*a[3]/12,m:a[2]*a[3]/12,pig:0,aw:0,st:0}));
+ L.p.forEach(p=>bodies.push({x:p[0]-11+dx,y:p[1]-11+dy,w:22,h:22,vx:0,vy:0,hp:15,m:15,pig:1,aw:0,st:0}));
  birds=3;newBird();}
 function newBird(){birds--;bird={x:SX,y:SY,vx:0,vy:0,fly:0,t:0,still:0};state='aim';}
 function hurt(b,d){b.hp-=d;}
@@ -121,8 +130,10 @@ function drawBird(px,py,r){x.fillStyle=C.bird;x.beginPath();x.arc(px,py,r,0,7);x
  x.fillStyle=C.sky;x.beginPath();x.arc(px+r*.38,py-r*.35,r*.13,0,7);x.fill();}
 function draw(){x.fillStyle=C.sky;x.fillRect(0,0,W,H);x.fillStyle=C.gr;x.fillRect(0,G,W,H-G);
  x.lineCap='round';x.strokeStyle=C.dim;x.lineWidth=5;x.beginPath();x.moveTo(SX,G);x.lineTo(SX,SY+18);x.lineTo(SX-9,SY);x.moveTo(SX,SY+18);x.lineTo(SX+9,SY);x.stroke();
- if(drag){let px=bird.x,py=bird.y,vx=-(bird.x-SX)*PW,vy=-(bird.y-SY)*PW;x.fillStyle=C.dim;
-  for(let i=1;i<45;i++){vy+=g;px+=vx;py+=vy;if(py>G)break;if(i%3==0){x.beginPath();x.arc(px,py,1.8,0,7);x.fill();}}}
+ if(state==='aim'&&!drag){x.save();x.setLineDash([5,6]);x.strokeStyle=C.dim;x.globalAlpha=.4;x.lineWidth=1.5;
+  x.beginPath();x.arc(SX,SY,ZONE_R,0,7);x.stroke();x.restore();}
+ if(drag){let px=bird.x,py=bird.y,vx=-(bird.x-SX)*PW,vy=-(bird.y-SY)*PW;x.fillStyle=C.acc;x.globalAlpha=.9;
+  for(let i=1;i<50;i++){vy+=g;px+=vx;py+=vy;if(py>G)break;if(i%2===0){x.beginPath();x.arc(px,py,2.4,0,7);x.fill();}}x.globalAlpha=1;}
  if(state==='aim'){x.strokeStyle=C.wood;x.lineWidth=3;x.beginPath();x.moveTo(SX-9,SY);x.lineTo(bird.x,bird.y);x.moveTo(SX+9,SY);x.lineTo(bird.x,bird.y);x.stroke();}
  for(const b of bodies){if(b.pig){const cx=b.x+11,cy=b.y+11;x.fillStyle=C.pig;x.beginPath();x.arc(cx,cy,11,0,7);x.fill();
    x.fillStyle=C.ink;x.beginPath();x.arc(cx-4,cy-3,2.6,0,7);x.arc(cx+4,cy-3,2.6,0,7);x.fill();
@@ -148,19 +159,34 @@ function frame(){
  draw();requestAnimationFrame(frame);}
 function pt(e){const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*W/r.width,(e.clientY-r.top)*H/r.height];}
 function move(px,py){let dx=px-SX,dy=py-SY,l=Math.hypot(dx,dy);if(l>70){dx*=70/l;dy*=70/l;}bird.x=SX+dx;bird.y=SY+dy;}
+// A generous grab zone around AND behind the slingshot: a plain radius would
+// force a finger to start right on top of the bird (covering it and the aim
+// line to the targets). Widening it into a zone that extends down-and-left —
+// away from the targets, which sit up-and-right — lets a thumb start the
+// pull from open space below/behind the sling instead.
+function inZone(px,py){
+ if(Math.hypot(px-SX,py-SY)<ZONE_R)return true;
+ return px>SX-ZONE_R-40&&px<SX+30&&py>SY-20&&py<G+20;
+}
+let anchor=null;
 cv.onpointerdown=e=>{e.preventDefault();const[px,py]=pt(e);
  if(state==='win'){lvl++;if(lvl>=LV.length){state='done';return;}start();return;}
  if(state==='done'){lvl=0;score=0;start();return;}
  if(state==='lose'){score=base;start();return;}
- if(state==='aim'&&Math.hypot(px-bird.x,py-bird.y)<45){drag=true;cv.setPointerCapture(e.pointerId);move(px,py);}};
-cv.onpointermove=e=>{if(drag){e.preventDefault();const[px,py]=pt(e);move(px,py);}};
-cv.onpointerup=cv.onpointercancel=()=>{if(!drag)return;drag=false;const dx=bird.x-SX,dy=bird.y-SY;
+ if(state==='aim'&&inZone(px,py)){drag=true;anchor={x:px,y:py,bx:bird.x,by:bird.y};cv.setPointerCapture(e.pointerId);}};
+// Relative drag: the pull is driven by how far the finger has MOVED from
+// where it first touched down, not by the finger's raw position — so the
+// bird is never pinned directly under the finger no matter where in the
+// grab zone the drag started.
+cv.onpointermove=e=>{if(drag){e.preventDefault();const[px,py]=pt(e);
+ move(anchor.bx+(px-anchor.x),anchor.by+(py-anchor.y));}};
+cv.onpointerup=cv.onpointercancel=()=>{if(!drag)return;drag=false;anchor=null;const dx=bird.x-SX,dy=bird.y-SY;
  if(Math.hypot(dx,dy)<12){bird.x=SX;bird.y=SY;return;}bird.vx=-dx*PW;bird.vy=-dy*PW;bird.fly=1;state='fly';
  SFX.tone(220,0.16,'sawtooth',0.05,80);};
 addEventListener('resize',size);addEventListener('orientationchange',size);
 size();start();frame();
 window.__angryLaunch=(dx,dy)=>{if(state!=='aim')return;drag=true;move(bird.x+dx===bird.x?SX-dx:SX-dx,SY-dy);bird.x=SX-dx;bird.y=SY-dy;drag=false;bird.vx=-(bird.x-SX)*PW;bird.vy=-(bird.y-SY)*PW;bird.fly=1;state='fly';SFX.tone(220,0.16,'sawtooth',0.05,80);}; // exposed for automated verification only
-window.__angryState=()=>({state,lvl,score,best,birds,bodies:bodies.map(b=>({x:b.x,y:b.y,w:b.w,h:b.h,pig:b.pig,hp:b.hp})),bird:bird?{x:bird.x,y:bird.y,fly:bird.fly}:null}); // exposed for automated verification only
+window.__angryState=()=>({state,lvl,score,best,birds,sx:SX,sy:SY,g:G,w:W,h:H,scaleF,bodies:bodies.map(b=>({x:b.x,y:b.y,w:b.w,h:b.h,pig:b.pig,hp:b.hp})),bird:bird?{x:bird.x,y:bird.y,fly:bird.fly}:null}); // exposed for automated verification only
 })();
 </script>
 <script src="/games/register.js"></script>

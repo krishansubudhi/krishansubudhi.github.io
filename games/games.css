@@ -46,3 +46,41 @@ body.play .top{margin:0 0 10px;flex:none}
   .back,.mute{min-width:52px;height:52px;font-size:24px}
   .game{min-height:104px}
 }
+/* Phone landscape ("play" screens only): a short, wide viewport. The portrait
+   rules above cap main at 560px and spend ~130px of vertical chrome on the
+   top bar + stats, which on a 390px-tall landscape phone leaves a tiny board
+   stranded in the middle with dead space on both sides. Here the page widens
+   to use the full width and every fixed-height chrome row shrinks so the
+   play area (and each game's own canvas/grid sizing, which reads #area's or
+   #wrap's clientWidth/clientHeight) gets the most room possible. Respect the
+   notch via safe-area insets on whichever edges are now load-bearing. */
+@media (orientation:landscape) and (max-height:500px){
+  body.play{
+    padding-top:max(6px,env(safe-area-inset-top));
+    padding-bottom:max(6px,env(safe-area-inset-bottom));
+    padding-left:max(10px,env(safe-area-inset-left));
+    padding-right:max(10px,env(safe-area-inset-right));
+  }
+  body.play main{max-width:none;width:100%}
+  body.play .top{margin:0 0 6px;gap:8px}
+  body.play .top h1{font-size:17px}
+  body.play .back,body.play .mute{min-width:40px;height:40px;font-size:18px}
+  body.play .stats{font-size:13px}
+  body.play .row,body.play .tabs{margin-bottom:6px}
+  body.play .tabs button{min-height:38px}
+  body.play .hint{margin-top:4px}
+  /* Directional d-pad controls (Blocks, Space Fight): dock them to the left
+     and right edges — exactly where thumbs land holding a phone sideways —
+     instead of a bottom row that eats into the already-scarce height. */
+  body.play .ctrls{
+    position:fixed;top:0;right:max(8px,env(safe-area-inset-right));bottom:0;
+    display:flex;flex-direction:column;justify-content:center;gap:10px;
+    width:56px;z-index:4;background:none;pointer-events:none;
+  }
+  body.play .ctrls button{min-height:48px;font-size:20px;pointer-events:auto}
+  /* "left"/-1 peels off to the opposite (left) edge so both thumbs share the
+     load instead of stacking every button on one side. */
+  body.play .ctrls button[data-k="left"],body.play .ctrls button[data-d="-1"]{
+    position:fixed;left:max(8px,env(safe-area-inset-left));right:auto;top:50%;transform:translateY(-50%);width:56px;
+  }
+}

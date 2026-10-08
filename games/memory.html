@@ -82,8 +82,13 @@ function paintBest(){const b=bestGet();BS.textContent=b?b.m+' · '+fmt(b.t):'–
 function stop(){if(tick){clearInterval(tick);tick=null;}}
 function size(){const L=LEVELS[lv],w=WRAP.clientWidth,h=WRAP.clientHeight,g=8;
  const cw=(w-g*(L.c-1))/L.c,ch=(h-g*(L.r-1))/L.r;BD.style.fontSize=Math.max(20,Math.min(cw,ch)*0.62)+'px';
- // keep cards from getting absurdly tall on a wide-short or tall-narrow screen
- const ratio=1.8;let W=w,H=h;if(ch>cw*ratio)H=(cw*ratio)*L.r+g*(L.r-1);else if(cw>ch)W=ch*L.c+g*(L.c-1);
+ // Keep cards from getting absurdly stretched on a wide-short (landscape
+ // phone) or tall-narrow screen: cap whichever axis is overrunning, but
+ // let cards be up to `ratio` wider-than-tall too — not just capped back to
+ // square the moment a landscape screen gives more width than height, which
+ // used to shrink the whole board down to a small square stranded in the
+ // middle of the available width.
+ const ratio=1.8;let W=w,H=h;if(ch>cw*ratio)H=(cw*ratio)*L.r+g*(L.r-1);else if(cw>ch*ratio)W=(ch*ratio)*L.c+g*(L.c-1);
  BD.style.maxWidth=W+'px';BD.style.maxHeight=H+'px';BD.style.margin='auto';BD.style.width='100%';BD.style.height='100%';}
 function deal(){stop();const L=LEVELS[lv],n=L.r*L.c/2;OV.hidden=true;open=[];moves=0;pairs=0;elapsed=0;t0=0;lock=false;
  const pick=EMO.map((_,i)=>i);for(let i=pick.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pick[i],pick[j]]=[pick[j],pick[i]];}

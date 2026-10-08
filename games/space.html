@@ -43,9 +43,13 @@ const SC=document.getElementById('sc'),WV=document.getElementById('wv'),LF=docum
 const OV=document.getElementById('ov'),OVT=document.getElementById('ovt'),OVS=document.getElementById('ovs');
 const COLS=['#ff8b82','#f2c94c','#5fd97f','#8ab4f8','#c792ea','#ffb46b'];
 let W=360,H=480,best=0;try{best=parseInt(localStorage.getItem('games.space.best'),10)||0;}catch(e){}BS.textContent=best;
-// Letterbox the play field to a 3:4-ish range so a short, wide desktop window
-// doesn't turn the formation into an unplayable horizontal sliver.
-const MIN_AR=360/640,MAX_AR=360/320;
+// Letterbox the play field so an extreme window shape doesn't turn the
+// formation into an unplayable sliver, but allow a much wider range than a
+// 3:4-ish box: the enemy grid and ship range below are computed from W at
+// resize time (not off fixed design coordinates), so a landscape phone can
+// spread the wave across most of its width instead of being squeezed into a
+// small square with dead space either side.
+const MIN_AR=360/640,MAX_AR=360/140;
 let ship=null,shots=[],enemies=[],bombs=[],parts=[],stars=[],score,wave,lives,state='ready',fireT=0,banner=0,dir=0,form,last=0;
 function size(){const R=Math.min(3,window.devicePixelRatio||1);
  let w=Math.max(1,A.clientWidth),h=Math.max(1,A.clientHeight);const ar=w/h;

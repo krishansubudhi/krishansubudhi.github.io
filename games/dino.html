@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" href="/games/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="/games/games.css">
 <title>Dino Run</title>
-<style>#area{flex:1;min-height:0;margin:8px 0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}#g{display:block;background:var(--card2);border-radius:10px;touch-action:manipulation;cursor:pointer;user-select:none;-webkit-user-select:none}</style>
+<style>#area{flex:1;min-height:0;margin:8px 0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}#g{display:block;background:var(--card2);border-radius:10px;touch-action:none;cursor:pointer;user-select:none;-webkit-user-select:none}</style>
 </head>
 <body class="play">
 <main>
@@ -36,34 +36,39 @@ const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim
 const INK=css('--ink'),DIM=css('--dim'),ACC=css('--accent'),BAD=css('--bad'),OK=css('--ok'),LINE=css('--line');
 const KEY='games.dino.best';
 let saved=0;try{saved=parseInt(localStorage.getItem(KEY),10)||0;}catch(e){}
-// Logical coordinate space is always 360 units wide; height (and so ground Y) grows
-// with however tall #area actually is, so a portrait phone gets a tall sky instead
-// of a squashed strip, while every sprite and the physics stay the same size/feel.
-// On a very tall narrow area or a very short wide one, the box is letterboxed and
-// centered within #area instead of stretching to an extreme shape.
-const W=360;let H=180,G=150,scaleF=1;
-const MIN_AR=W/700,MAX_AR=W/240;
+// Logical coordinate space is 360 units wide at rest; height (and so ground Y)
+// grows with however tall #area actually is, so a portrait phone gets a tall
+// sky instead of a squashed strip, while every sprite and the physics stay
+// the same size/feel. On a short, wide screen — a landscape phone, or a
+// short desktop window — the logical height is pinned at a floor instead of
+// shrinking the canvas width to protect it, so the run track fills #area
+// edge to edge rather than sitting as a small strip with dead space either
+// side. A very tall narrow area still gets its height letterboxed as before.
+const W0=360,HFLOOR=240;let W=W0,H=180,G=150,scaleF=1;
+const MIN_AR=W0/700,MAX_AR=W0/HFLOOR;
 let d,obs,t,speed,score,best=saved,state='ready',clouds;B.textContent=best;
 function size(){
  const R=Math.min(3,window.devicePixelRatio||1);
  let w=Math.max(1,area.clientWidth),h=Math.max(1,area.clientHeight);
  const ar=w/h;
- if(ar<MIN_AR)h=w/MIN_AR;else if(ar>MAX_AR)w=h*MAX_AR;
- scaleF=w/W;H=h/scaleF;G=H-30;
+ if(ar<MIN_AR){h=w/MIN_AR;scaleF=w/W0;W=W0;H=h/scaleF;}
+ else if(ar>MAX_AR){H=HFLOOR;scaleF=h/H;W=w/scaleF;}
+ else{scaleF=w/W0;W=W0;H=h/scaleF;}
+ G=H-30;
  c.style.width=Math.round(w)+'px';c.style.height=Math.round(h)+'px';
  c.width=Math.round(w*R);c.height=Math.round(h*R);
  x.setTransform(scaleF*R,0,0,scaleF*R,0,0);
  if(d)d.y=Math.min(d.y,G-d.h);
 }
-function reset(){d={x:40,y:G-30,vy:0,w:24,h:30,duck:false};obs=[];t=0;speed=4;score=0;clouds=[{x:80,yf:0.2},{x:250,yf:0.333}];}
+function reset(){d={x:40,y:G-30,vy:0,w:24,h:30,duck:false};obs=[];t=0;speed=4;score=0;clouds=[{x:80,yf:0.2},{x:W*0.69,yf:0.333}];}
 size();reset();
 function jump(){if(state!=='run'){reset();state='run';SFX.tone(440,0.1,'triangle');return;}if(d.y>=G-d.h-0.5){d.vy=-9.5;SFX.tone(520,0.14,'square',0.035,820);}}
 c.addEventListener('pointerdown',e=>{e.preventDefault();jump();});
 addEventListener('keydown',e=>{if(e.code==='Space'||e.code==='ArrowUp'){e.preventDefault();jump();}});
 addEventListener('resize',size);addEventListener('orientationchange',size);
 function spawn(){const r=Math.random();
- if(score>300&&r<0.25)obs.push({x:380,y:G-55-Math.random()*20,w:26,h:14,bird:1});
- else{const n=1+(Math.random()<0.35?1:0);obs.push({x:380,y:G-28,w:12*n+(n-1)*4,h:28,n});}}
+ if(score>300&&r<0.25)obs.push({x:W+20,y:G-55-Math.random()*20,w:26,h:14,bird:1});
+ else{const n=1+(Math.random()<0.35?1:0);obs.push({x:W+20,y:G-28,w:12*n+(n-1)*4,h:28,n});}}
 function drawDino(){x.fillStyle=INK;const{x:X,y:Y}=d;
  x.fillRect(X+8,Y,16,10);x.fillRect(X,Y+8,18,14);x.fillStyle=css('--card2');x.fillRect(X+18,Y+3,3,3);x.fillStyle=INK;
  const leg=state==='run'&&Y>=G-d.h-0.5?(Math.floor(t/6)%2):0;
@@ -72,9 +77,9 @@ function drawObs(o){if(o.bird){x.fillStyle=BAD;x.fillRect(o.x,o.y+5,o.w,5);const
  else{x.fillStyle=OK;for(let i=0;i<o.n;i++){const cx=o.x+i*16;x.fillRect(cx+3,o.y,6,o.h);x.fillRect(cx,o.y+8,3,8);x.fillRect(cx+9,o.y+5,3,8);}}}
 function hit(a,b){return a.x+4<b.x+b.w&&a.x+a.w-4>b.x&&a.y+4<b.y+b.h&&a.y+a.h>b.y;}
 function frame(){x.clearRect(0,0,W,H);
- x.fillStyle=LINE;clouds.forEach(k=>{const ky=k.yf*G;x.fillRect(k.x,ky,30,6);x.fillRect(k.x+8,ky-5,14,5);if(state==='run'){k.x-=speed*0.2;if(k.x<-40)k.x=380;}});
+ x.fillStyle=LINE;clouds.forEach(k=>{const ky=k.yf*G;x.fillRect(k.x,ky,30,6);x.fillRect(k.x+8,ky-5,14,5);if(state==='run'){k.x-=speed*0.2;if(k.x<-40)k.x=W+20;}});
  x.strokeStyle=DIM;x.beginPath();x.moveTo(0,G+0.5);x.lineTo(W,G+0.5);x.stroke();
- for(let i=0;i<12;i++){x.fillStyle=DIM;x.fillRect(((i*37-t*speed)%400+400)%400-20,G+6+(i%3)*5,3,1);}
+ const dotSpan=W+40;for(let i=0;i<12*Math.ceil(dotSpan/400);i++){x.fillStyle=DIM;x.fillRect(((i*37-t*speed)%dotSpan+dotSpan)%dotSpan-20,G+6+(i%3)*5,3,1);}
  if(state==='run'){t++;d.vy+=0.55;d.y=Math.min(G-d.h,d.y+d.vy);if(d.y>=G-d.h)d.vy=0;
   if(!obs.length||obs[obs.length-1].x<W-(150+Math.random()*120)*(speed/5))if(Math.random()<0.04||!obs.length)spawn();
   obs.forEach(o=>o.x-=speed);obs=obs.filter(o=>o.x>-40);
