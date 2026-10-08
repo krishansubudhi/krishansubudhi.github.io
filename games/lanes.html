@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>(function(){function v(){var h=(window.visualViewport&&visualViewport.height)||innerHeight;document.documentElement.style.setProperty('--vh',h*0.01+'px');}v();addEventListener('resize',v);addEventListener('orientationchange',v);if(window.visualViewport)visualViewport.addEventListener('resize',v);})();</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0e1116">
+<link rel="manifest" href="/games/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="/games/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/games/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="/games/games.css">
+<title>Lane Dash</title>
+<style>
+#area{flex:1;min-height:0;margin:8px 0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;touch-action:none}
+#g{display:block;background:var(--card2);border-radius:10px;touch-action:none;cursor:pointer;user-select:none;-webkit-user-select:none}
+body.play{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+</style>
+</head>
+<body class="play">
+<main>
+<div class="top"><a class="back" href="/games/" aria-label="Back to games">‹</a><h1>🏎️ Lane Dash</h1><button id="mute" class="mute" aria-label="Sound on or off">🔊</button></div>
+<div class="stats"><span>Score <b id="s" style="color:var(--ink)">0</b></span><span>Best <b id="b" style="color:var(--accent)">0</b></span></div>
+<div id="area"><canvas id="g"></canvas></div>
+</main>
+<script>
+// Gentle sounds via WebAudio, with a mute toggle shared by every game.
+const SFX=(function(){let ac=null,muted=false,unlocked=false;try{muted=localStorage.getItem('games.muted')==='1';}catch(e){}
+const btn=document.getElementById('mute');function paint(){if(btn){btn.textContent=muted?'🔇':'🔊';btn.setAttribute('aria-pressed',muted?'true':'false');}}paint();
+function ctx(){ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();return ac;}
+// iOS Safari only allows WebAudio/speech after a real user gesture. Unlock both
+// the first time the player taps anywhere, so later automatic (setTimeout-driven)
+// sounds and speech are allowed to play for the rest of the session.
+function unlock(){if(unlocked)return;unlocked=true;
+ try{if(navigator.audioSession)navigator.audioSession.type='playback';}catch(e){}
+ try{const a=ctx(),b=a.createBuffer(1,1,22050),s=a.createBufferSource();s.buffer=b;s.connect(a.destination);s.start(0);}catch(e){}
+ try{if('speechSynthesis' in window){const u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u);}}catch(e){}}
+document.addEventListener('touchend',unlock,{once:true,passive:true});
+document.addEventListener('click',unlock,{once:true});
+function tone(f,d,type,vol,slide){if(muted)return;try{const a=ctx();
+ const t=a.currentTime,o=a.createOscillator(),g=a.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);
+ g.gain.setValueAtTime(vol||0.06,t);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d+0.02);}catch(e){}}
+function notes(list,step,type){list.forEach((f,i)=>setTimeout(()=>tone(f,step*1.4,type),i*step*1000));}
+if(btn)btn.addEventListener('click',()=>{muted=!muted;try{localStorage.setItem('games.muted',muted?'1':'0');}catch(e){}paint();if(muted&&window.speechSynthesis)try{speechSynthesis.cancel();}catch(e){}tone(660,0.08);});
+return{tone,notes,get muted(){return muted;}};})();
+</script>
+<script>
+(function(){
+const area=document.getElementById('area'),c=document.getElementById('g'),x=c.getContext('2d'),S=document.getElementById('s'),B=document.getElementById('b');
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim()||'#ccc';
+const INK=css('--ink'),DIM=css('--dim'),ACC=css('--accent'),BAD=css('--bad'),OK=css('--ok'),WARN=css('--warn'),LINE=css('--line'),CARD2=css('--card2');
+const KEY='games.lanes.best';
+let saved=0;try{saved=parseInt(localStorage.getItem(KEY),10)||0;}catch(e){}
+// Logical coordinate space is always 320 units wide split into 4 lanes; height
+// (and so how much road is visible) grows with however tall #area actually is,
+// like Dino Run and Flappy Bird. Only a short, wide window gets its width
+// clamped so the road stays a sensible lane-sized strip instead of smearing
+// edge to edge, with the leftover space on the sides still live as tap zones
+// because pointer listeners are bound to #area, not the canvas.
+const LANES=4,W=320,laneW=W/LANES;let H=560,scaleF=1;
+const MIN_AR=W/820,MAX_AR=W/380;
+const CARW=50,CARH=78,START_LANE=1;
+const BASE_SPEED=140,MAX_SPEED=520;
+let carX,carY=H-110,lane=START_LANE,t=0,roadScroll=0,speed=BASE_SPEED,score=0,best=saved,state='ready';
+let obstacles=[],coins=[],spawnTimer=0,coinTimer=0,last=0;
+B.textContent=best;
+function laneX(l){return (l+0.5)*laneW;}
+function size(){
+ const R=Math.min(3,window.devicePixelRatio||1);
+ let w=Math.max(1,area.clientWidth),h=Math.max(1,area.clientHeight);
+ const ar=w/h;
+ if(ar<MIN_AR)h=w/MIN_AR;else if(ar>MAX_AR)w=h*MAX_AR;
+ scaleF=w/W;H=h/scaleF;
+ c.style.width=Math.round(w)+'px';c.style.height=Math.round(h)+'px';
+ c.width=Math.round(w*R);c.height=Math.round(h*R);
+ x.setTransform(scaleF*R,0,0,scaleF*R,0,0);
+ carY=H-Math.max(70,H*0.14);
+}
+function reset(){lane=START_LANE;carX=laneX(lane);obstacles=[];coins=[];t=0;roadScroll=0;speed=BASE_SPEED;score=0;spawnTimer=0.6;coinTimer=0.9;}
+size();reset();
+function changeLane(d){if(state!=='run')return;const n=lane+d;if(n<0||n>=LANES)return;lane=n;SFX.tone(520,0.05,'square',0.03);}
+function start(){reset();state='run';SFX.tone(440,0.1,'triangle');}
+let downX=0,justStarted=false;
+function relX(e){const r=area.getBoundingClientRect();return e.clientX-r.left;}
+area.addEventListener('pointerdown',e=>{
+ e.preventDefault();
+ if(state!=='run'){justStarted=true;start();return;}
+ downX=relX(e);
+});
+area.addEventListener('pointerup',e=>{
+ if(justStarted){justStarted=false;return;}
+ if(state!=='run')return;
+ const upX=relX(e),dx=upX-downX,r=area.getBoundingClientRect();
+ const dir=Math.abs(dx)>24?(dx>0?1:-1):(upX<r.width/2?-1:1);
+ changeLane(dir);
+});
+area.addEventListener('pointercancel',()=>{justStarted=false;});
+addEventListener('keydown',e=>{
+ const left=e.code==='ArrowLeft'||e.code==='KeyA',right=e.code==='ArrowRight'||e.code==='KeyD';
+ if(!left&&!right)return;
+ e.preventDefault();
+ if(state!=='run')start();else changeLane(left?-1:1);
+});
+addEventListener('resize',size);addEventListener('orientationchange',size);
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function spawnWave(){
+ const lanes=shuffle([...Array(LANES).keys()]);
+ const n=1+Math.floor(Math.random()*(LANES-1)); // leaves at least one lane open
+ lanes.slice(0,n).forEach(l=>{
+  const r=Math.random();let type='car',w=50,h=78,color=OK;
+  if(r<0.28){type='cone';w=24;h=30;color=WARN;}
+  else if(r<0.48){type='pothole';w=42;h=26;color=LINE;}
+  else{color=[BAD,OK,DIM][Math.floor(Math.random()*3)];}
+  obstacles.push({lane:l,x:laneX(l),y:-h,w,h,type,color});
+ });
+}
+function spawnCoin(){const l=Math.floor(Math.random()*LANES);coins.push({lane:l,x:laneX(l),y:-20,r:10,dead:false});}
+function rectHit(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;}
+function crash(){state='over';SFX.notes([392,330,262],0.12,'triangle');best=Math.max(best,Math.floor(score));B.textContent=best;try{localStorage.setItem(KEY,String(best));}catch(e){}}
+function step(dt){
+ roadScroll+=speed*dt;
+ if(state!=='run')return;
+ t+=dt;
+ carX+=(laneX(lane)-carX)*Math.min(1,dt*12);
+ score+=speed*0.03*dt;
+ speed=Math.min(MAX_SPEED,BASE_SPEED+score*1.1);
+ spawnTimer-=dt;if(spawnTimer<=0){spawnWave();spawnTimer=Math.max(0.55,1.5-speed/450);}
+ coinTimer-=dt;if(coinTimer<=0){spawnCoin();coinTimer=1+Math.random()*1.2;}
+ obstacles.forEach(o=>o.y+=speed*dt);obstacles=obstacles.filter(o=>o.y<H+80);
+ coins.forEach(k=>k.y+=speed*dt);coins=coins.filter(k=>!k.dead&&k.y<H+40);
+ const pr={x:carX-CARW/2+6,y:carY-CARH/2+6,w:CARW-12,h:CARH-12};
+ for(const o of obstacles){
+  const inX=o.type==='pothole'?6:4,inY=o.type==='pothole'?6:4;
+  const or={x:o.x-o.w/2+inX,y:o.y-o.h/2+inY,w:o.w-inX*2,h:o.h-inY*2};
+  if(rectHit(pr,or)){crash();break;}
+ }
+ for(const k of coins){if(!k.dead&&Math.hypot(k.x-carX,k.y-carY)<k.r+CARW*0.3){k.dead=true;score+=15;SFX.tone(988,0.08,'triangle',0.05);}}
+ coins=coins.filter(k=>!k.dead);
+ S.textContent=Math.floor(score);
+}
+function roundRect(x0,y0,w,h,r,color){x.fillStyle=color;x.beginPath();x.moveTo(x0+r,y0);x.arcTo(x0+w,y0,x0+w,y0+h,r);x.arcTo(x0+w,y0+h,x0,y0+h,r);x.arcTo(x0,y0+h,x0,y0,r);x.arcTo(x0,y0,x0+w,y0,r);x.closePath();x.fill();}
+function drawCar(cx,cy,w,h,body){
+ x.save();x.translate(cx,cy);
+ roundRect(-w/2,-h/2,w,h,10,body);
+ x.fillStyle=INK;const ww=6,wh=16;
+ x.fillRect(-w/2-2,-h/2+10,ww,wh);x.fillRect(w/2-ww+2,-h/2+10,ww,wh);
+ x.fillRect(-w/2-2,h/2-10-wh,ww,wh);x.fillRect(w/2-ww+2,h/2-10-wh,ww,wh);
+ roundRect(-w*0.32,-h*0.22,w*0.64,h*0.4,4,CARD2);
+ x.restore();
+}
+function drawCone(cx,cy,w,h){x.fillStyle=WARN;x.beginPath();x.moveTo(cx,cy-h/2);x.lineTo(cx+w/2,cy+h/2);x.lineTo(cx-w/2,cy+h/2);x.closePath();x.fill();x.fillStyle=CARD2;x.fillRect(cx-w/2+3,cy+h/2-7,w-6,4);}
+function drawPothole(cx,cy,w,h){x.fillStyle=LINE;x.beginPath();x.ellipse(cx,cy,w/2,h/2,0,0,Math.PI*2);x.fill();x.strokeStyle=DIM;x.lineWidth=2;x.stroke();}
+function drawCoin(cx,cy,r){x.fillStyle=ACC;x.beginPath();x.arc(cx,cy,r,0,Math.PI*2);x.fill();x.strokeStyle=css('--bg')||'#0e1116';x.lineWidth=2;x.beginPath();x.arc(cx,cy,r-3,0,Math.PI*2);x.stroke();}
+function drawObstacle(o){if(o.type==='cone')drawCone(o.x,o.y,o.w,o.h);else if(o.type==='pothole')drawPothole(o.x,o.y,o.w,o.h);else drawCar(o.x,o.y,o.w,o.h,o.color);}
+function drawRoad(){
+ x.fillStyle=CARD2;x.fillRect(0,0,W,H);
+ x.fillStyle=LINE;x.fillRect(0,0,4,H);x.fillRect(W-4,0,4,H);
+ x.strokeStyle=DIM;x.lineWidth=4;x.setLineDash([22,18]);x.lineDashOffset=-(roadScroll%40);
+ for(let i=1;i<LANES;i++){const lx=i*laneW;x.beginPath();x.moveTo(lx,0);x.lineTo(lx,H);x.stroke();}
+ x.setLineDash([]);
+}
+function draw(){
+ x.clearRect(0,0,W,H);
+ drawRoad();
+ coins.forEach(k=>drawCoin(k.x,k.y,k.r));
+ obstacles.forEach(drawObstacle);
+ drawCar(carX,carY,CARW,CARH,ACC);
+ if(state!=='run'){
+  const ty=H*0.4;
+  x.fillStyle=state==='over'?BAD:ACC;x.font='bold 20px -apple-system,sans-serif';x.textAlign='center';
+  x.fillText(state==='over'?'CRASH!':'TAP TO START',W/2,ty);
+  x.fillStyle=DIM;x.font='14px -apple-system,sans-serif';
+  x.fillText(state==='over'?'score '+Math.floor(score)+' · tap to retry':'tap/swipe sides or arrows to switch lanes',W/2,ty+22);
+ }
+ c.dataset.state=state;
+}
+function loop(now){const dt=Math.min(0.05,last?(now-last)/1000:0);last=now;step(dt);draw();requestAnimationFrame(loop);}
+requestAnimationFrame(loop);
+})();
+</script>
+<script src="/games/register.js"></script>
+</body>
+</html>
