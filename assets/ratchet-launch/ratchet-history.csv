@@ -1,0 +1,33 @@
+commit,date,subject,source_lines,test_lines,source_ceiling,test_ceiling
+b71d320,2026-10-06,ratchet: a code-size budget that only goes down,690,269,710,289
+2da1918,2026-10-06,Replace OWNER placeholders with krishansubudhi,690,269,710,289
+883b462,2026-10-06,README: say what ratchet counts,690,269,710,289
+5edc5e7,2026-10-06,Explain pre-commit setup,690,269,710,289
+a119d28,2026-10-06,Agent-driven setup,690,269,710,289
+eaada98,2026-10-06,CI: dogfood ratchet on itself,690,269,710,289
+5a1ea85,2026-10-06,Release workflow for PyPI (trusted publishing),690,269,710,289
+d7fb61f,2026-10-06,Demo GIF and simpler README,690,269,710,289
+cbf468e,2026-10-06,Ship ratchet as a Claude Code plugin,690,269,710,289
+9d0293e,2026-10-06,Pin plugin launcher versions,690,269,710,289
+0119f37,2026-10-07,Add a budget command and hooks so agents stop refusal loops,764,322,764,322
+e60366d,2026-10-09,Release 0.2.0,764,322,764,322
+9334427,2026-10-09,"Rewrite Quickstart: ratchet measures, a hook enforces",764,322,764,322
+3636671,2026-10-09,"Quickstart: agents enforce by default, git hook is opt-in strict mode",764,322,764,322
+93d0c23,2026-10-09,Docs: ask before installing the git hook; ratchet works without git,764,322,764,322
+67cbeea,2026-10-09,Release 0.2.1: a cleaner refusal message,764,322,764,322
+8c5032c,2026-10-09,Docs: add an Uninstall section,764,322,764,322
+d37c952,2026-10-09,Docs: refresh,764,322,764,322
+16580c6,2026-10-09,Docs: short README; details moved to docs/,764,322,764,322
+b42cb53,2026-10-09,"SETUP-FOR-AGENTS: self-contained, wire the running agent first",764,322,764,322
+53034ea,2026-10-09,Docs: GIF of an agent stopping to ask after a ratchet block,764,322,764,322
+314637d,2026-10-09,Docs: put the agent GIF under What a refusal looks like,764,322,764,322
+4188f0c,2026-10-09,Release 0.2.2: init --force refuses to re-baseline a dirty tree,763,322,764,322
+f48ca41,2026-10-09,SETUP-FOR-AGENTS: survive fetch summaries; never compress working code to fit,763,322,764,322
+ebb6c3a,2026-10-09,Snippet: a request to commit is not a grant,763,322,764,322
+172b2fe,2026-10-09,README: real Gemini CLI run after Quickstart step 3,763,322,764,322
+74e3d71,2026-10-09,"README/setup: surface uninstall near Quickstart, use raw SETUP-FOR-AGENTS URL",763,322,764,322
+8c57092,2026-10-09,"docs: fix README grammar, clarify source/tests groups, fix config example",763,322,764,322
+c7dd9ca,2026-10-09,aider row: warn about the .aider* gitignore collision with .aider.conf.yml,763,322,764,322
+1aa5481,2026-10-09,"aider row: the gitignore fix has to land before .aider.conf.yml, not after",763,322,764,322
+89fa388,2026-10-09,init: count files under testing/ as tests,763,322,764,322
+ba21545,2026-10-11,"Release 0.2.3: init counts files under testing/ as tests, aider row fixes",763,322,764,322
