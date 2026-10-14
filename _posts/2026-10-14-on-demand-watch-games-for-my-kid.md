@@ -4,7 +4,6 @@ author: krishan
 layout: post
 categories: agents
 date: 2026-10-14
-permalink: /posts/on-demand-watch-games-for-my-kid/
 title: I asked my watch for a game for my kid, and had it that evening
 description: I talk to a personal agent from my phone and my Wear OS watch. I asked it for a game for my kid, then kept asking, and ended the evening with five games on my wrist. They are small and disposable, and I wouldn't have built them any other way.
 ---
@@ -64,11 +63,6 @@ _A rendering of Shake Dice: a one-die roll, then a two-dice roll._
 ## Versions 2.5 to 2.10
 
 The watch app went from version 2.5 to 2.10 in about one evening. Each version was a voice request, and each was signed with the same key, so the watch updated itself and I never reinstalled anything. A request is one sentence. If the sentence was wrong, I say another.
-
-## What I can and can't say
-
-- **The pictures are renderings.** I had no emulator, so I redrew each game with the shapes, colours and layout from the app's drawing code. They are faithful, but they aren't screenshots.
-- **The newer games haven't been tested on a real watch by the agent.** The balloon notes above came from my own use. Tilt Ball, Copy Me and Shake Dice still need me to check the feel, and in particular whether Tilt Ball rolls the way you tip it.
 
 ## Why bother
 
