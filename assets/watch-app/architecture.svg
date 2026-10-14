@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 760" width="600" height="760" role="img" aria-labelledby="wa1t wa1d">
+  <title id="wa1t">How a question travels from the watch to the assistant and back</title>
+  <desc id="wa1d">On the watch, the mic feeds Android's speech recognizer, which turns speech into text. The text goes over HTTPS with a token to my server, where the assistant, a Claude agent, writes a reply. The reply text comes back to the watch, which splits it into sentences. Each sentence goes back to the server, where Kokoro-82M turns it into audio. The watch plays the audio, buzzes and shows a notification. If Kokoro fails, the watch's own text-to-speech reads the rest.</desc>
+  <defs>
+    <marker id="wa1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="ah"/></marker>
+  </defs>
+  <style>
+    text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+    .bg{fill:#ffffff;stroke:#e2e5e9}
+    .zone{fill:#f6f7f9;stroke:#d5dae0;stroke-width:1.5}
+    .zt{font-size:22px;font-weight:700;fill:#1f2933}
+    .box{fill:#ffffff;stroke:#4a5561;stroke-width:2}
+    .gold{fill:#fff6d6;stroke:#b8901f;stroke-width:2.5}
+    .bt{font-size:23px;font-weight:600;fill:#1f2933}
+    .bs{font-size:18px;fill:#5b6672}
+    .ln{fill:none;stroke:#4a5561;stroke-width:2.4}
+    .ah{fill:#4a5561}
+    .el{font-size:18px;fill:#5b6672;font-style:italic}
+    .dash{fill:none;stroke:#8a949e;stroke-width:2;stroke-dasharray:6 6}
+    @media (prefers-color-scheme:dark){
+      .bg{fill:#1b1f24;stroke:#2d333b}
+      .zone{fill:#22272e;stroke:#3a414a}
+      .zt,.bt{fill:#e6e9ec}
+      .box{fill:#1b1f24;stroke:#9aa5b1}
+      .gold{fill:#3a3218;stroke:#f2c94c}
+      .bs,.el{fill:#a9b3bd}
+      .ln{stroke:#9aa5b1}
+      .ah{fill:#9aa5b1}
+    }
+  </style>
+  <rect class="bg" x="1" y="1" width="598" height="758" rx="14"/>
+
+  <!-- watch zone -->
+  <rect class="zone" x="20" y="20" width="560" height="300" rx="12"/>
+  <text class="zt" x="40" y="54">Pixel Watch</text>
+  <rect class="gold" x="40" y="74" width="240" height="72" rx="36"/>
+  <text class="bt" x="160" y="118" text-anchor="middle">tap the mic</text>
+  <rect class="box" x="320" y="74" width="240" height="72" rx="10"/>
+  <text class="bt" x="440" y="104" text-anchor="middle">speech → text</text>
+  <text class="bs" x="440" y="130" text-anchor="middle">SpeechRecognizer</text>
+  <path class="ln" d="M280 110 L318 110" marker-end="url(#wa1a)"/>
+
+  <rect class="box" x="40" y="200" width="240" height="96" rx="10"/>
+  <text class="bt" x="160" y="234" text-anchor="middle">play + buzz</text>
+  <text class="bs" x="160" y="260" text-anchor="middle">audio, reply text,</text>
+  <text class="bs" x="160" y="282" text-anchor="middle">notification</text>
+  <rect class="box" x="320" y="200" width="185" height="96" rx="10"/>
+  <text class="bt" x="412" y="234" text-anchor="middle">split reply</text>
+  <text class="bt" x="412" y="264" text-anchor="middle">into sentences</text>
+
+  <!-- server zone -->
+  <rect class="zone" x="20" y="420" width="560" height="330" rx="12"/>
+  <text class="zt" x="310" y="454" text-anchor="middle">My server</text>
+  <rect class="box" x="320" y="474" width="240" height="72" rx="10"/>
+  <text class="bt" x="440" y="504" text-anchor="middle">assistant API</text>
+  <text class="bs" x="440" y="530" text-anchor="middle">token checked</text>
+  <rect class="gold" x="320" y="600" width="240" height="96" rx="10"/>
+  <text class="bt" x="440" y="638" text-anchor="middle">Claude agent</text>
+  <text class="bs" x="440" y="666" text-anchor="middle">thinks, writes reply</text>
+  <rect class="box" x="40" y="540" width="240" height="96" rx="10"/>
+  <text class="bt" x="160" y="578" text-anchor="middle">Kokoro-82M</text>
+  <text class="bs" x="160" y="606" text-anchor="middle">sentence → audio</text>
+
+  <path class="ln" d="M450 546 L450 598" marker-end="url(#wa1a)"/>
+  <path class="ln" d="M430 598 L430 548" marker-end="url(#wa1a)"/>
+
+  <!-- across the network -->
+  <path class="ln" d="M535 146 L535 472" marker-end="url(#wa1a)"/>
+  <text class="el" x="527" y="370" text-anchor="end">question</text>
+  <path class="ln" d="M390 472 L390 298" marker-end="url(#wa1a)"/>
+  <text class="el" x="398" y="370">reply</text>
+  <path class="ln" d="M330 296 L330 340 L230 340 L230 538" marker-end="url(#wa1a)"/>
+  <text class="el" x="222" y="380" text-anchor="end">each</text>
+  <text class="el" x="222" y="402" text-anchor="end">sentence</text>
+  <path class="ln" d="M90 538 L90 298" marker-end="url(#wa1a)"/>
+  <text class="el" x="100" y="352">audio</text>
+
+  <text class="bs" x="40" y="712" style="font-size:17px">All calls go over HTTPS with a token. If Kokoro</text>
+  <text class="bs" x="40" y="732" style="font-size:17px">fails, the watch's own TTS reads the rest.</text>
+</svg>

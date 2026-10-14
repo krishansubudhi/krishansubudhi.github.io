@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 820" width="600" height="820" role="img" aria-labelledby="wa2t wa2d">
+  <title id="wa2t">One voice round-trip, step by step</title>
+  <desc id="wa2d">A sequence across three lanes: watch, assistant, and Kokoro. The user taps the mic. The watch listens and turns speech into text on the watch. It sends the text to the assistant, which thinks and returns the reply text. The watch splits the reply into sentences and asks Kokoro for the first sentence's audio. While sentence one plays, it fetches sentence two. When the reply lands with the screen off, the watch buzzes and shows a notification. Once the reply has been spoken to its end, conversation mode listens again.</desc>
+  <defs>
+    <marker id="wa2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="ah"/></marker>
+  </defs>
+  <style>
+    text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+    .bg{fill:#ffffff;stroke:#e2e5e9}
+    .hd{fill:#f6f7f9;stroke:#4a5561;stroke-width:2}
+    .hdg{fill:#fff6d6;stroke:#b8901f;stroke-width:2.5}
+    .ht{font-size:22px;font-weight:700;fill:#1f2933}
+    .life{stroke:#c3cad2;stroke-width:2;stroke-dasharray:5 6}
+    .act{fill:#e9ecef;stroke:#8a949e;stroke-width:1.5}
+    .actg{fill:#f2c94c;stroke:#b8901f;stroke-width:1.5}
+    .ln{fill:none;stroke:#4a5561;stroke-width:2.4}
+    .ah{fill:#4a5561}
+    .lb{font-size:19px;fill:#1f2933}
+    .nt{font-size:18px;fill:#5b6672}
+    .num{font-size:15px;font-weight:700;fill:#1f2933}
+    .nb{fill:#f2c94c}
+    @media (prefers-color-scheme:dark){
+      .bg{fill:#1b1f24;stroke:#2d333b}
+      .hd{fill:#22272e;stroke:#9aa5b1}
+      .hdg{fill:#3a3218;stroke:#f2c94c}
+      .ht,.lb{fill:#e6e9ec}
+      .life{stroke:#454c56}
+      .act{fill:#2d333b;stroke:#6b7580}
+      .ln{stroke:#9aa5b1}
+      .ah{fill:#9aa5b1}
+      .nt{fill:#a9b3bd}
+    }
+  </style>
+  <rect class="bg" x="1" y="1" width="598" height="818" rx="14"/>
+
+  <rect class="hdg" x="30" y="20" width="160" height="50" rx="25"/>
+  <text class="ht" x="110" y="53" text-anchor="middle">Watch</text>
+  <rect class="hd" x="240" y="20" width="160" height="50" rx="10"/>
+  <text class="ht" x="320" y="53" text-anchor="middle">Assistant</text>
+  <rect class="hd" x="430" y="20" width="150" height="50" rx="10"/>
+  <text class="ht" x="505" y="53" text-anchor="middle">Kokoro</text>
+  <line class="life" x1="110" y1="70" x2="110" y2="800"/>
+  <line class="life" x1="320" y1="70" x2="320" y2="800"/>
+  <line class="life" x1="505" y1="70" x2="505" y2="800"/>
+
+  <!-- 1 tap -->
+  <circle class="nb" cx="30" cy="110" r="14"/><text class="num" x="30" y="115" text-anchor="middle">1</text>
+  <text class="lb" x="128" y="116">tap the mic</text>
+  <!-- 2 listen -->
+  <rect class="actg" x="102" y="140" width="16" height="70" rx="3"/>
+  <circle class="nb" cx="30" cy="175" r="14"/><text class="num" x="30" y="180" text-anchor="middle">2</text>
+  <text class="lb" x="128" y="170">listen, speech → text</text>
+  <text class="nt" x="128" y="194">stops when I stop</text>
+  <!-- 3 send -->
+  <circle class="nb" cx="30" cy="250" r="14"/><text class="num" x="30" y="255" text-anchor="middle">3</text>
+  <path class="ln" d="M118 250 L310 250" marker-end="url(#wa2a)"/>
+  <text class="lb" x="214" y="240" text-anchor="middle">question</text>
+  <!-- 4 think -->
+  <rect class="act" x="312" y="260" width="16" height="90" rx="3"/>
+  <circle class="nb" cx="30" cy="305" r="14"/><text class="num" x="30" y="310" text-anchor="middle">4</text>
+  <text class="lb" x="340" y="300">think</text>
+  <text class="nt" x="340" y="324">the slow part</text>
+  <!-- 5 reply -->
+  <circle class="nb" cx="30" cy="380" r="14"/><text class="num" x="30" y="385" text-anchor="middle">5</text>
+  <path class="ln" d="M310 380 L120 380" marker-end="url(#wa2a)"/>
+  <text class="lb" x="214" y="370" text-anchor="middle">reply text</text>
+  <text class="nt" x="128" y="410">shown on screen;</text>
+  <text class="nt" x="128" y="432">buzz if screen is off</text>
+  <!-- 6 speak sentence 1 -->
+  <circle class="nb" cx="30" cy="480" r="14"/><text class="num" x="30" y="485" text-anchor="middle">6</text>
+  <path class="ln" d="M118 470 L495 470" marker-end="url(#wa2a)"/>
+  <text class="lb" x="320" y="460" text-anchor="middle">sentence 1</text>
+  <rect class="act" x="497" y="476" width="16" height="30" rx="3"/>
+  <path class="ln" d="M495 512 L120 512" marker-end="url(#wa2a)"/>
+  <text class="lb" x="320" y="503" text-anchor="middle">audio 1</text>
+  <!-- 7 play while fetching -->
+  <rect class="actg" x="102" y="520" width="16" height="110" rx="3"/>
+  <circle class="nb" cx="30" cy="585" r="14"/><text class="num" x="30" y="590" text-anchor="middle">7</text>
+  <path class="ln" d="M118 568 L495 568" marker-end="url(#wa2a)"/>
+  <text class="lb" x="320" y="558" text-anchor="middle">sentence 2</text>
+  <path class="ln" d="M495 606 L120 606" marker-end="url(#wa2a)"/>
+  <text class="lb" x="320" y="632" text-anchor="middle">audio 2, while 1 plays</text>
+  <!-- 8 listen again -->
+  <circle class="nb" cx="30" cy="700" r="14"/><text class="num" x="30" y="705" text-anchor="middle">8</text>
+  <text class="lb" x="128" y="696">spoken to the end:</text>
+  <text class="lb" x="128" y="722">listen again</text>
+  <text class="nt" x="128" y="748">conversation mode;</text>
+  <text class="nt" x="128" y="772">"stop" or silence ends it</text>
+</svg>

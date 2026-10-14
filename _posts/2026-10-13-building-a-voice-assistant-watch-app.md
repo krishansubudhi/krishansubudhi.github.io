@@ -11,6 +11,8 @@ I wanted to ask my personal AI assistant something without getting my phone out.
 
 The first version came a few days before the rest. The last four versions, v2.1 to v2.4, were one late-night session with a coding agent, and most of what is interesting happened in that part.
 
+![Two round watch screens. Left: a gold mic orb with the word Listening and a small red cross to discard. Right: the reply text in white on black, with gold replay and mic buttons below it](/assets/watch-app/watch-screen.png)
+
 
 ## What it does
 
@@ -21,6 +23,14 @@ The first version came a few days before the rest. The last four versions, v2.1 
 - **Screen off.** Asking, waiting and speaking run in a foreground service, so they keep going when the screen turns off.
 - **Buzz and a notification** when a reply lands while the screen is off.
 - **Self-update.** On launch, the app asks my server for a `latest.json`. If there is a higher version code, it downloads the APK and hands it to Android's package installer. Each build is signed with the same key, so after the first sideload, fixes can ship without a cable.
+
+Here is how one question travels. Speech becomes text on the watch, the assistant on my server writes the reply, and the watch then asks the server to voice it one sentence at a time.
+
+![Architecture: on the watch, tap the mic and SpeechRecognizer turns speech into text; the question goes over HTTPS to the assistant API on my server and a Claude agent writes the reply; the watch splits the reply into sentences and sends each one to Kokoro-82M on the server, which returns audio for the watch to play, with a buzz and a notification](/assets/watch-app/architecture.svg)
+
+And the same thing as one round-trip in time:
+
+![Sequence of one voice round-trip: 1 tap the mic, 2 listen and turn speech into text, 3 send the question, 4 the assistant thinks, 5 the reply text comes back and is shown, with a buzz if the screen is off, 6 sentence 1 goes to Kokoro and audio comes back, 7 sentence 2 is fetched while sentence 1 plays, 8 once the reply is spoken, conversation mode listens again](/assets/watch-app/round-trip.svg)
 
 The self-update was the most useful part to build early. The first install was the fiddliest part of the project.
 
