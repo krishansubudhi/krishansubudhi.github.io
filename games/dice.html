@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>(function(){function v(){var h=(window.visualViewport&&visualViewport.height)||innerHeight;document.documentElement.style.setProperty('--vh',h*0.01+'px');}v();addEventListener('resize',v);addEventListener('orientationchange',v);if(window.visualViewport)visualViewport.addEventListener('resize',v);})();</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0e1116">
+<link rel="manifest" href="/games/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="/games/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/games/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="/games/games.css">
+<title>Dice Roll</title>
+<style>
+.dwrap{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}
+.pills{display:flex;gap:8px;flex:none}
+.pills button{flex:1;white-space:nowrap;padding:0 4px;min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font-size:17px}
+.pills button[aria-pressed=true]{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:700}
+.tray{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;gap:3vmin;flex-wrap:wrap;cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:manipulation;border-radius:14px}
+.die{--s:min(24vw,22vh,130px);width:var(--s);height:var(--s);border-radius:calc(var(--s)*.2);background:#f4f1ea;box-shadow:inset 0 -5px 0 rgba(0,0,0,.14),0 6px 16px rgba(0,0,0,.45);display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);padding:calc(var(--s)*.12);gap:0}
+.die i{display:none;width:70%;height:70%;margin:auto;border-radius:50%;background:#1b212b;grid-area:var(--a)}
+.die i.on{display:block}
+.die.hit{box-shadow:inset 0 -5px 0 rgba(0,0,0,.14),0 0 0 4px var(--accent),0 6px 16px rgba(0,0,0,.45)}
+@keyframes tumble{0%{transform:rotate(-24deg) scale(.8)}35%{transform:rotate(18deg) scale(1.12)}65%{transform:rotate(-8deg) scale(.96)}100%{transform:rotate(0) scale(1)}}
+.die.roll{animation:tumble .5s ease-out}
+.tot{flex:none;text-align:center;font-size:clamp(40px,10vh,64px);font-weight:800;line-height:1;color:var(--ink)}
+.msg{flex:none;text-align:center;min-height:26px;font-size:20px;font-weight:700;color:var(--accent)}
+.rollbtn{flex:none;min-height:68px;font-size:24px;border-radius:16px}
+.rollbtn:disabled{opacity:.7}
+.chips{flex:none;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;min-height:32px}
+.chips span{padding:3px 10px;border-radius:999px;background:var(--card2);border:1px solid var(--line);font-size:15px;color:var(--dim)}
+.chips span:first-child{color:var(--ink);border-color:var(--accent)}
+@media (orientation:landscape) and (max-height:500px){
+ .dcard{padding:8px 12px!important;max-width:none!important}
+ .dwrap{display:grid;grid-template-columns:1.4fr 1fr;grid-template-rows:auto auto auto auto 1fr;column-gap:14px;row-gap:6px}
+ .tray{grid-column:1;grid-row:1/6;flex-wrap:nowrap;gap:2vw}
+ .dwrap>:not(.tray){grid-column:2}
+ .die{--s:min(14vw,40vh,120px)}
+ .pills button{min-height:38px}
+ .tot{font-size:36px}.msg{font-size:16px;min-height:20px}
+ .rollbtn{min-height:50px;font-size:20px}
+ .chips span{font-size:13px;padding:2px 8px}
+}
+@media (min-width:900px) and (min-height:600px){.die{--s:min(18vw,24vh,170px)}.rollbtn{min-height:76px;font-size:28px}}
+</style>
+</head>
+<body class="play">
+<main>
+<div class="top"><a class="back" href="/games/" aria-label="Back to games">‹</a><h1>🎲 Dice Roll</h1><button id="mute" class="mute" aria-label="Sound on or off">🔊</button></div>
+<div class="card board-wrap dcard" style="flex:1;min-height:0;display:flex;flex-direction:column">
+<div class="dwrap">
+<div class="pills" role="group" aria-label="Number of dice">
+<button data-n="1" aria-pressed="false">1 die</button><button data-n="2" aria-pressed="true">2 dice</button><button data-n="3" aria-pressed="false">3 dice</button>
+</div>
+<div id="tray" class="tray" aria-label="Dice. Tap to roll."></div>
+<div id="tot" class="tot" aria-live="polite">–</div>
+<div id="msg" class="msg" aria-live="polite">Tap to roll!</div>
+<button id="roll" class="big rollbtn">🎲 Roll</button>
+<div class="stats" style="justify-content:space-around;font-size:15px"><span>Score <b id="sc">0</b></span><span>Best <b id="bs" style="color:var(--accent)">0</b></span><span>Rolls <b id="rc">0</b></span></div>
+<div id="chips" class="chips" aria-label="Last rolls"></div>
+</div>
+</div>
+</main>
+<script>
+// Gentle sounds via WebAudio, with a mute toggle shared by every game.
+const SFX=(function(){let ac=null,muted=false;try{muted=localStorage.getItem('games.muted')==='1';}catch(e){}
+const btn=document.getElementById('mute');function paint(){if(btn){btn.textContent=muted?'🔇':'🔊';btn.setAttribute('aria-pressed',muted?'true':'false');}}paint();
+function tone(f,d,type,vol,slide){if(muted)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();
+ const t=ac.currentTime,o=ac.createOscillator(),g=ac.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);
+ g.gain.setValueAtTime(vol||0.06,t);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+0.02);}catch(e){}}
+function notes(list,step,type){list.forEach((f,i)=>setTimeout(()=>tone(f,step*1.4,type),i*step*1000));}
+if(btn)btn.addEventListener('click',()=>{muted=!muted;try{localStorage.setItem('games.muted',muted?'1':'0');}catch(e){}paint();if(muted&&window.speechSynthesis)try{speechSynthesis.cancel();}catch(e){}tone(660,0.08);});
+return{tone,notes,get muted(){return muted;}};})();
+</script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const tray=$('tray'),tot=$('tot'),msg=$('msg'),rollBtn=$('roll'),chips=$('chips');
+// pip cells on a 3x3 grid, numbered row-major
+const PIPS={1:[4],2:[2,6],3:[2,4,6],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
+let n=2,score=0,rolls=0,best=0,last=[],busy=false,dice=[];
+try{best=parseInt(localStorage.getItem('diceBest'),10)||0;}catch(e){}
+$('bs').textContent=best;
+function build(){tray.textContent='';dice=[];for(let k=0;k<n;k++){const d=document.createElement('div');d.className='die';
+ for(let c=0;c<9;c++){const p=document.createElement('i');p.style.setProperty('--a',(Math.floor(c/3)+1)+'/'+(c%3+1));d.appendChild(p);}
+ tray.appendChild(d);dice.push(d);show(d,k===0?1:(k+1)*2%6||6);}}
+function show(d,v){const ps=d.children,on=PIPS[v];for(let c=0;c<9;c++)ps[c].classList.toggle('on',on.indexOf(c)>=0);d.setAttribute('aria-label','Die showing '+v);}
+function rnd(){return 1+Math.floor(Math.random()*6);}
+function vib(p){try{if(navigator.vibrate)navigator.vibrate(p);}catch(e){}}
+function reset(){score=0;rolls=0;last=[];$('sc').textContent=0;$('rc').textContent=0;chips.textContent='';tot.textContent='–';msg.style.color='';msg.textContent='Tap to roll!';}
+function roll(){
+ if(busy)return;busy=true;rollBtn.disabled=true;msg.textContent='';vib(30);
+ const fin=dice.map(rnd);let f=0;
+ dice.forEach(d=>{d.classList.remove('hit','roll');void d.offsetWidth;d.classList.add('roll');});
+ const iv=setInterval(()=>{f++;
+  if(f<8){dice.forEach(d=>show(d,rnd()));SFX.tone(300+Math.random()*300,0.04,'square',0.025);}
+  else{clearInterval(iv);dice.forEach((d,k)=>show(d,fin[k]));done(fin);}},60);}
+function done(v){
+ const sum=v.reduce((a,b)=>a+b,0),same=n>1&&v.every(x=>x===v[0]);
+ let pts=sum,note='';
+ if(same){pts=sum*2;note=(n===3?'Triples! +':'Doubles! +')+pts;}
+ else if(v.filter(x=>x===6).length===1)note='Six! +6';
+ score+=pts;rolls++;if(score>best){best=score;try{localStorage.setItem('diceBest',String(best));}catch(e){}}
+ last.unshift(v.join('·'));last=last.slice(0,6);
+ tot.textContent=sum;msg.style.color=same?'var(--ok)':'var(--accent)';msg.textContent=note;
+ if(same||note)dice.forEach(d=>d.classList.add('hit'));
+ $('sc').textContent=score;$('bs').textContent=best;$('rc').textContent=rolls;
+ chips.textContent='';last.forEach(t=>{const s=document.createElement('span');s.textContent=t;chips.appendChild(s);});
+ if(same){vib([60,40,60,40,120]);SFX.notes([523,659,784,1047],0.08,'triangle');}
+ else if(note){vib([50,30,50]);SFX.notes([523,784],0.08,'triangle');}
+ else SFX.tone(440,0.1,'triangle');
+ busy=false;rollBtn.disabled=false;}
+document.querySelectorAll('.pills button').forEach(b=>b.onclick=()=>{
+ const k=+b.dataset.n;if(k===n||busy)return;n=k;
+ document.querySelectorAll('.pills button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));
+ reset();build();});
+rollBtn.onclick=roll;tray.onclick=roll;
+addEventListener('keydown',e=>{if(e.code==='Space'||e.key==='Enter'){if(e.target.closest&&e.target.closest('a,.pills button,#mute'))return;e.preventDefault();if(!e.repeat)roll();}});
+build();
+})();
+</script>
+<script src="/games/register.js"></script>
+</body>
+</html>
