@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>(function(){function v(){var h=(window.visualViewport&&visualViewport.height)||innerHeight;document.documentElement.style.setProperty('--vh',h*0.01+'px');}v();addEventListener('resize',v);addEventListener('orientationchange',v);if(window.visualViewport)visualViewport.addEventListener('resize',v);})();</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0e1116">
+<link rel="manifest" href="/games/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="/games/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/games/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="/games/games.css">
+<title>Flags</title>
+<style>
+.fwrap{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}
+.flagbox{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;border-radius:14px;background:var(--card2);padding:10px}
+.flagbox img{max-width:100%;max-height:100%;object-fit:contain;border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.5)}
+.flagbox .emo{font-size:min(36vw,22vh,150px);line-height:1}
+.q{flex:none;text-align:center;font-size:18px;color:var(--dim);min-height:24px}
+.ch{flex:none;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ch button{min-height:72px;padding:6px 8px;border-radius:14px;border:2px solid var(--line);background:var(--card2);color:var(--ink);font-size:20px;font-weight:700;line-height:1.15}
+.ch button:active{background:var(--line)}
+.ch button.ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.ch button.bad{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+.ch button:disabled{opacity:1}
+@media (orientation:landscape) and (max-height:500px){
+ .fcard{padding:8px 12px!important;max-width:none!important}
+ .fwrap{display:grid;grid-template-columns:1.2fr 1fr;grid-template-rows:auto 1fr auto;column-gap:14px;row-gap:6px}
+ .flagbox{grid-column:1;grid-row:1/4}
+ .q{grid-column:2;grid-row:1;font-size:15px;min-height:0}
+ .ch{grid-column:2;grid-row:2;align-content:center}
+ .fwrap>.stats{grid-column:2;grid-row:3}
+ .ch button{min-height:56px;font-size:18px}
+}
+@media (min-width:900px) and (min-height:600px){.ch button{min-height:84px;font-size:24px}}
+</style>
+</head>
+<body class="play">
+<main>
+<div class="top"><a class="back" href="/games/" aria-label="Back to games">‹</a><h1>🏳️ Flags</h1><button id="mute" class="mute" aria-label="Sound on or off">🔊</button></div>
+<div class="card board-wrap fcard" style="flex:1;min-height:0;display:flex;flex-direction:column">
+<div class="fwrap">
+<div id="flagbox" class="flagbox" aria-live="polite"></div>
+<div id="q" class="q">Which country is this?</div>
+<div id="ch" class="ch"></div>
+<div class="stats" style="justify-content:space-around;font-size:15px"><span>Score <b id="sc">0</b>/<b id="tt">0</b></span><span>Streak <b id="st">0</b></span><span>Best <b id="bs" style="color:var(--accent)">0</b></span></div>
+</div>
+</div>
+</main>
+<script>
+// Gentle sounds via WebAudio, with a mute toggle shared by every game.
+const SFX=(function(){let ac=null,muted=false;try{muted=localStorage.getItem('games.muted')==='1';}catch(e){}
+const btn=document.getElementById('mute');function paint(){if(btn){btn.textContent=muted?'🔇':'🔊';btn.setAttribute('aria-pressed',muted?'true':'false');}}paint();
+function tone(f,d,type,vol,slide){if(muted)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();
+ const t=ac.currentTime,o=ac.createOscillator(),g=ac.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);
+ g.gain.setValueAtTime(vol||0.06,t);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+0.02);}catch(e){}}
+function notes(list,step,type){list.forEach((f,i)=>setTimeout(()=>tone(f,step*1.4,type),i*step*1000));}
+if(btn)btn.addEventListener('click',()=>{muted=!muted;try{localStorage.setItem('games.muted',muted?'1':'0');}catch(e){}paint();if(muted&&window.speechSynthesis)try{speechSynthesis.cancel();}catch(e){}tone(660,0.08);});
+return{tone,notes,get muted(){return muted;}};})();
+</script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const C=[['us','United States'],['ca','Canada'],['mx','Mexico'],['br','Brazil'],['ar','Argentina'],['cl','Chile'],['co','Colombia'],['pe','Peru'],['cu','Cuba'],['jm','Jamaica'],
+['gb','United Kingdom'],['ie','Ireland'],['fr','France'],['de','Germany'],['es','Spain'],['pt','Portugal'],['it','Italy'],['nl','Netherlands'],['be','Belgium'],['ch','Switzerland'],
+['at','Austria'],['se','Sweden'],['no','Norway'],['dk','Denmark'],['fi','Finland'],['is','Iceland'],['pl','Poland'],['ua','Ukraine'],['gr','Greece'],['tr','Turkey'],
+['ru','Russia'],['cn','China'],['jp','Japan'],['kr','South Korea'],['in','India'],['pk','Pakistan'],['bd','Bangladesh'],['th','Thailand'],['vn','Vietnam'],['id','Indonesia'],
+['ph','Philippines'],['sa','Saudi Arabia'],['il','Israel'],['ir','Iran'],['eg','Egypt'],['ke','Kenya'],['tz','Tanzania'],['ng','Nigeria'],['za','South Africa'],['et','Ethiopia'],
+['ma','Morocco'],['gh','Ghana'],['au','Australia'],['nz','New Zealand'],['np','Nepal'],['lk','Sri Lanka'],['sg','Singapore'],['ae','United Arab Emirates'],['cz','Czechia'],['hu','Hungary']];
+let score=0,total=0,streak=0,best=0,cur=null,busy=false,deck=[];
+try{best=parseInt(localStorage.getItem('flagsBest'),10)||0;}catch(e){}
+$('bs').textContent=best;
+function shuf(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function emoji(c){return String.fromCodePoint(...c.toUpperCase().split('').map(x=>0x1F1E6+x.charCodeAt(0)-65));}
+function vib(p){try{if(navigator.vibrate)navigator.vibrate(p);}catch(e){}}
+function next(){
+ if(!deck.length)deck=shuf(C.slice());
+ cur=deck.pop();
+ const opts=shuf([cur].concat(shuf(C.filter(x=>x!==cur)).slice(0,3)));
+ const box=$('flagbox');box.textContent='';
+ const im=document.createElement('img');im.alt='A country flag';im.src='https://flagcdn.com/w320/'+cur[0]+'.png';
+ im.onerror=()=>{box.textContent='';const s=document.createElement('div');s.className='emo';s.textContent=emoji(cur[0]);s.setAttribute('role','img');s.setAttribute('aria-label','A country flag');box.appendChild(s);};
+ box.appendChild(im);
+ const ch=$('ch');ch.textContent='';
+ opts.forEach(o=>{const b=document.createElement('button');b.textContent=o[1];b.dataset.c=o[0];b.onclick=()=>pick(b,o);ch.appendChild(b);});
+ $('q').textContent='Which country is this?';busy=false;}
+function pick(b,o){
+ if(busy)return;busy=true;total++;
+ const right=o===cur;
+ document.querySelectorAll('#ch button').forEach(x=>{x.disabled=true;if(x.dataset.c===cur[0])x.classList.add('ok');});
+ if(right){score++;streak++;b.classList.add('pop');
+  if(streak>best){best=streak;try{localStorage.setItem('flagsBest',String(best));}catch(e){}}
+  $('q').textContent='Yes! 🎉';vib(30);SFX.notes([523,784],0.08,'triangle');}
+ else{streak=0;b.classList.add('bad','shake');$('q').textContent='It is '+cur[1]+'.';vib([40,30,40]);SFX.tone(220,0.25,'sawtooth',0.04,140);}
+ $('sc').textContent=score;$('tt').textContent=total;$('st').textContent=streak;$('bs').textContent=best;
+ setTimeout(next,right?900:1600);}
+next();
+})();
+</script>
+<script src="/games/register.js"></script>
+</body>
+</html>
