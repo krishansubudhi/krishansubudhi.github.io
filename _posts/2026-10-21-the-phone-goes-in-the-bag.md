@@ -21,7 +21,9 @@ This is not a "ten years from now" post. Everything below is built from parts th
 
 **A watch as the control hub.** The watch is where you tap to say yes, feel a haptic nudge, glance at one line of text, and pay. It has LTE, so it works without the phone nearby.
 
-**A ring for health.** Sleep, heart rate and temperature, synced in batches a few times a day. It needs no live connection.
+**A ring for health.** Sleep, heart rate and temperature, synced in batches a few times a day. It needs no live connection. It also covers the night: the watch charges while you sleep, and the ring keeps tracking.
+
+**An EMG wristband, optional.** For people who want silent finger gestures instead of voice in a quiet room.
 
 **An agent server you own.** The thinking happens on a home machine or a cloud server running your personal agent, the way people already run things like Muse, Dot or a Grok bot. That server holds your memory, your tools and your accounts. The things you wear are its eyes, ears and hands.
 
@@ -41,6 +43,12 @@ So the design splits the job in two:
 Do this and each device's radio is idle most of the day. That is the only way a ring, a pair of earbuds and a watch each last a full day on batteries their size.
 
 ![A run with no phone: pace in your ear](/assets/wearable-agent/s1-run.png)
+
+## Three privacy rules
+
+1. **Explicit capture consent.** The camera records only after a deliberate tap on the watch. While it is live, the watch pulses and the earbud's outer LED is lit, so people around you can see it.
+2. **Coarse location only.** The agent knows "home", "gym" or "office", not a continuous GPS trail.
+3. **Context-gated output.** Voice is public. When other people are around, sensitive things like money, health or personal alerts wait until you're alone, or show up as a few words on the watch.
 
 ## What a day looks like
 
