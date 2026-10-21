@@ -4,7 +4,7 @@ author: krishan
 layout: post
 categories: agents
 title: The phone goes in the bag. A realistic kit for a personal agent you wear.
-description: Not glasses, not a pin, not a puck. An earbud with a small camera, a watch as the control hub, a ring, and an agent running on a server you own. What works today and what is still hard.
+description: An earbud with a small camera, a watch as the control hub, a ring, and an agent running on a server you own. What works today and what is still hard.
 ---
 
 Laptops did not disappear when phones arrived. They went into the bag, and they come out when there is real work to do: a long document, a spreadsheet, a lot of typing. I think the phone is heading the same way. Most of what we pull it out for is small: what's next, reply to this, log that, play something, how far did I run. A personal agent that can hear you, see what you see when you ask, and talk back in your ear can do most of those without a screen.
@@ -24,8 +24,6 @@ This is not a "ten years from now" post. Everything below is built from parts th
 **A ring for health.** Sleep, heart rate and temperature, synced in batches a few times a day. It needs no live connection.
 
 **An agent server you own.** The thinking happens on a home machine or a cloud server running your personal agent, the way people already run things like Muse, Dot or a Grok bot. That server holds your memory, your tools and your accounts. The things you wear are its eyes, ears and hands.
-
-**No pocket puck.** Every "compute puck" design asks you to carry one more thing to charge. If you are carrying something anyway, it may as well be the phone, and the point is to not carry it.
 
 ![Present with people, agent in the background](/assets/wearable-agent/woman.png)
 
