@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 838" width="600" height="838" role="img" aria-labelledby="wf1t wf1d">
+<title id="wf1t">From a spoken sentence to a new watch face on the wrist</title>
+<desc id="wf1d">Six steps. The wrist hears the sentence. The agent adds a theme row. A Java generator draws the layers and the watch face XML. A headless test validates and renders it. Gradle builds and signs a code-less APK and bumps the face version. The watch downloads and installs it.</desc>
+<defs><marker id="wf1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="ah"/></marker></defs>
+<style>
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+.bg{fill:#fff;stroke:#e2e5e9}
+.bx{fill:#f6f7f9;stroke:#4a5561;stroke-width:2}
+.bw{fill:#fff6d6;stroke:#b8901f;stroke-width:2.5}
+.bt{fill:#e8f4ec;stroke:#2f7d4f;stroke-width:2.5}
+.n{fill:#1f2933;font-size:15px;font-weight:700}
+.nb{fill:#f2c94c}
+.hd{font-size:15px;font-weight:700;fill:#5b6672;letter-spacing:.04em}
+.lb{font-size:19px;font-weight:600;fill:#1f2933}
+.nt{font-size:15px;fill:#5b6672}
+.ln{stroke:#4a5561;stroke-width:2.4;fill:none}
+.ah{fill:#4a5561}
+.ti{font-size:22px;font-weight:700;fill:#1f2933}
+@media (prefers-color-scheme:dark){
+.bg{fill:#1b1f24;stroke:#2d333b}
+.bx{fill:#22272e;stroke:#9aa5b1}
+.bw{fill:#3a3218;stroke:#f2c94c}
+.bt{fill:#1c3326;stroke:#5fbf86}
+.n,.lb,.ti{fill:#e6e9ec}
+.hd,.nt{fill:#9aa5b1}
+.ln{stroke:#9aa5b1}
+.ah{fill:#9aa5b1}
+}
+</style>
+<rect x="0.5" y="0.5" width="599" height="837" rx="10" class="bg"/>
+<text x="300" y="36" text-anchor="middle" class="ti">A sentence in, a watch face out</text>
+<rect x="40" y="58" width="520" height="96" rx="12" class="bw"/>
+<circle cx="78" cy="106.0" r="17" class="nb"/><text x="78" y="111.5" text-anchor="middle" class="n">1</text>
+<text x="112" y="86" class="hd">ON THE WRIST</text>
+<text x="112" y="113" class="lb">Say: Create a Halloween watch face</text>
+<text x="112" y="136" class="nt">the watch turns speech to text and sends it</text>
+<path d="M300 156 L300 185" class="ln" marker-end="url(#wf1a)"/>
+<rect x="40" y="188" width="520" height="96" rx="12" class="bx"/>
+<circle cx="78" cy="236.0" r="17" class="nb"/><text x="78" y="241.5" text-anchor="middle" class="n">2</text>
+<text x="112" y="216" class="hd">THE AGENT</text>
+<text x="112" y="243" class="lb">Adds one row to the theme table</text>
+<text x="112" y="266" class="nt">a name and five colours</text>
+<path d="M300 286 L300 315" class="ln" marker-end="url(#wf1a)"/>
+<rect x="40" y="318" width="520" height="96" rx="12" class="bx"/>
+<circle cx="78" cy="366.0" r="17" class="nb"/><text x="78" y="371.5" text-anchor="middle" class="n">3</text>
+<text x="112" y="346" class="hd">GENERATOR, AT BUILD TIME</text>
+<text x="112" y="373" class="lb">Draws each layer as a transparent PNG</text>
+<text x="112" y="396" class="nt">and writes watchface.xml with the new colour</text>
+<path d="M300 416 L300 445" class="ln" marker-end="url(#wf1a)"/>
+<rect x="40" y="448" width="520" height="96" rx="12" class="bt"/>
+<circle cx="78" cy="496.0" r="17" class="nb"/><text x="78" y="501.5" text-anchor="middle" class="n">4</text>
+<text x="112" y="476" class="hd">HEADLESS TEST</text>
+<text x="112" y="503" class="lb">XSD 1.1 check, ambient under 10% lit</text>
+<text x="112" y="526" class="nt">text margins on 41 and 45 mm, theme colours</text>
+<path d="M300 546 L300 575" class="ln" marker-end="url(#wf1a)"/>
+<rect x="40" y="578" width="520" height="96" rx="12" class="bx"/>
+<circle cx="78" cy="626.0" r="17" class="nb"/><text x="78" y="631.5" text-anchor="middle" class="n">5</text>
+<text x="112" y="606" class="hd">GRADLE</text>
+<text x="112" y="633" class="lb">Builds and signs watchface.apk, no code</text>
+<text x="112" y="656" class="nt">publish writes faceVersionCode to latest.json</text>
+<path d="M300 676 L300 705" class="ln" marker-end="url(#wf1a)"/>
+<rect x="40" y="708" width="520" height="96" rx="12" class="bw"/>
+<circle cx="78" cy="756.0" r="17" class="nb"/><text x="78" y="761.5" text-anchor="middle" class="n">6</text>
+<text x="112" y="736" class="hd">ON THE WRIST</text>
+<text x="112" y="763" class="lb">Update watch face, one confirm tap</text>
+<text x="112" y="786" class="nt">PackageInstaller installs it over the old face</text>
+</svg>
