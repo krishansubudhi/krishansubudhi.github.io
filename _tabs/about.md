@@ -5,7 +5,7 @@ icon: fas fa-info-circle
 order: 4
 ---
 
-<img src="/assets/img/about.jpg" alt="Krishan standing on a city sidewalk on a sunny day, wearing a brown quarter-zip sweater and khakis" width="720" height="987" style="display: block; width: 100%; max-width: 360px; height: auto; margin: 0 auto 1.5rem; border-radius: 8px;">
+<img src="/assets/img/about.jpg" alt="Krishan outdoors in a park wearing sunglasses and an olive jacket" width="720" height="960" style="display: block; width: 100%; max-width: 360px; height: auto; margin: 0 auto 1.5rem; border-radius: 8px;">
 
 I'm Krishan. I build coding agents at Google, and this is where I write up the parts I can say in public.
 
