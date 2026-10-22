@@ -4,7 +4,7 @@ author: krishan
 layout: post
 categories: agents
 title: The phone goes in the bag. A realistic kit for a personal agent you wear.
-description: An earbud with a small camera, a watch as the control hub, a ring, and an agent running on a server you own. The full design: device roles, links, tiers of compute, battery budget, privacy rules, a simulated day and an honest scorecard.
+description: "An earbud with a small camera, a watch as the control hub, a ring, and an agent running on a server you own. The full design: device roles, links, tiers of compute, battery budget, privacy rules, a simulated day and an honest scorecard."
 ---
 
 Laptops did not disappear when phones arrived. They went into the bag, and they come out when there is real work to do: a long document, a spreadsheet, a lot of typing. I think the phone is heading the same way. Most of what we pull it out for is small: what's next, reply to this, log that, play something, how far did I run. A personal agent that can hear you, see what you see when you ask, and talk back in your ear can do most of those without a screen.
