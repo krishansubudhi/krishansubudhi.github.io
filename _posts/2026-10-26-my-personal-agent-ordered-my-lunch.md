@@ -10,6 +10,9 @@ description: "The day after a half marathon, I told Jarvis to order food. Two mi
 
 The day after running the Santa Cruz Half Marathon (13.1 miles, sore legs, sore shoulders, pure rest day), I was lying on the couch with zero energy to cook. I pulled up chat with my personal assistant, Jarvis, and said: "Order something healthy and tasty."
 
+![Order placed: 2 Souvlaki chicken bowls, arriving in about 20 minutes (personal details blurred)](/assets/order-lunch/order-share.jpg)
+_Order placed: 2 Souvlaki chicken bowls, arriving in about 20 minutes (personal details blurred)_
+
 Two minutes later, an order was placed on Uber Eats.
 
 No menu scrolling, no guessing portion sizes, and no decision fatigue. Jarvis chose a meal matching my nutrition targets, built the cart through an open Chrome tab, navigated checkout, and paused only to confirm the tip.
