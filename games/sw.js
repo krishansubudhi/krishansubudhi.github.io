@@ -1,5 +1,5 @@
 // Offline cache for /games/. Bump VERSION whenever any file below changes.
-const VERSION = 'games-v14';
+const VERSION = 'games-v15';
 const FILES = [
   '/games/',
   '/games/index.html',
@@ -19,6 +19,19 @@ const FILES = [
   '/games/dino-rush-halloween.html',
   '/games/pumpkin-catch.html',
   '/games/flags.html',
+  '/games/animal-colors/',
+  '/games/animal-colors/index.html',
+  '/games/animal-colors/black-animals.jpg',
+  '/games/animal-colors/blue-animals.jpg',
+  '/games/animal-colors/brown-animals.jpg',
+  '/games/animal-colors/gray-animals.jpg',
+  '/games/animal-colors/green-animals.jpg',
+  '/games/animal-colors/magenta-animals.jpg',
+  '/games/animal-colors/purple-animals.jpg',
+  '/games/animal-colors/red-animals.jpg',
+  '/games/animal-colors/turquoise-animals.jpg',
+  '/games/animal-colors/white-animals.jpg',
+  '/games/animal-colors/yellow-animals.jpg',
   '/games/games.css',
   '/games/register.js',
   '/games/manifest.webmanifest',

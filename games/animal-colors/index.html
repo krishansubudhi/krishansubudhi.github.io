@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>(function(){function v(){var h=(window.visualViewport&&visualViewport.height)||innerHeight;document.documentElement.style.setProperty('--vh',h*0.01+'px');}v();addEventListener('resize',v);addEventListener('orientationchange',v);if(window.visualViewport)visualViewport.addEventListener('resize',v);})();</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0e1116">
+<link rel="manifest" href="/games/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="/games/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/games/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="/games/games.css">
+<title>Find the animals</title>
+<style>
+body.play{background:#0e1116;color:#e6edf3}
+#game-card{flex:1;min-height:0;display:flex;flex-direction:column;position:relative;background:#161b22;border:1px solid #242c37;border-radius:18px;padding:12px;overflow-y:auto}
+#g{display:flex;flex-direction:column;gap:10px;width:100%;max-width:480px;margin:0 auto}
+#g .h{font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:8px}
+#g .img-wrap{position:relative;width:100%;background:#1b212b;border-radius:14px;overflow:hidden;aspect-ratio:1/1}
+#g img{width:100%;height:100%;object-fit:cover;border-radius:14px;pointer-events:none;display:block}
+#g .msg{font-size:36px;text-align:center;min-height:48px;line-height:1.2;margin-top:2px}
+#g .opts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:4px}
+#g button.a{height:76px;font-size:42px;border-radius:18px;border:3px solid #242c37;background:#1b212b;color:#e6edf3;touch-action:manipulation;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .1s,border-color .15s}
+#g button.a:active{transform:scale(0.96)}
+#g button.a.ok{border-color:#5fd97f;background:rgba(95,217,127,0.25)}
+#g button.a.no{opacity:.25;border-color:#ff8b82;background:rgba(255,139,130,0.15)}
+#g .pills{display:flex;gap:10px;justify-content:center;margin-top:4px}
+#g .pill{min-height:48px;padding:8px 18px;border-radius:14px;border:1px solid #242c37;background:#1b212b;color:#e6edf3;font-size:17px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer}
+#g .pill:active{background:#242c37}
+#start-overlay{position:absolute;inset:0;background:rgba(14,17,22,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:10;border-radius:18px;padding:24px;text-align:center}
+#start-overlay h2{font-size:28px;margin:0;color:#e6edf3}
+#start-overlay p{font-size:16px;color:#8b96a5;margin:0 0 8px;max-width:320px}
+#start-btn{min-height:64px;min-width:200px;font-size:22px;font-weight:700;border-radius:18px;border:none;background:#f2c94c;color:#0e1116;cursor:pointer;box-shadow:0 4px 16px rgba(242,201,76,0.35);touch-action:manipulation}
+#start-btn:active{transform:scale(0.97)}
+@media (max-height:680px){
+  #g .img-wrap{max-height:36vh;aspect-ratio:auto}
+  #g img{height:36vh}
+  #g button.a{height:62px;font-size:34px}
+  #g .msg{font-size:28px;min-height:36px}
+}
+</style>
+</head>
+<body class="play">
+<main>
+<div class="top"><a class="back" href="/games/" aria-label="Back to games">‹</a><h1>🔍 Find the animals</h1><button id="mute" class="mute" aria-label="Sound on or off">🔊</button></div>
+<div id="game-card">
+  <div id="start-overlay">
+    <h2>🔍 Find the animals</h2>
+    <p>Look closely at the picture and tap every animal hiding inside!</p>
+    <button id="start-btn" aria-label="Start Game">▶ Play</button>
+  </div>
+  <div id="g">
+    <div class="h"><span>🔍 Find the animals!</span> <span id="s"></span></div>
+    <div class="img-wrap"><img id="im" alt="Animals hiding in scenery"></div>
+    <div class="msg" id="m"></div>
+    <div class="opts" id="o"></div>
+    <div class="pills"><button class="pill" id="rp">🔊 Ask again</button><button class="pill" id="nx">⏭ Next</button></div>
+  </div>
+</div>
+</main>
+<script>
+// Gentle sounds via WebAudio, with a mute toggle shared by every game.
+const SFX=(function(){let ac=null,muted=false,unlocked=false;try{muted=localStorage.getItem('games.muted')==='1';}catch(e){}
+const btn=document.getElementById('mute');function paint(){if(btn){btn.textContent=muted?'🔇':'🔊';btn.setAttribute('aria-pressed',muted?'true':'false');}}paint();
+function ctx(){ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();return ac;}
+function unlock(){if(unlocked)return;unlocked=true;
+ try{if(navigator.audioSession)navigator.audioSession.type='playback';}catch(e){}
+ try{const a=ctx(),b=a.createBuffer(1,1,22050),s=a.createBufferSource();s.buffer=b;s.connect(a.destination);s.start(0);}catch(e){}
+ try{if('speechSynthesis' in window){const u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u);}}catch(e){}}
+document.addEventListener('touchend',unlock,{once:true,passive:true});
+document.addEventListener('click',unlock,{once:true});
+function tone(f,t0,d,ty,vol){if(muted)return;try{const a=ctx();
+ const o=a.createOscillator(),g=a.createGain();o.type=ty||'sine';o.frequency.setValueAtTime(f,a.currentTime+t0);
+ g.gain.setValueAtTime(0.0001,a.currentTime+t0);g.gain.exponentialRampToValueAtTime(vol||0.35,a.currentTime+t0+0.02);
+ g.gain.exponentialRampToValueAtTime(0.0001,a.currentTime+t0+d);o.connect(g);g.connect(a.destination);
+ o.start(a.currentTime+t0);o.stop(a.currentTime+t0+d+0.05);}catch(e){}}
+function ding(){tone(880,0,0.18,'triangle',0.35);tone(1320,0.08,0.22,'triangle',0.35);}
+function win(){[523,659,784,1047,1319].forEach((f,k)=>tone(f,k*0.1,0.3,'triangle',0.35));}
+function lose(){tone(300,0,0.2,'sawtooth',0.2);tone(200,0.18,0.3,'sawtooth',0.2);}
+if(btn)btn.addEventListener('click',()=>{muted=!muted;try{localStorage.setItem('games.muted',muted?'1':'0');}catch(e){}paint();if(muted&&window.speechSynthesis)try{speechSynthesis.cancel();}catch(e){}ding();});
+return{unlock,ctx,ding,win,lose,get muted(){return muted;}};})();
+</script>
+<script>
+(function(){
+const R={blue:["🐋","🐦","🦚","🐸","🦋","🐟"],green:["🐸","🦜","🐢","🦎","🐍","🦗"],yellow:["🐥","🐤","🦆","🦋","🐠","🦒"],purple:["⭐","🐙","🪼","🦋","🐦"],magenta:["🦩","🐬","🦋"],turquoise:["🐦","🐟","🦎","🦚"],brown:["🐻","🐴","🐿️","🦉","🦌","🐒"],gray:["🐘","🐨","🐺","🐬","🦏","🐦"],black:["🐆","🐦‍⬛","🐈‍⬛","🦍","🐻"],white:["🐻‍❄️","🦢","🐇","🦉","🐑","🦊"],red:["🐦","🐞","🐼","🦀","🦊","🦜"]};
+const N={"🐋":"whale","🐦":"bird","🦚":"peacock","🐸":"frog","🦋":"butterfly","🐟":"fish","🦜":"parrot","🐢":"turtle","🦎":"lizard","🐍":"snake","🦗":"grasshopper","🐥":"chick","🐤":"chick","🦆":"duck","🐠":"fish","🦒":"giraffe","⭐":"starfish","🐙":"octopus","🪼":"jellyfish","🦩":"flamingo","🐬":"dolphin","🐻":"bear","🐴":"horse","🐿️":"squirrel","🦉":"owl","🦌":"deer","🐒":"monkey","🐘":"elephant","🐨":"koala","🐺":"wolf","🦏":"rhino","🐆":"panther","🐦‍⬛":"crow","🐈‍⬛":"cat","🦍":"gorilla","🐻‍❄️":"polar bear","🦢":"swan","🐇":"rabbit","🐑":"sheep","🦊":"fox","🐞":"ladybug","🐼":"panda","🦀":"crab"};
+const ALL=["🐶","🐷","🐮","🐔","🦁","🐯","🐵","🐭","🐰","🦓","🐫","🦘","🐊","🦈","🐧","🦇"];
+let ks=Object.keys(R).sort(()=>Math.random()-0.5),i=0,stars=0,started=false;
+
+function say(t,d){if(SFX.muted)return;setTimeout(()=>{try{if('speechSynthesis' in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=0.9;u.pitch=1.2;u.lang='en-US';speechSynthesis.speak(u);}}catch(e){}},d||0);}
+
+function show(){
+  const k=ks[i%ks.length],ans=[...new Set(R[k])];let found=0;
+  document.getElementById('im').src=k+"-animals.jpg";
+  document.getElementById('m').textContent="Find "+ans.length+"! "+"⚪".repeat(ans.length);
+  const dis=ALL.filter(x=>!ans.includes(x)).sort(()=>Math.random()-0.5).slice(0,8-ans.length);
+  const o=document.getElementById('o');o.innerHTML="";
+  [...ans,...dis].sort(()=>Math.random()-0.5).forEach(x=>{
+    const b=document.createElement('button');b.className='a';b.textContent=x;b.setAttribute('aria-label',N[x]||'animal');
+    b.addEventListener('pointerdown',e=>{
+      e.preventDefault();
+      SFX.unlock();
+      if(b.classList.contains('ok')||b.classList.contains('no'))return;
+      if(ans.includes(x)){
+        b.classList.add('ok');found++;
+        document.getElementById('m').textContent="🟢".repeat(found)+"⚪".repeat(ans.length-found);
+        if(found===ans.length){
+          SFX.win();stars++;
+          document.getElementById('s').textContent="⭐".repeat(stars);
+          say("You found them all! Amazing!",500);
+          setTimeout(()=>{i++;show()},2600);
+        }else{
+          SFX.ding();say(N[x]||"yes",250);
+        }
+      }else{
+        b.classList.add('no');SFX.lose();say("No, that one is not there",400);
+      }
+    });
+    o.appendChild(b);
+  });
+  if(started)say("Can you find all "+ans.length+" animals in the picture?",300);
+}
+
+document.getElementById('rp').addEventListener('pointerdown',e=>{e.preventDefault();SFX.unlock();say("Find all the animals in the picture!");});
+document.getElementById('nx').addEventListener('pointerdown',e=>{e.preventDefault();SFX.unlock();i++;show();});
+
+const startBtn=document.getElementById('start-btn');
+const startOverlay=document.getElementById('start-overlay');
+function startGame(e){
+  if(e)e.preventDefault();
+  SFX.unlock();
+  started=true;
+  startOverlay.style.display='none';
+  const k=ks[i%ks.length],ans=[...new Set(R[k])];
+  say("Can you find all "+ans.length+" animals in the picture?",300);
+}
+startBtn.addEventListener('click',startGame);
+startBtn.addEventListener('touchend',startGame);
+
+show();
+})();
+</script>
+<script src="/games/register.js"></script>
+</body>
+</html>
