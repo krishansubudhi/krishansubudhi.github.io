@@ -4,6 +4,7 @@ author: krishan
 layout: post
 categories: agents
 date: 2026-10-26
+pin: true
 title: AI agents delete half as much existing code
 description: "Analyzing 642 merged pull requests across 16 major open-source repositories: why coding agents bloat codebases by adding logic without pruning dead code, and how code-size ceilings prevent it."
 ---

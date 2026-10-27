@@ -36,6 +36,13 @@
           <span>{{ site.data.locales[include.lang].tabs.home | upcase }}</span>
         </a>
       </li>
+      <!-- bloat report card: interactive tool at /bloat/ -->
+      <li class="nav-item{% if page.url == '/bloat/' %}{{ " active" }}{% endif %}">
+        <a href="{{ '/bloat/' | relative_url }}" class="nav-link">
+          <i class="fa-fw fas fa-chart-simple"></i>
+          <span>BLOAT CARD</span>
+        </a>
+      </li>
       <!-- games: a plain static app at /games/, not a _tabs collection doc -->
       <li class="nav-item{% if page.url == '/games/' %}{{ " active" }}{% endif %}">
         <a href="{{ '/games/' | relative_url }}" class="nav-link">
