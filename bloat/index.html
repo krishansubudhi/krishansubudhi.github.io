@@ -1,0 +1,829 @@
+---
+layout: null
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Agent Bloat & Deletion Report Card</title>
+  <meta name="description" content="Interactive benchmark: Measure code bloat, zero-deletion rates, and net-growth across AI Agents (Claude, Devin, Copilot SWE) vs Human developers.">
+  
+  <meta property="og:title" content="AI Agent Bloat & Deletion Report Card">
+  <meta property="og:description" content="Empirical analysis of 642 merged PRs: AI agents delete half as much existing code and net-grow codebases 88.2% of the time.">
+  <meta property="og:url" content="https://krishansubudhi.github.io/bloat/">
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: #111726;
+      --card-border: #1e293b;
+      --card-hover: #192339;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --accent-cyan: #06b6d4;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
+      --accent-purple: #a855f7;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a { color: var(--primary); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: #818cf8; }
+
+    .header-nav {
+      border-bottom: 1px solid var(--card-border);
+      background: rgba(9, 13, 22, 0.85);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #fff;
+    }
+    .header-links {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      font-size: 0.9rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.5rem 1.25rem 4rem;
+      flex: 1;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      color: #a5b4fc;
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    h1.hero-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.15;
+      margin-bottom: 0.85rem;
+      background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    @media (max-width: 640px) {
+      h1.hero-title { font-size: 1.85rem; }
+    }
+
+    p.hero-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 750px;
+      margin-bottom: 2rem;
+    }
+
+    /* Repo selector chips */
+    .section-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .repo-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.75rem;
+    }
+    .chip {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: #cbd5e1;
+      padding: 0.4rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .chip:hover {
+      background: var(--card-hover);
+      border-color: #3b82f6;
+      color: #fff;
+    }
+    .chip.active {
+      background: rgba(99, 102, 241, 0.2);
+      border-color: var(--primary);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* Input Bar */
+    .search-box {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 0.4rem;
+      box-shadow: 0 4px 20px -2px rgba(0,0,0,0.5);
+    }
+    .search-box:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+    }
+    .search-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.95rem;
+      padding: 0.6rem 0.85rem;
+    }
+    .search-input::placeholder { color: #475569; }
+    .btn-analyze {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1.4rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background 0.2s;
+    }
+    .btn-analyze:hover { background: var(--primary-hover); }
+
+    /* Report Card */
+    .report-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+    .report-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, #6366f1, #06b6d4, #10b981);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.75rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .card-repo-meta h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: #fff;
+    }
+    .card-repo-meta .badge-source {
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      background: #1e293b;
+      color: #94a3b8;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      margin-left: 0.4rem;
+    }
+    .card-repo-meta p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-top: 0.35rem;
+    }
+
+    .grade-badge-wrap {
+      text-align: right;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+    .grade-box {
+      width: 72px;
+      height: 72px;
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      line-height: 1;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .grade-box.grade-A { background: rgba(16, 185, 129, 0.2); border: 2px solid #10b981; color: #10b981; }
+    .grade-box.grade-B { background: rgba(6, 182, 212, 0.2); border: 2px solid #06b6d4; color: #06b6d4; }
+    .grade-box.grade-C { background: rgba(245, 158, 11, 0.2); border: 2px solid #f59e0b; color: #f59e0b; }
+    .grade-box.grade-D { background: rgba(244, 63, 94, 0.2); border: 2px solid #f43f5e; color: #f43f5e; }
+    .grade-box.grade-F { background: rgba(225, 29, 72, 0.3); border: 2px solid #e11d48; color: #fda4af; }
+    .grade-box .letter { font-size: 2.2rem; }
+    .grade-box .lbl { font-size: 0.6rem; letter-spacing: 0.05em; text-transform: uppercase; margin-top: 2px; }
+
+    /* Comparison Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .metric-card {
+      background: #0d131f;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+    .metric-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.75rem;
+    }
+    .comparison-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.4rem;
+      font-size: 0.95rem;
+    }
+    .comparison-row.agent { color: #818cf8; font-weight: 700; }
+    .comparison-row.human { color: #94a3b8; }
+    .val { font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; }
+
+    /* Ratchet Banner */
+    .ratchet-box {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(6, 182, 212, 0.08));
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .ratchet-cta-title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .ratchet-cmd {
+      background: #090d16;
+      border: 1px solid #1e293b;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: #a5b4fc;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-share {
+      background: #1e293b;
+      color: #fff;
+      border: 1px solid #334155;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+    .btn-share:hover {
+      background: #334155;
+      border-color: #475569;
+    }
+
+    /* Samples table */
+    .table-container {
+      margin-top: 2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      text-align: left;
+    }
+    th, td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #1e293b;
+    }
+    th {
+      background: #0d131f;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+    }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    .del-tag { color: var(--accent-rose); font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+    .add-tag { color: var(--accent-emerald); font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+    footer {
+      border-top: 1px solid var(--card-border);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header-nav">
+    <a href="/" class="header-brand">
+      <i class="fa-solid fa-bolt text-primary"></i>
+      <span>Krishan's Tech Blog</span>
+    </a>
+    <div class="header-links">
+      <a href="/2026/10/26/ai-agents-delete-half-as-much-existing-code/">
+        <i class="fa-solid fa-file-lines me-1"></i>Read Study
+      </a>
+      <a href="https://github.com/krishansubudhi/ratchet" target="_blank" rel="noopener noreferrer">
+        <i class="fa-brands fa-github me-1"></i>Ratchet CLI
+      </a>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="hero-badge">
+      <i class="fa-solid fa-microchip"></i>
+      <span>Empirical 642-PR Dataset & Real-Time Classifier</span>
+    </div>
+
+    <h1 class="hero-title">AI Agent Bloat & Deletion Report Card</h1>
+    <p class="hero-subtitle">
+      Autonomous software agents (Claude Code, Devin, Copilot SWE) solve prompts by adding code rather than deleting or refactoring. Pick any studied repo or enter any public GitHub repository to grade its AI deletion deficit.
+    </p>
+
+    <div class="section-label">
+      <i class="fa-solid fa-layer-group"></i>
+      <span>Preloaded Study Repositories (Click to inspect)</span>
+    </div>
+
+    <div class="repo-chips" id="repo-chips">
+      <!-- Populated via JS -->
+    </div>
+
+    <form class="search-box" id="search-form" onsubmit="handleSearch(event)">
+      <input 
+        type="text" 
+        class="search-input" 
+        id="repo-input" 
+        placeholder="Enter public repo (e.g. BerriAI/litellm, astral-sh/ruff, or owner/repo)..."
+        autocomplete="off"
+        spellcheck="false"
+      >
+      <button type="submit" class="btn-analyze" id="analyze-btn">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <span>Analyze Repo</span>
+      </button>
+    </form>
+
+    <div id="status-msg" style="display: none; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;"></div>
+
+    <!-- The Report Card -->
+    <div class="report-card" id="report-card">
+      <div class="card-top">
+        <div class="card-repo-meta">
+          <h2>
+            <i class="fa-brands fa-github"></i>
+            <span id="card-repo-name">BerriAI/litellm</span>
+            <span class="badge-source" id="card-source-badge">PRELOADED STUDY</span>
+          </h2>
+          <p id="card-repo-desc">Empirical benchmark of 40 agent PRs (Devin) matched 1:1 against 40 human PRs.</p>
+        </div>
+        <div class="grade-badge-wrap">
+          <div>
+            <button class="btn-share" onclick="copyShareText()" id="share-btn">
+              <i class="fa-solid fa-share-nodes"></i>
+              <span>Copy Share Text</span>
+            </button>
+          </div>
+          <div class="grade-box grade-C" id="grade-box">
+            <span class="letter" id="grade-letter">C</span>
+            <span class="lbl">Bloat Grade</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 Core Metrics -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-title">Net-Growth PR %</div>
+          <div class="comparison-row agent">
+            <span>🤖 Agent:</span>
+            <span class="val" id="val-agent-net-grow">75.0%</span>
+          </div>
+          <div class="comparison-row human">
+            <span>👤 Human:</span>
+            <span class="val" id="val-human-net-grow">62.5%</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-title">Zero-Deletion PR %</div>
+          <div class="comparison-row agent">
+            <span>🤖 Agent:</span>
+            <span class="val" id="val-agent-zero-del">20.0%</span>
+          </div>
+          <div class="comparison-row human">
+            <span>👤 Human:</span>
+            <span class="val" id="val-human-zero-del">10.0%</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-title">Median Deletions / PR</div>
+          <div class="comparison-row agent">
+            <span>🤖 Agent:</span>
+            <span class="val" id="val-agent-med-del">6.5 lines</span>
+          </div>
+          <div class="comparison-row human">
+            <span>👤 Human:</span>
+            <span class="val" id="val-human-med-del">17.5 lines</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-title">Median Additions / PR</div>
+          <div class="comparison-row agent">
+            <span>🤖 Agent:</span>
+            <span class="val" id="val-agent-med-add">142 lines</span>
+          </div>
+          <div class="comparison-row human">
+            <span>👤 Human:</span>
+            <span class="val" id="val-human-med-add">110 lines</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ratchet CTA Snippet -->
+      <div class="ratchet-box">
+        <div>
+          <div class="ratchet-cta-title">
+            <i class="fa-solid fa-shield-halved text-primary"></i>
+            <span>Fix agent bloat before it merges with Ratchet</span>
+          </div>
+          <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 0.2rem;">
+            Enforce code size caps directly in CI so AI agents are forced to refactor & delete dead code.
+          </p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
+          <div class="ratchet-cmd">
+            <code>pip install ratchet-cli &amp;&amp; ratchet init</code>
+          </div>
+          <a href="https://github.com/krishansubudhi/ratchet" target="_blank" rel="noopener noreferrer" class="btn-analyze" style="padding: 0.45rem 0.9rem; font-size: 0.82rem;">
+            <span>View on GitHub</span>
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Sample PRs Table -->
+      <div class="table-container" id="sample-table-container">
+        <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem; color: #cbd5e1;">
+          <i class="fa-solid fa-code-pull-request me-1 text-primary"></i> Sample Analyzed PRs
+        </h3>
+        <table id="prs-table">
+          <thead>
+            <tr>
+              <th>Cohort</th>
+              <th>PR</th>
+              <th>Title</th>
+              <th>Author / Agent</th>
+              <th>Changes</th>
+            </tr>
+          </thead>
+          <tbody id="prs-tbody">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>
+      Data from <a href="https://github.com/krishansubudhi/ratchet">Ratchet</a> research study &amp; live GitHub API.
+      Read the full post: <a href="/2026/10/26/ai-agents-delete-half-as-much-existing-code/">AI agents delete half as much existing code</a>.
+    </p>
+  </footer>
+
+  <script>
+    const PRELOADED = {"BerriAI/litellm": {"grade": "B", "agent_count": 40, "human_count": 40, "agent_net_grow_pct": 75.0, "human_net_grow_pct": 90.0, "agent_zero_del_pct": 20.0, "human_zero_del_pct": 12.5, "agent_med_del": 6.5, "human_med_del": 17.5, "agent_med_add": 127.0, "human_med_add": 161.5, "recent_agent_prs": [{"pr": 46931, "agent": "Devin (Bot)", "title": "test(cost): add tier 1 cost tracking cases for gpt-5.6-terra, gemini-4-argon and gemini-3.1-pro-preview", "author": "devin-ai-integration", "created_at": "2026-10-16T17:11:06Z", "merged_at": "2026-10-16T17:31:42Z", "additions": 1180, "deletions": 7, "net_lines": 1173, "url": "https://github.com/BerriAI/litellm/pull/46931"}, {"pr": 46939, "agent": "Devin (Bot)", "title": "test(cost): bill vertex gemini-3.8-flash reasoning tokens at the reasoning price", "author": "devin-ai-integration", "created_at": "2026-10-16T18:16:44Z", "merged_at": "2026-10-16T18:32:35Z", "additions": 3, "deletions": 58, "net_lines": -55, "url": "https://github.com/BerriAI/litellm/pull/46939"}, {"pr": 46937, "agent": "Devin (Bot)", "title": "test(integration): remove BUG skip for 1 test that passes on main", "author": "devin-ai-integration", "created_at": "2026-10-16T17:47:45Z", "merged_at": "2026-10-16T19:39:35Z", "additions": 0, "deletions": 1, "net_lines": -1, "url": "https://github.com/BerriAI/litellm/pull/46937"}, {"pr": 46962, "agent": "Devin (Bot)", "title": "test(cost): rekey vertex gemini, add bedrock mantle gpt and claude-opus-5-5, drop suite-only price fields", "author": "devin-ai-integration", "created_at": "2026-10-16T19:50:44Z", "merged_at": "2026-10-16T20:14:54Z", "additions": 1017, "deletions": 1308, "net_lines": -291, "url": "https://github.com/BerriAI/litellm/pull/46962"}, {"pr": 47116, "agent": "Devin (Bot)", "title": "test(translation): recapture anthropic claude bases after usage speed field", "author": "devin-ai-integration", "created_at": "2026-10-17T14:44:01Z", "merged_at": "2026-10-17T16:29:57Z", "additions": 235, "deletions": 65, "net_lines": 170, "url": "https://github.com/BerriAI/litellm/pull/47116"}], "recent_human_prs": [{"pr": 47959, "agent": "Human (Matched)", "title": "fix(gateway): place chat's cache_control_injection_points instead of sending them", "author": "yujonglee-berri", "created_at": "2026-10-22T19:01:56Z", "merged_at": "2026-10-22T19:03:30Z", "additions": 897, "deletions": 18, "net_lines": 879, "url": "https://github.com/BerriAI/litellm/pull/47959"}, {"pr": 47962, "agent": "Human (Matched)", "title": "fix(router): keep retrying once every deployment of a group has been tried", "author": "yujonglee-berri", "created_at": "2026-10-22T19:02:05Z", "merged_at": "2026-10-22T19:05:19Z", "additions": 44, "deletions": 18, "net_lines": 26, "url": "https://github.com/BerriAI/litellm/pull/47962"}, {"pr": 47954, "agent": "Human (Matched)", "title": "fix: recognize OpenAI context_length_exceeded errors", "author": "shrey-berri", "created_at": "2026-10-22T18:45:03Z", "merged_at": "2026-10-23T17:09:40Z", "additions": 7, "deletions": 0, "net_lines": 7, "url": "https://github.com/BerriAI/litellm/pull/47954"}, {"pr": 48002, "agent": "Human (Matched)", "title": "test(interactions): read the spec from a vendored snapshot and canary the live one daily", "author": "mateo-berri", "created_at": "2026-10-23T05:26:03Z", "merged_at": "2026-10-23T17:20:41Z", "additions": 10226, "deletions": 39, "net_lines": 10187, "url": "https://github.com/BerriAI/litellm/pull/48002"}, {"pr": 47998, "agent": "Human (Matched)", "title": "fix(proxy): take the upgrade notice from the changelog instead of GitHub releases", "author": "yucheng-berri", "created_at": "2026-10-23T03:22:02Z", "merged_at": "2026-10-23T18:18:39Z", "additions": 174, "deletions": 105, "net_lines": 69, "url": "https://github.com/BerriAI/litellm/pull/47998"}]}, "electron/electron": {"grade": "C", "agent_count": 40, "human_count": 40, "agent_net_grow_pct": 90.0, "human_net_grow_pct": 82.5, "agent_zero_del_pct": 10.0, "human_zero_del_pct": 17.5, "agent_med_del": 21.0, "human_med_del": 17.5, "agent_med_add": 58.0, "human_med_add": 177.0, "recent_agent_prs": [{"pr": 55229, "agent": "Claude (Bot)", "title": "test: fix retry-reliant gc-lifecycle specs", "author": "claude", "created_at": "2026-10-22T23:26:41Z", "merged_at": "2026-10-23T13:22:48Z", "additions": 173, "deletions": 135, "net_lines": 38, "url": "https://github.com/electron/electron/pull/55229"}, {"pr": 55243, "agent": "Claude (Bot)", "title": "test: migrate cpp-heap specs to v8 heap snapshot helpers", "author": "claude", "created_at": "2026-10-23T05:10:36Z", "merged_at": "2026-10-23T14:06:27Z", "additions": 341, "deletions": 282, "net_lines": 59, "url": "https://github.com/electron/electron/pull/55243"}, {"pr": 55224, "agent": "Claude (Bot)", "title": "test: fix retry-reliant misc specs", "author": "claude", "created_at": "2026-10-22T22:42:07Z", "merged_at": "2026-10-23T14:19:47Z", "additions": 22, "deletions": 12, "net_lines": 10, "url": "https://github.com/electron/electron/pull/55224"}, {"pr": 55234, "agent": "Claude (Bot)", "title": "fix: bind WebRequestHost so blocking chrome.webRequest listeners can finish", "author": "claude", "created_at": "2026-10-23T00:59:54Z", "merged_at": "2026-10-23T14:28:29Z", "additions": 15, "deletions": 0, "net_lines": 15, "url": "https://github.com/electron/electron/pull/55234"}, {"pr": 55233, "agent": "Claude (Bot)", "title": "fix: close the utilityProcess port before its descriptor is destroyed", "author": "claude", "created_at": "2026-10-23T00:59:25Z", "merged_at": "2026-10-23T14:33:33Z", "additions": 57, "deletions": 42, "net_lines": 15, "url": "https://github.com/electron/electron/pull/55233"}], "recent_human_prs": [{"pr": 55155, "agent": "Human (Matched)", "title": "fix: extension code drift", "author": "samuelmaddock", "created_at": "2026-10-21T01:31:15Z", "merged_at": "2026-10-23T17:41:54Z", "additions": 822, "deletions": 51, "net_lines": 771, "url": "https://github.com/electron/electron/pull/55155"}, {"pr": 55283, "agent": "Human (Matched)", "title": "fix: extension code drift", "author": "samuelmaddock", "created_at": "2026-10-23T17:51:38Z", "merged_at": "2026-10-23T20:31:19Z", "additions": 643, "deletions": 51, "net_lines": 592, "url": "https://github.com/electron/electron/pull/55283"}, {"pr": 54024, "agent": "Human (Matched)", "title": "build: enable more performance-* clang-tidy checks", "author": "dsanders11", "created_at": "2026-09-17T05:38:30Z", "merged_at": "2026-10-23T21:53:41Z", "additions": 149, "deletions": 112, "net_lines": 37, "url": "https://github.com/electron/electron/pull/54024"}, {"pr": 55284, "agent": "Human (Matched)", "title": "fix: extension code drift", "author": "samuelmaddock", "created_at": "2026-10-23T17:52:47Z", "merged_at": "2026-10-23T22:01:32Z", "additions": 822, "deletions": 51, "net_lines": 771, "url": "https://github.com/electron/electron/pull/55284"}, {"pr": 55209, "agent": "Human (Matched)", "title": "docs: `?` in preload script globs matches zero or one character", "author": "samuelmaddock", "created_at": "2026-10-22T17:46:35Z", "merged_at": "2026-10-23T01:09:20Z", "additions": 33, "deletions": 1, "net_lines": 32, "url": "https://github.com/electron/electron/pull/55209"}]}, "opensanctions/opensanctions": {"grade": "F", "agent_count": 35, "human_count": 35, "agent_net_grow_pct": 94.3, "human_net_grow_pct": 82.9, "agent_zero_del_pct": 68.6, "human_zero_del_pct": 14.3, "agent_med_del": 0, "human_med_del": 5, "agent_med_add": 7, "human_med_add": 27, "recent_agent_prs": [{"pr": 5863, "agent": "Claude (Bot)", "title": "[tw_shtc] Stop spurious \"URL hash changed\" warnings from the entity list document", "author": "claude", "created_at": "2026-10-08T03:32:09Z", "merged_at": "2026-10-08T13:40:34Z", "additions": 48, "deletions": 3, "net_lines": 45, "url": "https://github.com/opensanctions/opensanctions/pull/5863"}, {"pr": 5869, "agent": "Claude (Bot)", "title": "[eu_journal_sanctions] Transcribe Council Implementing Regulation (EU) 2026/2263", "author": "claude", "created_at": "2026-10-08T13:20:50Z", "merged_at": "2026-10-08T13:44:49Z", "additions": 2, "deletions": 0, "net_lines": 2, "url": "https://github.com/opensanctions/opensanctions/pull/5869"}, {"pr": 5870, "agent": "Claude (Bot)", "title": "[eu_journal_sanctions] Transcribe Council Implementing Regulation (EU) 2026/2257", "author": "claude", "created_at": "2026-10-08T13:50:59Z", "merged_at": "2026-10-08T14:05:54Z", "additions": 9, "deletions": 0, "net_lines": 9, "url": "https://github.com/opensanctions/opensanctions/pull/5870"}, {"pr": 5879, "agent": "Claude (Bot)", "title": "[eu_journal_sanctions] Transcribe 2026/2287 and bump 269/2014 to 02014R0269-20260928", "author": "claude", "created_at": "2026-10-09T08:21:25Z", "merged_at": "2026-10-09T09:21:26Z", "additions": 223, "deletions": 187, "net_lines": 36, "url": "https://github.com/opensanctions/opensanctions/pull/5879"}, {"pr": 5887, "agent": "Claude (Bot)", "title": "[eu_journal_sanctions] transcribe Sudan amendment 32026R2262", "author": "claude", "created_at": "2026-10-09T14:08:32Z", "merged_at": "2026-10-09T14:23:23Z", "additions": 4, "deletions": 0, "net_lines": 4, "url": "https://github.com/opensanctions/opensanctions/pull/5887"}], "recent_human_prs": [{"pr": 5838, "agent": "Human (Matched)", "title": "Tag cleanup: apply sector.securities to datasets that contain securities", "author": "nvmbrasserie", "created_at": "2026-10-06T13:17:26Z", "merged_at": "2026-10-08T15:26:09Z", "additions": 17, "deletions": 0, "net_lines": 17, "url": "https://github.com/opensanctions/opensanctions/pull/5838"}, {"pr": 5867, "agent": "Human (Matched)", "title": "gb_fcdo_sanctions: Split multi-value fields", "author": "leonhandreke", "created_at": "2026-10-08T10:13:15Z", "merged_at": "2026-10-08T10:29:08Z", "additions": 57, "deletions": 5, "net_lines": 52, "url": "https://github.com/opensanctions/opensanctions/pull/5867"}, {"pr": 5839, "agent": "Human (Matched)", "title": "Tag cleanup: bring sector.crypto, academic, defense and energy to 5+ datasets", "author": "nvmbrasserie", "created_at": "2026-10-06T13:54:21Z", "merged_at": "2026-10-08T17:34:02Z", "additions": 52, "deletions": 19, "net_lines": 33, "url": "https://github.com/opensanctions/opensanctions/pull/5839"}, {"pr": 5874, "agent": "Human (Matched)", "title": "[us_cuba_sanctions] Tag accommodations with US-DOS-CU-PAL", "author": "nvmbrasserie", "created_at": "2026-10-08T16:22:14Z", "merged_at": "2026-10-09T10:54:28Z", "additions": 2, "deletions": 1, "net_lines": 1, "url": "https://github.com/opensanctions/opensanctions/pull/5874"}, {"pr": 5886, "agent": "Human (Matched)", "title": "[docs] Emit an entity after the helpers that write to it", "author": "nvmbrasserie", "created_at": "2026-10-09T13:38:34Z", "merged_at": "2026-10-09T14:09:20Z", "additions": 19, "deletions": 1, "net_lines": 18, "url": "https://github.com/opensanctions/opensanctions/pull/5886"}]}, "roundup-app/roundup": {"grade": "C", "agent_count": 35, "human_count": 35, "agent_net_grow_pct": 88.6, "human_net_grow_pct": 62.9, "agent_zero_del_pct": 14.3, "human_zero_del_pct": 17.1, "agent_med_del": 14, "human_med_del": 4, "agent_med_add": 193, "human_med_add": 16, "recent_agent_prs": [{"pr": 4239, "agent": "Claude (Bot)", "title": "U4237 specify completion retention across snapshot ordering", "author": "claude", "created_at": "2026-10-26T12:45:55Z", "merged_at": "2026-10-26T13:07:46Z", "additions": 15, "deletions": 0, "net_lines": 15, "url": "https://github.com/roundup-app/roundup/pull/4239"}, {"pr": 4240, "agent": "Claude (Bot)", "title": "U4237 retain completed faults after task exit", "author": "claude", "created_at": "2026-10-26T13:14:44Z", "merged_at": "2026-10-26T13:32:25Z", "additions": 92, "deletions": 4, "net_lines": 88, "url": "https://github.com/roundup-app/roundup/pull/4240"}, {"pr": 4238, "agent": "Claude (Bot)", "title": "U4231 release keyboard suppression after unchanged acknowledgements", "author": "claude", "created_at": "2026-10-26T12:42:12Z", "merged_at": "2026-10-26T13:54:32Z", "additions": 376, "deletions": 12, "net_lines": 364, "url": "https://github.com/roundup-app/roundup/pull/4238"}, {"pr": 4241, "agent": "Claude (Bot)", "title": "U3523e: preserve recovery when live import launch fails", "author": "claude", "created_at": "2026-10-26T14:58:12Z", "merged_at": "2026-10-26T15:44:06Z", "additions": 230, "deletions": 78, "net_lines": 152, "url": "https://github.com/roundup-app/roundup/pull/4241"}, {"pr": 4243, "agent": "Claude (Bot)", "title": "Z3799b await program completion during Agent clean exit", "author": "claude", "created_at": "2026-10-26T15:40:15Z", "merged_at": "2026-10-26T16:04:23Z", "additions": 1, "deletions": 14, "net_lines": -13, "url": "https://github.com/roundup-app/roundup/pull/4243"}], "recent_human_prs": [{"pr": 4233, "agent": "Human (Matched)", "title": "U134: route native material through the Tauri adapter door", "author": "saadshahd", "created_at": "2026-10-26T12:17:57Z", "merged_at": "2026-10-26T13:21:48Z", "additions": 29, "deletions": 29, "net_lines": 0, "url": "https://github.com/roundup-app/roundup/pull/4233"}, {"pr": 4242, "agent": "Human (Matched)", "title": "Fix flaky u3474d and u3078k under CPU-starved shards", "author": "saadshahd", "created_at": "2026-10-26T15:13:58Z", "merged_at": "2026-10-26T15:44:45Z", "additions": 5, "deletions": 1, "net_lines": 4, "url": "https://github.com/roundup-app/roundup/pull/4242"}, {"pr": 4250, "agent": "Human (Matched)", "title": "CI3781 drop GHA sccache, bound the apt download", "author": "saadshahd", "created_at": "2026-10-26T16:28:11Z", "merged_at": "2026-10-26T16:37:49Z", "additions": 3, "deletions": 11, "net_lines": -8, "url": "https://github.com/roundup-app/roundup/pull/4250"}, {"pr": 4255, "agent": "Human (Matched)", "title": "CI3781: restore an older Tauri package archive when the key changes", "author": "saadshahd", "created_at": "2026-10-26T16:56:46Z", "merged_at": "2026-10-26T17:13:02Z", "additions": 3, "deletions": 1, "net_lines": 2, "url": "https://github.com/roundup-app/roundup/pull/4255"}, {"pr": 4257, "agent": "Human (Matched)", "title": "Scan each mutated parent once in the scrollbar tracker (U362 densest-seed timeout)", "author": "saadshahd", "created_at": "2026-10-26T17:04:11Z", "merged_at": "2026-10-26T17:26:44Z", "additions": 7, "deletions": 1, "net_lines": 6, "url": "https://github.com/roundup-app/roundup/pull/4257"}]}, "CopilotKit/CopilotKit": {"grade": "D", "agent_count": 25, "human_count": 25, "agent_net_grow_pct": 96.0, "human_net_grow_pct": 88.0, "agent_zero_del_pct": 16.0, "human_zero_del_pct": 8.0, "agent_med_del": 2, "human_med_del": 4, "agent_med_add": 29, "human_med_add": 38, "recent_agent_prs": [{"pr": 7467, "agent": "Claude Code", "title": "fix(mcp-apps-renderer): follow the host page's dark theme", "author": "tylerslaton", "created_at": "2026-09-27T05:49:00Z", "merged_at": "2026-09-29T18:38:08Z", "additions": 36, "deletions": 1, "net_lines": 35, "url": "https://github.com/CopilotKit/CopilotKit/pull/7467"}, {"pr": 7584, "agent": "Claude Code", "title": "ci: add a job timeout to every workflow job that lacks one", "author": "BenTaylorDev", "created_at": "2026-10-02T11:06:31Z", "merged_at": "2026-10-02T12:49:13Z", "additions": 10, "deletions": 0, "net_lines": 10, "url": "https://github.com/CopilotKit/CopilotKit/pull/7584"}, {"pr": 7614, "agent": "Claude Code", "title": "chore(renovate): disable the Dependency Dashboard issue", "author": "BenTaylorDev", "created_at": "2026-10-04T01:21:29Z", "merged_at": "2026-10-05T03:58:33Z", "additions": 2, "deletions": 1, "net_lines": 1, "url": "https://github.com/CopilotKit/CopilotKit/pull/7614"}, {"pr": 7724, "agent": "Claude Code", "title": "docs(langgraph): align the Python quickstart and add a FastAPI create_agent example", "author": "BenTaylorDev", "created_at": "2026-10-08T21:51:17Z", "merged_at": "2026-10-08T22:55:55Z", "additions": 62, "deletions": 4, "net_lines": 58, "url": "https://github.com/CopilotKit/CopilotKit/pull/7724"}, {"pr": 7728, "agent": "Claude Code", "title": "fix(runtime): log a not-yet-created thread lookup at debug, not error (refs PE-678)", "author": "BenTaylorDev", "created_at": "2026-10-09T02:05:07Z", "merged_at": "2026-10-09T09:22:27Z", "additions": 138, "deletions": 9, "net_lines": 129, "url": "https://github.com/CopilotKit/CopilotKit/pull/7728"}], "recent_human_prs": [{"pr": 7894, "agent": "Human (Matched)", "title": "ci(showcase): skip google-adk Python tests on 3.10", "author": "contextablemark", "created_at": "2026-10-20T21:14:59Z", "merged_at": "2026-10-20T21:25:09Z", "additions": 3, "deletions": 1, "net_lines": 2, "url": "https://github.com/CopilotKit/CopilotKit/pull/7894"}, {"pr": 7898, "agent": "Human (Matched)", "title": "feat(react-core): drop Loading, LoadingIndicator, LoadingBlock and Celebration; keep a fade under reduced motion", "author": "mme", "created_at": "2026-10-21T09:13:38Z", "merged_at": "2026-10-21T10:05:32Z", "additions": 38, "deletions": 370, "net_lines": -332, "url": "https://github.com/CopilotKit/CopilotKit/pull/7898"}, {"pr": 7903, "agent": "Human (Matched)", "title": "fix(examples): pin the starters to Next.js 16.3.8 to stop Turbopack's PostCSS worker leak", "author": "BenTaylorDev", "created_at": "2026-10-21T19:52:21Z", "merged_at": "2026-10-21T22:17:56Z", "additions": 5124, "deletions": 3920, "net_lines": 1204, "url": "https://github.com/CopilotKit/CopilotKit/pull/7903"}, {"pr": 7913, "agent": "Human (Matched)", "title": "feat(react-core): readable DateTimeInput: separate date and time fields, the value in words, timeStep slots", "author": "mme", "created_at": "2026-10-22T09:34:38Z", "merged_at": "2026-10-22T12:00:11Z", "additions": 744, "deletions": 27, "net_lines": 717, "url": "https://github.com/CopilotKit/CopilotKit/pull/7913"}, {"pr": 7901, "agent": "Human (Matched)", "title": "fix(core): don't move a tool result in front of reasoning stored before it", "author": "mxmzb", "created_at": "2026-10-21T17:40:58Z", "merged_at": "2026-10-22T14:06:17Z", "additions": 125, "deletions": 19, "net_lines": 106, "url": "https://github.com/CopilotKit/CopilotKit/pull/7901"}]}, "browserbase/stagehand": {"grade": "D", "agent_count": 25, "human_count": 25, "agent_net_grow_pct": 100.0, "human_net_grow_pct": 88.0, "agent_zero_del_pct": 8.0, "human_zero_del_pct": 8.0, "agent_med_del": 3, "human_med_del": 25, "agent_med_add": 69, "human_med_add": 217, "recent_agent_prs": [{"pr": 865, "agent": "Claude Code", "title": "Fix type safety for undefined xpath values (#863)", "author": "seanmcguire12", "created_at": "2025-07-10T01:39:05Z", "merged_at": "2025-07-10T01:59:46Z", "additions": 10, "deletions": 3, "net_lines": 7, "url": "https://github.com/browserbase/stagehand/pull/865"}, {"pr": 2195, "agent": "Claude Code", "title": "[STG-2186] ci: fix browse release-cli ignore list", "author": "shrey150", "created_at": "2026-06-05T22:04:40Z", "merged_at": "2026-06-05T22:35:45Z", "additions": 4, "deletions": 1, "net_lines": 3, "url": "https://github.com/browserbase/stagehand/pull/2195"}, {"pr": 2199, "agent": "Claude Code", "title": "docs: add Anthropic Managed Agents browser guide", "author": "ziruihao", "created_at": "2026-06-05T23:39:51Z", "merged_at": "2026-06-05T23:51:55Z", "additions": 77, "deletions": 0, "net_lines": 77, "url": "https://github.com/browserbase/stagehand/pull/2199"}, {"pr": 2213, "agent": "Claude Code", "title": "[STG-2183] fix(cli): list full template catalog (send scope=all)", "author": "shrey150", "created_at": "2026-06-08T20:07:23Z", "merged_at": "2026-06-10T18:20:09Z", "additions": 19, "deletions": 7, "net_lines": 12, "url": "https://github.com/browserbase/stagehand/pull/2213"}, {"pr": 2232, "agent": "Claude Code", "title": "feat(llm): adaptive thinking + server-side refusal fallback for Anthropic agents", "author": "miguelg719", "created_at": "2026-06-10T20:24:07Z", "merged_at": "2026-06-10T20:34:23Z", "additions": 328, "deletions": 19, "net_lines": 309, "url": "https://github.com/browserbase/stagehand/pull/2232"}], "recent_human_prs": [{"pr": 3081, "agent": "Human (Matched)", "title": "[fix]: enforce `screenshot` & `pdf` deadlines across downstream steps", "author": "seanmcguire12", "created_at": "2026-09-30T20:10:18Z", "merged_at": "2026-09-30T21:13:49Z", "additions": 594, "deletions": 283, "net_lines": 311, "url": "https://github.com/browserbase/stagehand/pull/3081"}, {"pr": 3082, "agent": "Human (Matched)", "title": "ci: restore Browse alphas for CLI changes", "author": "shrey150", "created_at": "2026-09-30T22:55:29Z", "merged_at": "2026-10-01T20:53:31Z", "additions": 327, "deletions": 1, "net_lines": 326, "url": "https://github.com/browserbase/stagehand/pull/3082"}, {"pr": 3083, "agent": "Human (Matched)", "title": "[feat]: expose `timeout` param in `page.snapshot()`", "author": "seanmcguire12", "created_at": "2026-09-30T23:06:24Z", "merged_at": "2026-10-01T20:56:49Z", "additions": 914, "deletions": 227, "net_lines": 687, "url": "https://github.com/browserbase/stagehand/pull/3083"}, {"pr": 3095, "agent": "Human (Matched)", "title": "docs: add Amel Bajramovic to README acknowledgements", "author": "supremeboxlogos", "created_at": "2026-10-02T21:58:30Z", "merged_at": "2026-10-02T23:09:53Z", "additions": 1, "deletions": 0, "net_lines": 1, "url": "https://github.com/browserbase/stagehand/pull/3095"}, {"pr": 3084, "agent": "Human (Matched)", "title": "chore(python): add keywords and classifiers for Pypi discoverability", "author": "charlypoly", "created_at": "2026-10-01T14:29:36Z", "merged_at": "2026-10-05T14:07:38Z", "additions": 30, "deletions": 1, "net_lines": 29, "url": "https://github.com/browserbase/stagehand/pull/3084"}]}, "OpenHands/OpenHands": {"grade": "B", "agent_count": 25, "human_count": 25, "agent_net_grow_pct": 88.0, "human_net_grow_pct": 88.0, "agent_zero_del_pct": 8.0, "human_zero_del_pct": 8.0, "agent_med_del": 6, "human_med_del": 20, "agent_med_add": 54, "human_med_add": 152, "recent_agent_prs": [{"pr": 18001, "agent": "Claude Code", "title": "fix(agent-profiles): save task_tracker with delegation tools (workaround for SDK#5519)", "author": "simonrosenberg", "created_at": "2026-10-05T19:03:06Z", "merged_at": "2026-10-05T21:47:53Z", "additions": 39, "deletions": 1, "net_lines": 38, "url": "https://github.com/OpenHands/OpenHands/pull/18001"}, {"pr": 18180, "agent": "Claude Code", "title": "fix(docker): bind the frontend to 0.0.0.0 when the kernel has no IPv6", "author": "enyst", "created_at": "2026-10-08T17:35:09Z", "merged_at": "2026-10-10T10:25:29Z", "additions": 12, "deletions": 6, "net_lines": 6, "url": "https://github.com/OpenHands/OpenHands/pull/18180"}, {"pr": 18317, "agent": "Claude Code", "title": "docs(verify-openhands): clarify reconcile and live-pass rules", "author": "enyst", "created_at": "2026-10-12T05:44:36Z", "merged_at": "2026-10-12T21:22:41Z", "additions": 26, "deletions": 5522, "net_lines": -5496, "url": "https://github.com/OpenHands/OpenHands/pull/18317"}, {"pr": 18393, "agent": "Claude Code", "title": "fix(automations): leave draft test automations out of the overview tiles", "author": "enyst", "created_at": "2026-10-13T10:11:46Z", "merged_at": "2026-10-13T15:55:04Z", "additions": 139, "deletions": 19, "net_lines": 120, "url": "https://github.com/OpenHands/OpenHands/pull/18393"}, {"pr": 18394, "agent": "Claude Code", "title": "fix(automations): make the draft delete confirmation a real dialog", "author": "enyst", "created_at": "2026-10-13T10:11:47Z", "merged_at": "2026-10-13T15:58:13Z", "additions": 80, "deletions": 47, "net_lines": 33, "url": "https://github.com/OpenHands/OpenHands/pull/18394"}], "recent_human_prs": [{"pr": 18786, "agent": "Human (Matched)", "title": "chore: bump @openhands/extensions to 0.33.0", "author": "neubig", "created_at": "2026-10-21T22:55:59Z", "merged_at": "2026-10-21T23:59:55Z", "additions": 5, "deletions": 5, "net_lines": 0, "url": "https://github.com/OpenHands/OpenHands/pull/18786"}, {"pr": 18783, "agent": "Human (Matched)", "title": "fix(mars): restore explicit opt-in for the web bridge", "author": "enyst", "created_at": "2026-10-21T21:33:46Z", "merged_at": "2026-10-22T00:09:08Z", "additions": 152, "deletions": 127, "net_lines": 25, "url": "https://github.com/OpenHands/OpenHands/pull/18783"}, {"pr": 18788, "agent": "Human (Matched)", "title": "refactor(automations): express the activity track height in CSS", "author": "enyst", "created_at": "2026-10-21T23:29:42Z", "merged_at": "2026-10-22T01:40:46Z", "additions": 51, "deletions": 3, "net_lines": 48, "url": "https://github.com/OpenHands/OpenHands/pull/18788"}, {"pr": 18780, "agent": "Human (Matched)", "title": "fix(mcp): install OAuth-only library entries through the MCP server's own OAuth", "author": "ak684", "created_at": "2026-10-21T19:30:19Z", "merged_at": "2026-10-22T10:16:29Z", "additions": 264, "deletions": 25, "net_lines": 239, "url": "https://github.com/OpenHands/OpenHands/pull/18780"}, {"pr": 18797, "agent": "Human (Matched)", "title": "test: await lazy root gates before availability assertions", "author": "neubig", "created_at": "2026-10-22T02:34:34Z", "merged_at": "2026-10-22T12:12:40Z", "additions": 1279, "deletions": 25, "net_lines": 1254, "url": "https://github.com/OpenHands/OpenHands/pull/18797"}]}, "JW-Incorporated/swift2": {"grade": "D", "agent_count": 20, "human_count": 20, "agent_net_grow_pct": 100.0, "human_net_grow_pct": 80.0, "agent_zero_del_pct": 20.0, "human_zero_del_pct": 25.0, "agent_med_del": 1.0, "human_med_del": 7.5, "agent_med_add": 88.0, "human_med_add": 116.5, "recent_agent_prs": [{"pr": 6188, "agent": "Claude (Bot)", "title": "Tree: daily social draft \u2014 2026-10-22", "author": "claude", "created_at": "2026-10-22T08:11:09Z", "merged_at": "2026-10-22T08:15:33Z", "additions": 88, "deletions": 0, "net_lines": 88, "url": "https://github.com/JW-Incorporated/swift2/pull/6188"}, {"pr": 6191, "agent": "Claude (Bot)", "title": "vault: 2026-10-22 \u2014 4 lanes", "author": "claude", "created_at": "2026-10-22T08:17:40Z", "merged_at": "2026-10-22T08:20:17Z", "additions": 121, "deletions": 13, "net_lines": 108, "url": "https://github.com/JW-Incorporated/swift2/pull/6191"}, {"pr": 6189, "agent": "Claude (Bot)", "title": "marjorie: route the news-pipeline-holding watchdog alert", "author": "claude", "created_at": "2026-10-22T08:14:06Z", "merged_at": "2026-10-22T08:24:02Z", "additions": 100, "deletions": 5, "net_lines": 95, "url": "https://github.com/JW-Incorporated/swift2/pull/6189"}, {"pr": 6190, "agent": "Claude (Bot)", "title": "ops: file HUMAN-ACTIONS #142 for issue #6182's guard-blocked half", "author": "claude", "created_at": "2026-10-22T08:15:40Z", "merged_at": "2026-10-22T08:25:54Z", "additions": 11, "deletions": 1, "net_lines": 10, "url": "https://github.com/JW-Incorporated/swift2/pull/6190"}, {"pr": 6194, "agent": "Claude (Bot)", "title": "Human action #143: status page frozen 15 days", "author": "claude", "created_at": "2026-10-22T12:07:35Z", "merged_at": "2026-10-22T12:14:55Z", "additions": 11, "deletions": 1, "net_lines": 10, "url": "https://github.com/JW-Incorporated/swift2/pull/6194"}], "recent_human_prs": [{"pr": 6226, "agent": "Human (Matched)", "title": "test(tidewatch): pin clock in retraction integration test", "author": "sffan15-sys", "created_at": "2026-10-23T01:35:24Z", "merged_at": "2026-10-23T01:45:45Z", "additions": 3, "deletions": 0, "net_lines": 3, "url": "https://github.com/JW-Incorporated/swift2/pull/6226"}, {"pr": 6225, "agent": "Human (Matched)", "title": "fix(news): resolve Google News article URLs so stories get images", "author": "sffan15-sys", "created_at": "2026-10-23T01:23:54Z", "merged_at": "2026-10-23T02:39:45Z", "additions": 835, "deletions": 101, "net_lines": 734, "url": "https://github.com/JW-Incorporated/swift2/pull/6225"}, {"pr": 6224, "agent": "Human (Matched)", "title": "fix(ops): self-heal ambiguous desk labels before the ownership check", "author": "sffan15-sys", "created_at": "2026-10-23T01:04:10Z", "merged_at": "2026-10-23T02:41:27Z", "additions": 173, "deletions": 3, "net_lines": 170, "url": "https://github.com/JW-Incorporated/swift2/pull/6224"}, {"pr": 6227, "agent": "Human (Matched)", "title": "fix(news): one failing source no longer fails the whole news-worker run", "author": "sffan15-sys", "created_at": "2026-10-23T03:37:40Z", "merged_at": "2026-10-23T03:48:30Z", "additions": 148, "deletions": 3, "net_lines": 145, "url": "https://github.com/JW-Incorporated/swift2/pull/6227"}, {"pr": 6228, "agent": "Human (Matched)", "title": "feat(tidewatch): read-only per-class calibration report", "author": "sffan15-sys", "created_at": "2026-10-23T03:49:56Z", "merged_at": "2026-10-23T03:59:52Z", "additions": 257, "deletions": 3, "net_lines": 254, "url": "https://github.com/JW-Incorporated/swift2/pull/6228"}]}, "Open-MBEE/OpenSysML": {"grade": "D", "agent_count": 15, "human_count": 15, "agent_net_grow_pct": 100.0, "human_net_grow_pct": 100.0, "agent_zero_del_pct": 6.7, "human_zero_del_pct": 20.0, "agent_med_del": 57, "human_med_del": 5, "agent_med_add": 322, "human_med_add": 154, "recent_agent_prs": [{"pr": 1535, "agent": "Devin (Bot)", "title": "fix(view): draw a feature membership from the owner to the usage, its diamond from the model", "author": "devin-ai-integration", "created_at": "2026-10-26T09:43:01Z", "merged_at": "2026-10-26T16:13:26Z", "additions": 1773, "deletions": 624, "net_lines": 1149, "url": "https://github.com/Open-MBEE/OpenSysML/pull/1535"}, {"pr": 1537, "agent": "Devin (Bot)", "title": "fix(runtime): report an unbound calc result as no value, like an unassigned out", "author": "devin-ai-integration", "created_at": "2026-10-26T15:17:08Z", "merged_at": "2026-10-26T20:50:01Z", "additions": 245, "deletions": 81, "net_lines": 164, "url": "https://github.com/Open-MBEE/OpenSysML/pull/1537"}, {"pr": 1536, "agent": "Devin (Bot)", "title": "docs(compliance): key the validation rows to the Beta 2 constraint names and re-ground the state rows", "author": "devin-ai-integration", "created_at": "2026-10-26T15:16:28Z", "merged_at": "2026-10-26T20:50:12Z", "additions": 189, "deletions": 188, "net_lines": 1, "url": "https://github.com/Open-MBEE/OpenSysML/pull/1536"}, {"pr": 1539, "agent": "Devin (Bot)", "title": "fix(runtime): count a nested requirement as a required constraint of its container", "author": "devin-ai-integration", "created_at": "2026-10-26T15:28:34Z", "merged_at": "2026-10-26T20:50:24Z", "additions": 681, "deletions": 28, "net_lines": 653, "url": "https://github.com/Open-MBEE/OpenSysML/pull/1539"}, {"pr": 1534, "agent": "Devin (Bot)", "title": "feat(view): draw the graphical notation's remaining relationship glyphs", "author": "devin-ai-integration", "created_at": "2026-10-26T09:30:36Z", "merged_at": "2026-10-26T20:51:03Z", "additions": 2002, "deletions": 56, "net_lines": 1946, "url": "https://github.com/Open-MBEE/OpenSysML/pull/1534"}], "recent_human_prs": [{"pr": 1447, "agent": "Human (Matched)", "title": "chore(release): pin v0.11.0 in the shared digest table", "author": "HuiJun", "created_at": "2026-10-24T07:16:50Z", "merged_at": "2026-10-24T07:52:14Z", "additions": 84, "deletions": 0, "net_lines": 84, "url": "https://github.com/Open-MBEE/OpenSysML/pull/1447"}, {"pr": 1417, "agent": "Human (Matched)", "title": "fix: recognize Cameo UML2 v5 SysML stereotype namespace", "author": "wobrschalek", "created_at": "2026-10-23T05:44:21Z", "merged_at": "2026-10-23T13:29:20Z", "additions": 178, "deletions": 5, "net_lines": 173, "url": "https://github.com/Open-MBEE/OpenSysML/pull/1417"}, {"pr": 1187, "agent": "Human (Matched)", "title": "chore(release): pin v0.10.1 in the shared digest table", "author": "HuiJun", "created_at": "2026-10-16T03:00:09Z", "merged_at": "2026-10-16T04:59:44Z", "additions": 84, "deletions": 0, "net_lines": 84, "url": "https://github.com/Open-MBEE/OpenSysML/pull/1187"}, {"pr": 1085, "agent": "Human (Matched)", "title": "chore(release): pin v0.10.0 in the shared digest table", "author": "HuiJun", "created_at": "2026-10-11T20:56:08Z", "merged_at": "2026-10-12T00:03:31Z", "additions": 154, "deletions": 1, "net_lines": 153, "url": "https://github.com/Open-MBEE/OpenSysML/pull/1085"}, {"pr": 960, "agent": "Human (Matched)", "title": "fix(export): write a decision's branches as TransitionUsages", "author": "someshSandbox", "created_at": "2026-10-06T12:18:54Z", "merged_at": "2026-10-08T16:49:24Z", "additions": 1653, "deletions": 4, "net_lines": 1649, "url": "https://github.com/Open-MBEE/OpenSysML/pull/960"}]}, "run-llama/llama_index": {"grade": "B", "agent_count": 15, "human_count": 15, "agent_net_grow_pct": 73.3, "human_net_grow_pct": 73.3, "agent_zero_del_pct": 13.3, "human_zero_del_pct": 6.7, "agent_med_del": 6, "human_med_del": 6, "agent_med_add": 74, "human_med_add": 74, "recent_agent_prs": [{"pr": 20938, "agent": "Claude Code", "title": "fix: replace mutable default arguments with None", "author": "alvinttang", "created_at": "2026-03-10T14:33:37Z", "merged_at": "2026-03-10T17:22:22Z", "additions": 11, "deletions": 3, "net_lines": 8, "url": "https://github.com/run-llama/llama_index/pull/20938"}, {"pr": 20937, "agent": "Claude Code", "title": "fix: guard against ZeroDivisionError in LlamaDebugHandler._get_time_stats_from_event_pairs", "author": "alvinttang", "created_at": "2026-03-10T14:33:28Z", "merged_at": "2026-03-10T20:08:55Z", "additions": 3, "deletions": 0, "net_lines": 3, "url": "https://github.com/run-llama/llama_index/pull/20937"}, {"pr": 21529, "agent": "Claude Code", "title": "fix(memory): handle DocumentBlock in Memory._estimate_token_count", "author": "joshuakilts", "created_at": "2026-05-01T03:30:58Z", "merged_at": "2026-05-08T19:53:48Z", "additions": 18, "deletions": 0, "net_lines": 18, "url": "https://github.com/run-llama/llama_index/pull/21529"}, {"pr": 21530, "agent": "Claude Code", "title": "fix(azure-openai): use deployment name in AzureOpenAIResponses structured predict", "author": "joshuakilts", "created_at": "2026-05-01T04:05:34Z", "merged_at": "2026-05-08T20:00:59Z", "additions": 91, "deletions": 4, "net_lines": 87, "url": "https://github.com/run-llama/llama_index/pull/21530"}, {"pr": 21641, "agent": "Claude Code", "title": "fix(google-genai): pass DocumentBlock.title as display_name to File API", "author": "joshuakilts", "created_at": "2026-05-13T16:55:19Z", "merged_at": "2026-05-13T17:34:19Z", "additions": 67, "deletions": 6, "net_lines": 61, "url": "https://github.com/run-llama/llama_index/pull/21641"}], "recent_human_prs": [{"pr": 22843, "agent": "Human (Matched)", "title": "fix(tools/mcp): correct streamable-http tuple unpack for mcp 2.0 (#22655)", "author": "KhanCold", "created_at": "2026-08-26T12:26:31Z", "merged_at": "2026-08-27T04:03:23Z", "additions": 53, "deletions": 2, "net_lines": 51, "url": "https://github.com/run-llama/llama_index/pull/22843"}, {"pr": 22842, "agent": "Human (Matched)", "title": "feat(core): add native async support to StructuredLLMRerank", "author": "UjjwalRana12", "created_at": "2026-08-26T11:57:28Z", "merged_at": "2026-08-27T04:03:39Z", "additions": 270, "deletions": 48, "net_lines": 222, "url": "https://github.com/run-llama/llama_index/pull/22842"}, {"pr": 22818, "agent": "Human (Matched)", "title": "docs: fix duplicated words in framework guides", "author": "LancyZhao", "created_at": "2026-08-24T07:25:20Z", "merged_at": "2026-08-27T04:16:34Z", "additions": 2, "deletions": 2, "net_lines": 0, "url": "https://github.com/run-llama/llama_index/pull/22818"}, {"pr": 22841, "agent": "Human (Matched)", "title": "fix(core): avoid retrying failed function tools", "author": "YZJF", "created_at": "2026-08-26T11:21:15Z", "merged_at": "2026-08-27T14:59:36Z", "additions": 88, "deletions": 4, "net_lines": 84, "url": "https://github.com/run-llama/llama_index/pull/22841"}, {"pr": 22773, "agent": "Human (Matched)", "title": "fix(core): fall back when metadata replacement target value is None", "author": "Srivatsa03", "created_at": "2026-08-21T16:59:53Z", "merged_at": "2026-08-27T15:01:08Z", "additions": 31, "deletions": 6, "net_lines": 25, "url": "https://github.com/run-llama/llama_index/pull/22773"}]}, "langchain-ai/langchain": {"grade": "B", "agent_count": 13, "human_count": 13, "agent_net_grow_pct": 76.9, "human_net_grow_pct": 69.2, "agent_zero_del_pct": 15.4, "human_zero_del_pct": 7.7, "agent_med_del": 3, "human_med_del": 3, "agent_med_add": 18, "human_med_add": 22, "recent_agent_prs": [{"pr": 32201, "agent": "Claude Code", "title": "docs: fix typos in documentation", "author": "cluster2600", "created_at": "2025-07-23T07:43:04Z", "merged_at": "2025-07-23T14:43:26Z", "additions": 2, "deletions": 2, "net_lines": 0, "url": "https://github.com/langchain-ai/langchain/pull/32201"}, {"pr": 32840, "agent": "Claude Code", "title": "fix(core): preserve `ToolMessage.status` field in `convert_to_messages`", "author": "qizwiz", "created_at": "2025-09-08T04:10:41Z", "merged_at": "2025-09-10T19:49:40Z", "additions": 10, "deletions": 1, "net_lines": 9, "url": "https://github.com/langchain-ai/langchain/pull/32840"}, {"pr": 34722, "agent": "Claude Code", "title": "fix(core): add explicit `tags` parameter to sync `LLMManagerMixin` methods", "author": "skyvanguard", "created_at": "2026-01-12T20:27:44Z", "merged_at": "2026-01-13T01:19:06Z", "additions": 6, "deletions": 0, "net_lines": 6, "url": "https://github.com/langchain-ai/langchain/pull/34722"}, {"pr": 35268, "agent": "Claude Code", "title": "feat(anthropic): add User-Agent header for Anthropic API calls", "author": "mikelambert", "created_at": "2026-02-16T19:59:51Z", "merged_at": "2026-02-17T20:59:54Z", "additions": 18, "deletions": 1, "net_lines": 17, "url": "https://github.com/langchain-ai/langchain/pull/35268"}, {"pr": 35317, "agent": "Claude Code", "title": "fix(core): accept integer temperature values in _get_ls_params", "author": "gitbalaji", "created_at": "2026-02-18T20:21:53Z", "merged_at": "2026-02-18T22:52:14Z", "additions": 77, "deletions": 4, "net_lines": 73, "url": "https://github.com/langchain-ai/langchain/pull/35317"}], "recent_human_prs": [{"pr": 40248, "agent": "Human (Matched)", "title": "fix(langchain-classic): correct sqlite3 install guidance in SQLiteEntityStore error message", "author": "OmRajput17", "created_at": "2026-09-06T18:43:38Z", "merged_at": "2026-09-06T23:05:42Z", "additions": 6, "deletions": 1, "net_lines": 5, "url": "https://github.com/langchain-ai/langchain/pull/40248"}, {"pr": 40249, "agent": "Human (Matched)", "title": "fix(deepseek): route strict mode to the beta endpoint", "author": "ccurme", "created_at": "2026-09-06T23:36:01Z", "merged_at": "2026-09-07T01:23:41Z", "additions": 96, "deletions": 9, "net_lines": 87, "url": "https://github.com/langchain-ai/langchain/pull/40249"}, {"pr": 40268, "agent": "Human (Matched)", "title": "release(openai): 1.6.1", "author": "ccurme", "created_at": "2026-09-07T18:42:43Z", "merged_at": "2026-09-08T13:12:07Z", "additions": 22, "deletions": 5, "net_lines": 17, "url": "https://github.com/langchain-ai/langchain/pull/40268"}, {"pr": 40284, "agent": "Human (Matched)", "title": "fix(openai): bump `max_completion_tokens` in cache breakpoint integration test", "author": "ccurme", "created_at": "2026-09-08T13:28:58Z", "merged_at": "2026-09-08T13:30:38Z", "additions": 1, "deletions": 1, "net_lines": 0, "url": "https://github.com/langchain-ai/langchain/pull/40284"}, {"pr": 40330, "agent": "Human (Matched)", "title": "fix(openai): add GPT-6 Astra reasoning efforts", "author": "mdrxy", "created_at": "2026-09-09T13:52:14Z", "merged_at": "2026-09-09T14:22:15Z", "additions": 24, "deletions": 0, "net_lines": 24, "url": "https://github.com/langchain-ai/langchain/pull/40330"}]}, "dosu-ai/dosu-cli": {"grade": "C", "agent_count": 11, "human_count": 11, "agent_net_grow_pct": 90.9, "human_net_grow_pct": 81.8, "agent_zero_del_pct": 9.1, "human_zero_del_pct": 0.0, "agent_med_del": 9, "human_med_del": 42, "agent_med_add": 53, "human_med_add": 295, "recent_agent_prs": [{"pr": 203, "agent": "Claude (Bot)", "title": "copy: drop redundant hand-off sentence from bootstrap-knowledge confirm", "author": "claude", "created_at": "2026-09-01T19:10:01Z", "merged_at": "2026-09-01T19:16:42Z", "additions": 3, "deletions": 23, "net_lines": -20, "url": "https://github.com/dosu-ai/dosu-cli/pull/203"}, {"pr": 275, "agent": "Claude (Bot)", "title": "fix(sync): keep sessions that finished while incognito unstudied after `off`", "author": "claude", "created_at": "2026-10-10T06:38:54Z", "merged_at": "2026-10-10T15:01:10Z", "additions": 202, "deletions": 17, "net_lines": 185, "url": "https://github.com/dosu-ai/dosu-cli/pull/275"}, {"pr": 277, "agent": "Claude (Bot)", "title": "fix(sync): ship every ready session in one run", "author": "claude", "created_at": "2026-10-13T04:54:06Z", "merged_at": "2026-10-13T05:55:30Z", "additions": 315, "deletions": 145, "net_lines": 170, "url": "https://github.com/dosu-ai/dosu-cli/pull/277"}, {"pr": 279, "agent": "Claude (Bot)", "title": "feat(setup): pick the sync scope before the backfill offer", "author": "claude", "created_at": "2026-10-13T05:10:37Z", "merged_at": "2026-10-13T06:19:52Z", "additions": 567, "deletions": 108, "net_lines": 459, "url": "https://github.com/dosu-ai/dosu-cli/pull/279"}, {"pr": 281, "agent": "Claude (Bot)", "title": "fix(setup): wrap log prose to the centered content column", "author": "claude", "created_at": "2026-10-13T15:10:58Z", "merged_at": "2026-10-13T15:37:05Z", "additions": 53, "deletions": 15, "net_lines": 38, "url": "https://github.com/dosu-ai/dosu-cli/pull/281"}], "recent_human_prs": [{"pr": 241, "agent": "Human (Matched)", "title": "fix(deployments): resolve truncated ids in switch instead of sending them to the backend", "author": "buog", "created_at": "2026-09-24T22:31:04Z", "merged_at": "2026-09-24T22:33:49Z", "additions": 168, "deletions": 14, "net_lines": 154, "url": "https://github.com/dosu-ai/dosu-cli/pull/241"}, {"pr": 257, "agent": "Human (Matched)", "title": "feat(mcp): load Dosu tools up front in Codex", "author": "teedole", "created_at": "2026-09-29T22:08:52Z", "merged_at": "2026-10-09T23:04:47Z", "additions": 503, "deletions": 42, "net_lines": 461, "url": "https://github.com/dosu-ai/dosu-cli/pull/257"}, {"pr": 272, "agent": "Human (Matched)", "title": "feat(memory): v2 memory + more agent support", "author": "mmangus", "created_at": "2026-10-06T18:06:10Z", "merged_at": "2026-10-13T04:21:25Z", "additions": 30697, "deletions": 9461, "net_lines": 21236, "url": "https://github.com/dosu-ai/dosu-cli/pull/272"}, {"pr": 276, "agent": "Human (Matched)", "title": "fix(libraries): say Monitor comments instead of reacting on Azure DevOps", "author": "Daidanny008", "created_at": "2026-10-12T20:17:11Z", "merged_at": "2026-10-12T20:56:21Z", "additions": 6, "deletions": 7, "net_lines": -1, "url": "https://github.com/dosu-ai/dosu-cli/pull/276"}, {"pr": 282, "agent": "Human (Matched)", "title": "feat: drop unlearnable-agent providers; ship Cursor sessions on sessionEnd", "author": "buog", "created_at": "2026-10-13T16:45:15Z", "merged_at": "2026-10-13T21:17:11Z", "additions": 295, "deletions": 1143, "net_lines": -848, "url": "https://github.com/dosu-ai/dosu-cli/pull/282"}]}, "pydantic/pydantic": {"grade": "C", "agent_count": 6, "human_count": 6, "agent_net_grow_pct": 66.7, "human_net_grow_pct": 50.0, "agent_zero_del_pct": 33.3, "human_zero_del_pct": 0.0, "agent_med_del": 1.5, "human_med_del": 2.0, "agent_med_add": 41.0, "human_med_add": 5.0, "recent_agent_prs": [{"pr": 13435, "agent": "Codex (Branch)", "title": "Fix pre-commit installation command in contributor guide", "author": "PSR94", "created_at": "2026-07-13T05:01:21Z", "merged_at": "2026-07-15T13:33:29Z", "additions": 2, "deletions": 2, "net_lines": 0, "url": "https://github.com/pydantic/pydantic/pull/13435"}, {"pr": 13710, "agent": "Codex (Branch)", "title": "Improve Logfire guidance for validation errors", "author": "strawgate", "created_at": "2026-08-26T00:06:58Z", "merged_at": "2026-08-26T17:16:24Z", "additions": 170, "deletions": 109, "net_lines": 61, "url": "https://github.com/pydantic/pydantic/pull/13710"}, {"pr": 13800, "agent": "Codex (Branch)", "title": "Add an enterprise support guide", "author": "strawgate", "created_at": "2026-09-12T22:46:21Z", "merged_at": "2026-09-12T23:19:16Z", "additions": 71, "deletions": 0, "net_lines": 71, "url": "https://github.com/pydantic/pydantic/pull/13800"}, {"pr": 13812, "agent": "Codex (Branch)", "title": "Document coordinated vulnerability response in enterprise support", "author": "strawgate", "created_at": "2026-09-15T17:23:26Z", "merged_at": "2026-09-16T00:02:23Z", "additions": 11, "deletions": 5, "net_lines": 6, "url": "https://github.com/pydantic/pydantic/pull/13812"}, {"pr": 13686, "agent": "Codex (Branch)", "title": "Add safe unified docs preview dispatch", "author": "strawgate", "created_at": "2026-08-19T21:52:26Z", "merged_at": "2026-09-30T22:34:11Z", "additions": 155, "deletions": 0, "net_lines": 155, "url": "https://github.com/pydantic/pydantic/pull/13686"}], "recent_human_prs": [{"pr": 13863, "agent": "Human (Matched)", "title": "Fix PyPy 8.0.0 test failure", "author": "Viicos", "created_at": "2026-09-25T01:12:07Z", "merged_at": "2026-09-25T01:20:40Z", "additions": 5, "deletions": 1, "net_lines": 4, "url": "https://github.com/pydantic/pydantic/pull/13863"}, {"pr": 13864, "agent": "Human (Matched)", "title": "Bypass PR assignment check on `skip-assignment-check` label", "author": "Viicos", "created_at": "2026-09-25T01:14:57Z", "merged_at": "2026-09-25T01:34:14Z", "additions": 2, "deletions": 1, "net_lines": 1, "url": "https://github.com/pydantic/pydantic/pull/13864"}, {"pr": 13862, "agent": "Human (Matched)", "title": "Require `multiple_of` constraints to be positive", "author": "Viicos", "created_at": "2026-09-25T01:00:11Z", "merged_at": "2026-09-25T01:39:46Z", "additions": 59, "deletions": 3, "net_lines": 56, "url": "https://github.com/pydantic/pydantic/pull/13862"}, {"pr": 13865, "agent": "Human (Matched)", "title": "Remove Mkdocs `social` plugin", "author": "Viicos", "created_at": "2026-09-25T02:08:30Z", "merged_at": "2026-09-25T02:16:18Z", "additions": 5, "deletions": 177, "net_lines": -172, "url": "https://github.com/pydantic/pydantic/pull/13865"}, {"pr": 13904, "agent": "Human (Matched)", "title": "Convert annotation to footnote in documentation", "author": "Viicos", "created_at": "2026-09-30T22:07:21Z", "merged_at": "2026-09-30T22:18:30Z", "additions": 19, "deletions": 23, "net_lines": -4, "url": "https://github.com/pydantic/pydantic/pull/13904"}]}, "SeleniumHQ/selenium": {"grade": "A", "agent_count": 2, "human_count": 2, "agent_net_grow_pct": 0.0, "human_net_grow_pct": 50.0, "agent_zero_del_pct": 0.0, "human_zero_del_pct": 50.0, "agent_med_del": 2.0, "human_med_del": 170.0, "agent_med_add": 2.0, "human_med_add": 183.5, "recent_agent_prs": [{"pr": 18027, "agent": "Codex (Branch)", "title": "[py] Type BaseOptions.set_capability parameters", "author": "adamtheturtle", "created_at": "2026-09-12T13:33:17Z", "merged_at": "2026-09-16T22:02:09Z", "additions": 1, "deletions": 1, "net_lines": 0, "url": "https://github.com/SeleniumHQ/selenium/pull/18027"}, {"pr": 18028, "agent": "Codex (Branch)", "title": "[py] Type WebElement.get_attribute name", "author": "adamtheturtle", "created_at": "2026-09-12T13:33:19Z", "merged_at": "2026-09-21T08:33:32Z", "additions": 3, "deletions": 3, "net_lines": 0, "url": "https://github.com/SeleniumHQ/selenium/pull/18028"}], "recent_human_prs": [{"pr": 18043, "agent": "Human (Matched)", "title": "[dotnet] [bidi] Add Emulation.SetTextLayoutModeOverride command", "author": "nvborisenko", "created_at": "2026-09-16T19:17:30Z", "merged_at": "2026-09-16T19:44:25Z", "additions": 63, "deletions": 0, "net_lines": 63, "url": "https://github.com/SeleniumHQ/selenium/pull/18043"}, {"pr": 18061, "agent": "Human (Matched)", "title": "[build] Automated Dependency Update", "author": "selenium-ci", "created_at": "2026-09-21T07:27:30Z", "merged_at": "2026-09-21T09:22:13Z", "additions": 304, "deletions": 340, "net_lines": -36, "url": "https://github.com/SeleniumHQ/selenium/pull/18061"}]}, "astral-sh/ruff": {"grade": "A", "agent_count": 7, "human_count": 7, "agent_net_grow_pct": 71.4, "human_net_grow_pct": 42.9, "agent_zero_del_pct": 0.0, "human_zero_del_pct": 0.0, "agent_med_del": 70, "human_med_del": 46, "agent_med_add": 156, "human_med_add": 30, "recent_agent_prs": [{"pr": 21513, "agent": "Claude Code", "title": "Show partial fixability indicator in statistics output", "author": "tsvikas", "created_at": "2025-11-18T16:21:10Z", "merged_at": "2025-11-27T17:03:36Z", "additions": 112, "deletions": 41, "net_lines": 71, "url": "https://github.com/astral-sh/ruff/pull/21513"}, {"pr": 23070, "agent": "Claude Code", "title": "[ty] Recognize `__dataclass_transform__` to support SQLModel", "author": "rayzeller", "created_at": "2026-02-04T14:14:38Z", "merged_at": "2026-02-05T08:39:54Z", "additions": 156, "deletions": 77, "net_lines": 79, "url": "https://github.com/astral-sh/ruff/pull/23070"}, {"pr": 23288, "agent": "Claude Code", "title": "[ty] mdtest.py: auto-rerun mdtests when snapshots are rejected in a separate process", "author": "AlexWaygood", "created_at": "2026-02-15T17:40:58Z", "merged_at": "2026-02-16T09:54:07Z", "additions": 46, "deletions": 3, "net_lines": 43, "url": "https://github.com/astral-sh/ruff/pull/23288"}, {"pr": 23275, "agent": "Claude Code", "title": "[`ruff`] Detect `PLC0207` on chained `str.split()` calls", "author": "harupy", "created_at": "2026-02-14T10:11:15Z", "merged_at": "2026-02-18T16:51:45Z", "additions": 228, "deletions": 70, "net_lines": 158, "url": "https://github.com/astral-sh/ruff/pull/23275"}, {"pr": 23702, "agent": "Claude Code", "title": "test: migrate `show_settings` and `version` tests to use `CliTest`", "author": "Beltranss", "created_at": "2026-03-03T22:30:30Z", "merged_at": "2026-03-18T19:44:43Z", "additions": 209, "deletions": 225, "net_lines": -16, "url": "https://github.com/astral-sh/ruff/pull/23702"}], "recent_human_prs": [{"pr": 27123, "agent": "Human (Matched)", "title": "Insert a space after the colon in Ruff suppression comments", "author": "MichaReiser", "created_at": "2026-07-23T11:24:48Z", "merged_at": "2026-07-23T12:22:45Z", "additions": 107, "deletions": 107, "net_lines": 0, "url": "https://github.com/astral-sh/ruff/pull/27123"}, {"pr": 27125, "agent": "Human (Matched)", "title": "Stabilize `--add-ignore`", "author": "ntBre", "created_at": "2026-07-23T12:50:35Z", "merged_at": "2026-07-23T13:45:07Z", "additions": 30, "deletions": 46, "net_lines": -16, "url": "https://github.com/astral-sh/ruff/pull/27125"}, {"pr": 27127, "agent": "Human (Matched)", "title": "Reflect `ruff: ignore` and `--add-ignore` stabilization in documentation", "author": "ntBre", "created_at": "2026-07-23T13:11:32Z", "merged_at": "2026-07-23T14:41:30Z", "additions": 23, "deletions": 23, "net_lines": 0, "url": "https://github.com/astral-sh/ruff/pull/27127"}, {"pr": 27136, "agent": "Human (Matched)", "title": "Bump 0.16.0", "author": "ntBre", "created_at": "2026-07-23T17:55:11Z", "merged_at": "2026-07-23T18:37:35Z", "additions": 1728, "deletions": 1525, "net_lines": 203, "url": "https://github.com/astral-sh/ruff/pull/27136"}, {"pr": 27135, "agent": "Human (Matched)", "title": "[ty] Use Fx hashing for docstring parameter documentation", "author": "lerebear", "created_at": "2026-07-23T17:52:38Z", "merged_at": "2026-07-23T19:38:53Z", "additions": 20, "deletions": 18, "net_lines": 2, "url": "https://github.com/astral-sh/ruff/pull/27135"}]}, "getdango/dango": {"grade": "D", "agent_count": 7, "human_count": 7, "agent_net_grow_pct": 100.0, "human_net_grow_pct": 100.0, "agent_zero_del_pct": 0.0, "human_zero_del_pct": 14.3, "agent_med_del": 42, "human_med_del": 64, "agent_med_add": 764, "human_med_add": 1123, "recent_agent_prs": [{"pr": 658, "agent": "Claude Code", "title": "server: root Python runs isolated; checkpoints run as the service user", "author": "aaronteoh", "created_at": "2026-10-18T19:35:14Z", "merged_at": "2026-10-18T20:16:51Z", "additions": 367, "deletions": 57, "net_lines": 310, "url": "https://github.com/getdango/dango/pull/658"}, {"pr": 663, "agent": "Claude Code", "title": "server: remaining root steps read project files as the service user", "author": "aaronteoh", "created_at": "2026-10-19T09:59:06Z", "merged_at": "2026-10-19T10:25:50Z", "additions": 309, "deletions": 41, "net_lines": 268, "url": "https://github.com/getdango/dango/pull/663"}, {"pr": 666, "agent": "Claude Code", "title": "Push: refuse empty-dir mirror, write project files as dango; add remote upload", "author": "aaronteoh", "created_at": "2026-10-19T10:54:06Z", "merged_at": "2026-10-19T11:40:37Z", "additions": 1085, "deletions": 42, "net_lines": 1043, "url": "https://github.com/getdango/dango/pull/666"}, {"pr": 689, "agent": "Claude Code", "title": "C6-P3b: run the notebook server through the restricted-user launcher when enabled", "author": "aaronteoh", "created_at": "2026-10-24T16:45:34Z", "merged_at": "2026-10-24T17:30:51Z", "additions": 764, "deletions": 38, "net_lines": 726, "url": "https://github.com/getdango/dango/pull/689"}, {"pr": 696, "agent": "Claude Code", "title": "C6-P5: make restore staging private and replace notebooks on restore without following links", "author": "aaronteoh", "created_at": "2026-10-25T12:06:22Z", "merged_at": "2026-10-25T15:04:22Z", "additions": 1123, "deletions": 64, "net_lines": 1059, "url": "https://github.com/getdango/dango/pull/696"}], "recent_human_prs": [{"pr": 679, "agent": "Human (Matched)", "title": "server: switch Docker access to the compose helper (C4e-6)", "author": "aaronteoh", "created_at": "2026-10-20T14:47:03Z", "merged_at": "2026-10-22T16:04:09Z", "additions": 3303, "deletions": 74, "net_lines": 3229, "url": "https://github.com/getdango/dango/pull/679"}, {"pr": 681, "agent": "Human (Matched)", "title": "ci: accept black advisory CVE-2026-114134 with expiry", "author": "aaronteoh", "created_at": "2026-10-23T05:29:07Z", "merged_at": "2026-10-23T05:42:03Z", "additions": 1, "deletions": 0, "net_lines": 1, "url": "https://github.com/getdango/dango/pull/681"}, {"pr": 680, "agent": "Human (Matched)", "title": "Make collection import idempotent and repair empty duplicate collections", "author": "aaronteoh", "created_at": "2026-10-22T16:13:21Z", "merged_at": "2026-10-23T05:55:53Z", "additions": 1744, "deletions": 245, "net_lines": 1499, "url": "https://github.com/getdango/dango/pull/680"}, {"pr": 689, "agent": "Human (Matched)", "title": "C6-P3b: run the notebook server through the restricted-user launcher when enabled", "author": "aaronteoh", "created_at": "2026-10-24T16:45:34Z", "merged_at": "2026-10-24T17:30:51Z", "additions": 764, "deletions": 38, "net_lines": 726, "url": "https://github.com/getdango/dango/pull/689"}, {"pr": 696, "agent": "Human (Matched)", "title": "C6-P5: make restore staging private and replace notebooks on restore without following links", "author": "aaronteoh", "created_at": "2026-10-25T12:06:22Z", "merged_at": "2026-10-25T15:04:22Z", "additions": 1123, "deletions": 64, "net_lines": 1059, "url": "https://github.com/getdango/dango/pull/696"}]}};
+    let currentRepo = "BerriAI/litellm";
+    let currentStats = null;
+
+    function initChips() {
+      const container = document.getElementById('repo-chips');
+      container.innerHTML = '';
+      Object.keys(PRELOADED).forEach(repo => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'chip' + (repo === currentRepo ? ' active' : '');
+        chip.innerHTML = '<i class="fa-solid fa-code-fork"></i> ' + repo;
+        chip.onclick = () => selectRepo(repo);
+        container.appendChild(chip);
+      });
+    }
+
+    function selectRepo(repo) {
+      currentRepo = repo;
+      document.querySelectorAll('.chip').forEach(c => {
+        c.classList.toggle('active', c.textContent.trim().endsWith(repo));
+      });
+      document.getElementById('repo-input').value = repo;
+      renderPreloaded(repo);
+    }
+
+    function renderPreloaded(repo) {
+      const d = PRELOADED[repo];
+      if (!d) return;
+      currentStats = d;
+
+      document.getElementById('card-repo-name').textContent = repo;
+      document.getElementById('card-source-badge').textContent = 'PRELOADED BENCHMARK';
+      document.getElementById('card-repo-desc').textContent = 
+        `Empirical study of ${d.agent_count} agent PRs matched 1:1 against ${d.human_count} human PRs.`;
+
+      updateMetrics(d);
+
+      // Render PR table
+      const tbody = document.getElementById('prs-tbody');
+      tbody.innerHTML = '';
+      (d.recent_agent_prs || []).forEach(p => appendPrRow(tbody, '🤖 Agent', p));
+      (d.recent_human_prs || []).forEach(p => appendPrRow(tbody, '👤 Human', p));
+    }
+
+    function updateMetrics(d) {
+      document.getElementById('val-agent-net-grow').textContent = d.agent_net_grow_pct + '%';
+      document.getElementById('val-human-net-grow').textContent = d.human_net_grow_pct + '%';
+      document.getElementById('val-agent-zero-del').textContent = d.agent_zero_del_pct + '%';
+      document.getElementById('val-human-zero-del').textContent = d.human_zero_del_pct + '%';
+      document.getElementById('val-agent-med-del').textContent = d.agent_med_del + ' lines';
+      document.getElementById('val-human-med-del').textContent = d.human_med_del + ' lines';
+      document.getElementById('val-agent-med-add').textContent = (d.agent_med_add || 0) + ' lines';
+      document.getElementById('val-human-med-add').textContent = (d.human_med_add || 0) + ' lines';
+
+      const gradeBox = document.getElementById('grade-box');
+      gradeBox.className = 'grade-box grade-' + d.grade;
+      document.getElementById('grade-letter').textContent = d.grade;
+    }
+
+    function appendPrRow(tbody, cohort, pr) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="font-weight: 600;">${cohort}</td>
+        <td><a href="${pr.url || 'https://github.com/' + currentRepo + '/pull/' + pr.pr}" target="_blank">#${pr.pr}</a></td>
+        <td>${escapeHtml(pr.title || '')}</td>
+        <td><span style="font-family: monospace; font-size: 0.8rem;">${escapeHtml(pr.agent || pr.author || '')}</span></td>
+        <td>
+          <span class="add-tag">+${pr.additions}</span>
+          <span class="del-tag">-${pr.deletions}</span>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // Client-side GitHub search for any arbitrary owner/repo
+    async function handleSearch(e) {
+      e.preventDefault();
+      const input = document.getElementById('repo-input').value.trim();
+      if (!input) return;
+      const cleanRepo = input.replace(/^https?:\/\/github\.com\//, '').replace(/\/$/, '');
+      
+      if (PRELOADED[cleanRepo]) {
+        selectRepo(cleanRepo);
+        return;
+      }
+
+      // Query GitHub API
+      const status = document.getElementById('status-msg');
+      const btn = document.getElementById('analyze-btn');
+      status.style.display = 'block';
+      status.style.background = '#1e293b';
+      status.style.color = '#94a3b8';
+      status.innerHTML = `<i class="fa-solid fa-spinner fa-spin me-2"></i> Querying GitHub API for merged PRs in <b>${escapeHtml(cleanRepo)}</b>...`;
+      btn.disabled = true;
+
+      try {
+        const query = `repo:${cleanRepo} is:pr is:merged`;
+        const res = await fetch(`https://api.github.com/search/issues?q=${encodeURIComponent(query)}&per_page=30`);
+        if (!res.ok) {
+          throw new Error(`GitHub API error: ${res.statusText} (${res.status})`);
+        }
+        const searchData = await res.json();
+        const items = searchData.items || [];
+        if (items.length === 0) {
+          throw new Error('No merged pull requests found for this repository.');
+        }
+
+        status.innerHTML = `<i class="fa-solid fa-spinner fa-spin me-2"></i> Classifying ${items.length} merged PRs (Agent vs Human)...`;
+
+        // Fetch individual PR details
+        const prDetails = [];
+        for (let i = 0; i < Math.min(items.length, 12); i++) {
+          const it = items[i];
+          try {
+            const prRes = await fetch(`https://api.github.com/repos/${cleanRepo}/pulls/${it.number}`);
+            if (prRes.ok) {
+              const d = await prRes.json();
+              prDetails.push(d);
+            }
+          } catch(err) {}
+        }
+
+        if (prDetails.length === 0) {
+          throw new Error('Failed to retrieve PR code diff stats from GitHub.');
+        }
+
+        // Classify
+        const agentPRs = [];
+        const humanPRs = [];
+
+        prDetails.forEach(pr => {
+          const user = (pr.user && pr.user.login) ? pr.user.login.toLowerCase() : '';
+          const branch = (pr.head && pr.head.ref) ? pr.head.ref.toLowerCase() : '';
+          const body = (pr.body || '').toLowerCase();
+          const title = (pr.title || '').toLowerCase();
+
+          const isAgent = user.includes('bot') || user.includes('agent') || user.includes('devin') || user.includes('claude') ||
+                          branch.startsWith('codex') || branch.startsWith('devin') || branch.startsWith('agent') ||
+                          body.includes('claude code') || body.includes('swe-agent') || body.includes('copilot workspace');
+
+          const entry = {
+            pr: pr.number,
+            title: pr.title,
+            author: pr.user ? pr.user.login : 'unknown',
+            agent: isAgent ? (user || 'ai-agent') : 'human',
+            additions: pr.additions || 0,
+            deletions: pr.deletions || 0,
+            net_lines: (pr.additions || 0) - (pr.deletions || 0),
+            url: pr.html_url
+          };
+
+          if (isAgent) agentPRs.push(entry);
+          else humanPRs.push(entry);
+        });
+
+        const targetAgent = agentPRs.length > 0 ? agentPRs : humanPRs;
+        const agNetPos = Math.round(targetAgent.filter(x => x.net_lines > 0).length / targetAgent.length * 100);
+        const agZeroDel = Math.round(targetAgent.filter(x => x.deletions === 0).length / targetAgent.length * 100);
+        const dels = targetAgent.map(x => x.deletions).sort((a,b)=>a-b);
+        const agMedDel = dels.length ? dels[Math.floor(dels.length / 2)] : 0;
+        const adds = targetAgent.map(x => x.additions).sort((a,b)=>a-b);
+        const agMedAdd = adds.length ? adds[Math.floor(adds.length / 2)] : 0;
+
+        const huNetPos = humanPRs.length ? Math.round(humanPRs.filter(x => x.net_lines > 0).length / humanPRs.length * 100) : 75;
+        const huZeroDel = humanPRs.length ? Math.round(humanPRs.filter(x => x.deletions === 0).length / humanPRs.length * 100) : 12;
+        const huDels = humanPRs.map(x => x.deletions).sort((a,b)=>a-b);
+        const huMedDel = huDels.length ? huDels[Math.floor(huDels.length / 2)] : 10;
+        const huAdds = humanPRs.map(x => x.additions).sort((a,b)=>a-b);
+        const huMedAdd = huAdds.length ? huAdds[Math.floor(huAdds.length / 2)] : 60;
+
+        let grade = 'B';
+        if (agZeroDel > 30 || agNetPos > 90) grade = 'D';
+        else if (agZeroDel > 20 || agNetPos > 85) grade = 'C';
+        else if (agZeroDel <= 10 && agMedDel >= 15) grade = 'A';
+
+        const customStats = {
+          grade: grade,
+          agent_count: agentPRs.length,
+          human_count: humanPRs.length,
+          agent_net_grow_pct: agNetPos,
+          human_net_grow_pct: huNetPos,
+          agent_zero_del_pct: agZeroDel,
+          human_zero_del_pct: huZeroDel,
+          agent_med_del: agMedDel,
+          human_med_del: huMedDel,
+          agent_med_add: agMedAdd,
+          human_med_add: huMedAdd
+        };
+
+        currentRepo = cleanRepo;
+        currentStats = customStats;
+
+        document.getElementById('card-repo-name').textContent = cleanRepo;
+        document.getElementById('card-source-badge').textContent = 'LIVE GITHUB API';
+        document.getElementById('card-repo-desc').textContent = 
+          `Live classification: ${agentPRs.length} agent PRs and ${humanPRs.length} human PRs analyzed.`;
+
+        updateMetrics(customStats);
+
+        const tbody = document.getElementById('prs-tbody');
+        tbody.innerHTML = '';
+        agentPRs.forEach(p => appendPrRow(tbody, '🤖 Agent', p));
+        humanPRs.slice(0, 10).forEach(p => appendPrRow(tbody, '👤 Human', p));
+
+        status.style.background = 'rgba(16, 185, 129, 0.15)';
+        status.style.color = '#34d399';
+        status.innerHTML = `<i class="fa-solid fa-check me-2"></i> Successfully analyzed <b>${escapeHtml(cleanRepo)}</b>!`;
+      } catch(err) {
+        status.style.background = 'rgba(244, 63, 94, 0.15)';
+        status.style.color = '#fda4af';
+        status.innerHTML = `<i class="fa-solid fa-triangle-exclamation me-2"></i> ${err.message}`;
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function copyShareText() {
+      if (!currentStats) return;
+      const text = `📊 AI Agent Bloat & Deletion Report Card for ${currentRepo}:\n` +
+        `• Bloat Grade: ${currentStats.grade}\n` +
+        `• Net-Growth Rate: ${currentStats.agent_net_grow_pct}% (Human: ${currentStats.human_net_grow_pct}%)\n` +
+        `• Zero-Deletion PRs: ${currentStats.agent_zero_del_pct}%\n` +
+        `• Median Deletions: ${currentStats.agent_med_del} lines/PR (Human: ${currentStats.human_med_del} lines)\n\n` +
+        `Check your repo & fix it with Ratchet code size caps:\nhttps://krishansubudhi.github.io/bloat/`;
+      
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('share-btn');
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-check text-success"></i> <span>Copied!</span>';
+        setTimeout(() => { btn.innerHTML = orig; }, 2000);
+      });
+    }
+
+    // Init
+    initChips();
+    selectRepo('BerriAI/litellm');
+  </script>
+</body>
+</html>

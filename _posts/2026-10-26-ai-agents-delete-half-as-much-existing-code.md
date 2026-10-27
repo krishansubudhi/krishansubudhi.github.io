@@ -56,3 +56,7 @@ If agents default to purely additive changes, codebases need a mechanical counte
 I built [ratchet](https://github.com/krishansubudhi/ratchet) for this reason. Ratchet enforces an automated ceiling on total lines of code directly in CI (`ratchet check`). If an agent adds 40 lines of code, it either has to find dead code or obsolete helpers to prune, or explicitly ask a human maintainer for a logged ceiling grant (`ratchet grant`). When code is cleaned up, the ceiling ratchets down, locking in simplicity.
 
 In our own agent harness, ratchet has blocked over 50 bloat attempts, forcing agents to clean up after themselves instead of endlessly expanding the tree.
+
+---
+
+> 📊 **Explore the Interactive Report Card**: Want to see how your own repo or these 16 open-source projects compare? Try the [AI Agent Bloat & Deletion Report Card](/bloat/) to benchmark your pull requests and get an instant bloat grade.

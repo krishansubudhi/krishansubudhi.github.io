@@ -1,0 +1,80 @@
+<!-- Post Footer CTA: Follow & Subscribe -->
+<div class="card mt-5 mb-4 shadow-sm border-0" style="background: rgba(127, 127, 127, 0.08); border-radius: 12px; overflow: hidden;">
+  <div class="card-body p-4">
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+      <div>
+        <h4 class="card-title fw-bold mb-1" style="font-size: 1.25rem;">Follow the journey & stay updated</h4>
+        <p class="card-text text-muted mb-0" style="font-size: 0.95rem;">
+          Working notes on building autonomous agent loops, code size budgets, and self-improving AI assistants.
+        </p>
+      </div>
+      <div class="d-flex flex-wrap gap-2 align-items-center">
+        <a href="https://github.com/krishansubudhi" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1">
+          <i class="fa-brands fa-github"></i>
+          <span>Follow @krishansubudhi</span>
+        </a>
+        <a href="https://github.com/krishansubudhi/ratchet" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1">
+          <i class="fa-regular fa-star"></i>
+          <span>Star ratchet</span>
+        </a>
+        <a href="{{ '/feed.xml' | relative_url }}" class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-1" title="RSS Feed subscribe">
+          <i class="fa-solid fa-rss"></i>
+          <span>Subscribe RSS</span>
+        </a>
+      </div>
+    </div>
+    <hr class="my-3 opacity-25">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 text-muted" style="font-size: 0.85rem;">
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge rounded-pill bg-light text-dark border">
+          <i class="fa-solid fa-eye me-1 text-primary"></i>
+          <span id="blog-post-views">...</span> views
+        </span>
+        <span class="text-muted">·</span>
+        <a href="{{ '/bloat/' | relative_url }}" class="text-decoration-none text-muted">
+          <i class="fa-solid fa-chart-simple me-1 text-info"></i>Check repo bloat report card →
+        </a>
+      </div>
+      <div>
+        <span class="text-muted">Built with <a href="https://github.com/krishansubudhi/ratchet" target="_blank" rel="noopener noreferrer" class="text-muted text-decoration-none">ratchet</a> code discipline</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    var beaconUrl = 'https://blog-stats.krishan-liquid.com';
+    var path = window.location.pathname;
+    var ref = document.referrer || '';
+    
+    // Beacon hit
+    try {
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(beaconUrl + '/hit', JSON.stringify({ path: path, ref: ref, action: 'view' }));
+      } else {
+        var img = new Image();
+        img.src = beaconUrl + '/hit.gif?path=' + encodeURIComponent(path) + '&ref=' + encodeURIComponent(ref);
+      }
+    } catch(e) {}
+
+    // Fetch view count for badge
+    var viewBadge = document.getElementById('blog-post-views');
+    if (viewBadge) {
+      fetch(beaconUrl + '/stats')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data && data.by_path && data.by_path[path]) {
+            viewBadge.textContent = data.by_path[path].views;
+          } else if (data && data.total_views) {
+            viewBadge.textContent = data.total_views;
+          } else {
+            viewBadge.textContent = '1';
+          }
+        })
+        .catch(function() {
+          viewBadge.textContent = '1+';
+        });
+    }
+  })();
+</script>
