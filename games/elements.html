@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>⚛️</title>
+  <meta name="theme-color" content="#0b0f19">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="data:application/manifest+json;utf-8,%7B%22name%22%3A%22%E2%9A%9B%EF%B8%8F%20Elements%22%2C%22short_name%22%3A%22%E2%9A%9B%EF%B8%8F%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230b0f19%22%2C%22theme_color%22%3A%22%230b0f19%22%7D">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #141d30;
+      --border-subtle: #24314c;
+      --text: #ffffff;
+      --color-reactive-nonmetal: #38bdf8;
+      --color-noble-gas: #c084fc;
+      --color-alkali-metal: #f87171;
+      --color-alkaline-earth: #fb923c;
+      --color-metalloid: #34d399;
+      --color-transition-metal: #facc15;
+      --color-post-transition: #a3e635;
+      --color-lanthanide: #f472b6;
+      --color-actinide: #e879f9;
+      --color-unknown: #94a3b8;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    #app {
+      width: 100%;
+      max-width: 440px;
+      height: 100%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12px 16px 20px;
+      position: relative;
+    }
+
+    /* Top Stats Bar */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      z-index: 10;
+    }
+    .stat-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .stat-pill {
+      background: var(--card-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 9999px;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-variant-numeric: tabular-nums;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .stat-pill.best {
+      opacity: 0.85;
+      font-size: 19px;
+    }
+    .mute-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 9999px;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: transform 0.1s ease;
+      touch-action: manipulation;
+    }
+    .mute-btn:active {
+      transform: scale(0.9);
+    }
+    .mute-btn.muted {
+      opacity: 0.55;
+    }
+
+    /* Streak Flame Animation */
+    .streak-icon {
+      display: inline-block;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .streak-grow {
+      animation: flamePulse 0.4s ease-out;
+    }
+    @keyframes flamePulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.6) rotate(-8deg); filter: drop-shadow(0 0 10px #f97316); }
+      100% { transform: scale(1); }
+    }
+
+    /* Boss Badge in Header */
+    .boss-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      border-radius: 9999px;
+      padding: 6px 12px;
+      animation: pulse 1s infinite alternate;
+      font-size: 17px;
+      font-weight: 900;
+      box-shadow: 0 0 14px rgba(239, 68, 68, 0.6);
+    }
+    @keyframes pulse {
+      from { transform: scale(1); filter: drop-shadow(0 0 4px #f59e0b); }
+      to { transform: scale(1.06); filter: drop-shadow(0 0 12px #ef4444); }
+    }
+
+    /* Question / Prompt Stage */
+    .prompt-stage {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      margin: 10px 0;
+    }
+    .prompt-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      perspective: 1000px;
+    }
+
+    /* Prompt Cards */
+    .prompt-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 28px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+      border: 2px solid var(--border-subtle);
+      background: radial-gradient(circle at 50% 20%, #1e293b, #0f172a);
+      position: relative;
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.75); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .prompt-card.type-number {
+      width: 200px;
+      height: 200px;
+      border-color: #38bdf8;
+      box-shadow: 0 0 35px rgba(56, 189, 248, 0.25);
+    }
+    .prompt-card.type-symbol {
+      width: 200px;
+      height: 200px;
+    }
+    .prompt-card.type-picture {
+      width: 210px;
+      height: 210px;
+      background: radial-gradient(circle at 50% 20%, #262135, #110f1c);
+      border-color: #a855f7;
+      box-shadow: 0 0 35px rgba(168, 85, 247, 0.25);
+    }
+
+    .prompt-number {
+      font-size: 92px;
+      font-weight: 900;
+      color: #38bdf8;
+      text-shadow: 0 4px 20px rgba(56, 189, 248, 0.4);
+      font-variant-numeric: tabular-nums;
+    }
+    .prompt-symbol {
+      font-size: 94px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+    .prompt-emoji {
+      font-size: 100px;
+      line-height: 1.1;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.5));
+    }
+    .boss-flair {
+      position: absolute;
+      top: -14px;
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      color: #fff;
+      font-size: 15px;
+      padding: 3px 12px;
+      border-radius: 12px;
+      font-weight: 900;
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.7);
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    /* Options Stage */
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      width: 100%;
+      height: 155px;
+      margin-bottom: 8px;
+    }
+
+    .option-btn {
+      height: 100%;
+      border-radius: 22px;
+      background: #141b2d;
+      border: 2px solid #23314f;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+      touch-action: manipulation;
+      animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards;
+    }
+    .option-btn:nth-child(1) { animation-delay: 0.03s; }
+    .option-btn:nth-child(2) { animation-delay: 0.08s; }
+    .option-btn:nth-child(3) { animation-delay: 0.13s; }
+
+    .option-btn:active {
+      transform: scale(0.94);
+    }
+
+    /* Option button contents */
+    .option-btn .opt-symbol {
+      font-size: 44px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+    .option-btn .opt-atomic-num {
+      position: absolute;
+      top: 10px;
+      left: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      opacity: 0.8;
+      font-variant-numeric: tabular-nums;
+    }
+    .option-btn .opt-large-num {
+      font-size: 48px;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      color: #38bdf8;
+    }
+    .option-btn .opt-dot {
+      position: absolute;
+      bottom: 10px;
+      width: 18px;
+      height: 5px;
+      border-radius: 3px;
+    }
+
+    /* State animations on buttons */
+    .option-btn.correct {
+      background: #064e3b !important;
+      border-color: #10b981 !important;
+      box-shadow: 0 0 30px rgba(16, 185, 129, 0.8) !important;
+      animation: bounceGlow 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    }
+    @keyframes bounceGlow {
+      0% { transform: scale(0.95); }
+      50% { transform: scale(1.1); box-shadow: 0 0 35px #10b981; }
+      100% { transform: scale(1.04); }
+    }
+
+    .option-btn.wrong {
+      background: #7f1d1d !important;
+      border-color: #ef4444 !important;
+      box-shadow: 0 0 25px rgba(239, 68, 68, 0.7) !important;
+      animation: shake 0.35s ease-in-out;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+
+    /* Feedback Overlay Icon */
+    #feedback-flash {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      font-size: 110px;
+      pointer-events: none;
+      z-index: 50;
+      transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.25s ease;
+      opacity: 0;
+      filter: drop-shadow(0 6px 20px rgba(0,0,0,0.8));
+    }
+    #feedback-flash.show {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+
+    /* Confetti Canvas for Boss Celebrations */
+    #confetti-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* Screen Flash */
+    #flash-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 40;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    #flash-overlay.flash-green {
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.35) 0%, rgba(0,0,0,0) 70%);
+      opacity: 1;
+    }
+    #flash-overlay.flash-red {
+      background: radial-gradient(circle, rgba(239, 68, 68, 0.35) 0%, rgba(0,0,0,0) 70%);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="flash-overlay"></div>
+    <canvas id="confetti-canvas"></canvas>
+    <div id="feedback-flash"></div>
+
+    <!-- Header Stats -->
+    <header class="top-bar">
+      <div class="stat-group">
+        <button id="mute-btn" class="mute-btn" title="Toggle Sound">
+          <span id="mute-icon">🔊</span>
+        </button>
+        <div class="stat-pill">
+          <span>⭐</span>
+          <span id="score-val">0</span>
+        </div>
+      </div>
+      <div id="boss-indicator" class="boss-badge" style="display: none;">
+        <span>👑 90-118</span>
+      </div>
+      <div class="stat-group">
+        <div class="stat-pill" id="streak-pill">
+          <span class="streak-icon" id="streak-icon">🔥</span>
+          <span id="streak-val">0</span>
+        </div>
+        <div class="stat-pill best">
+          <span>🏆</span>
+          <span id="best-val">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Question Stage -->
+    <main class="prompt-stage">
+      <div class="prompt-container" id="prompt-slot">
+        <!-- Rendered dynamically -->
+      </div>
+    </main>
+
+    <!-- Choices Grid -->
+    <footer class="options-grid" id="options-slot">
+      <!-- 3 Option buttons rendered dynamically -->
+    </footer>
+  </div>
+
+  <script>
+    // 118 Elements with atomic number (1-indexed), symbol, and periodic table group/category
+    const CATEGORIES = {
+      NONMETAL: '#38bdf8',
+      NOBLE: '#c084fc',
+      ALKALI: '#f87171',
+      ALKALINE: '#fb923c',
+      METALLOID: '#34d399',
+      TRANSITION: '#facc15',
+      POST_TRANSITION: '#a3e635',
+      LANTHANIDE: '#f472b6',
+      ACTINIDE: '#e879f9',
+      UNKNOWN: '#94a3b8'
+    };
+
+    const ELEMENTS = [
+      { z: 1, s: "H", c: CATEGORIES.NONMETAL },
+      { z: 2, s: "He", c: CATEGORIES.NOBLE },
+      { z: 3, s: "Li", c: CATEGORIES.ALKALI },
+      { z: 4, s: "Be", c: CATEGORIES.ALKALINE },
+      { z: 5, s: "B", c: CATEGORIES.METALLOID },
+      { z: 6, s: "C", c: CATEGORIES.NONMETAL },
+      { z: 7, s: "N", c: CATEGORIES.NONMETAL },
+      { z: 8, s: "O", c: CATEGORIES.NONMETAL },
+      { z: 9, s: "F", c: CATEGORIES.NONMETAL },
+      { z: 10, s: "Ne", c: CATEGORIES.NOBLE },
+      { z: 11, s: "Na", c: CATEGORIES.ALKALI },
+      { z: 12, s: "Mg", c: CATEGORIES.ALKALINE },
+      { z: 13, s: "Al", c: CATEGORIES.POST_TRANSITION },
+      { z: 14, s: "Si", c: CATEGORIES.METALLOID },
+      { z: 15, s: "P", c: CATEGORIES.NONMETAL },
+      { z: 16, s: "S", c: CATEGORIES.NONMETAL },
+      { z: 17, s: "Cl", c: CATEGORIES.NONMETAL },
+      { z: 18, s: "Ar", c: CATEGORIES.NOBLE },
+      { z: 19, s: "K", c: CATEGORIES.ALKALI },
+      { z: 20, s: "Ca", c: CATEGORIES.ALKALINE },
+      { z: 21, s: "Sc", c: CATEGORIES.TRANSITION },
+      { z: 22, s: "Ti", c: CATEGORIES.TRANSITION },
+      { z: 23, s: "V", c: CATEGORIES.TRANSITION },
+      { z: 24, s: "Cr", c: CATEGORIES.TRANSITION },
+      { z: 25, s: "Mn", c: CATEGORIES.TRANSITION },
+      { z: 26, s: "Fe", c: CATEGORIES.TRANSITION },
+      { z: 27, s: "Co", c: CATEGORIES.TRANSITION },
+      { z: 28, s: "Ni", c: CATEGORIES.TRANSITION },
+      { z: 29, s: "Cu", c: CATEGORIES.TRANSITION },
+      { z: 30, s: "Zn", c: CATEGORIES.TRANSITION },
+      { z: 31, s: "Ga", c: CATEGORIES.POST_TRANSITION },
+      { z: 32, s: "Ge", c: CATEGORIES.METALLOID },
+      { z: 33, s: "As", c: CATEGORIES.METALLOID },
+      { z: 34, s: "Se", c: CATEGORIES.NONMETAL },
+      { z: 35, s: "Br", c: CATEGORIES.NONMETAL },
+      { z: 36, s: "Kr", c: CATEGORIES.NOBLE },
+      { z: 37, s: "Rb", c: CATEGORIES.ALKALI },
+      { z: 38, s: "Sr", c: CATEGORIES.ALKALINE },
+      { z: 39, s: "Y", c: CATEGORIES.TRANSITION },
+      { z: 40, s: "Zr", c: CATEGORIES.TRANSITION },
+      { z: 41, s: "Nb", c: CATEGORIES.TRANSITION },
+      { z: 42, s: "Mo", c: CATEGORIES.TRANSITION },
+      { z: 43, s: "Tc", c: CATEGORIES.TRANSITION },
+      { z: 44, s: "Ru", c: CATEGORIES.TRANSITION },
+      { z: 45, s: "Rh", c: CATEGORIES.TRANSITION },
+      { z: 46, s: "Pd", c: CATEGORIES.TRANSITION },
+      { z: 47, s: "Ag", c: CATEGORIES.TRANSITION },
+      { z: 48, s: "Cd", c: CATEGORIES.TRANSITION },
+      { z: 49, s: "In", c: CATEGORIES.POST_TRANSITION },
+      { z: 50, s: "Sn", c: CATEGORIES.POST_TRANSITION },
+      { z: 51, s: "Sb", c: CATEGORIES.METALLOID },
+      { z: 52, s: "Te", c: CATEGORIES.METALLOID },
+      { z: 53, s: "I", c: CATEGORIES.NONMETAL },
+      { z: 54, s: "Xe", c: CATEGORIES.NOBLE },
+      { z: 55, s: "Cs", c: CATEGORIES.ALKALI },
+      { z: 56, s: "Ba", c: CATEGORIES.ALKALINE },
+      { z: 57, s: "La", c: CATEGORIES.LANTHANIDE },
+      { z: 58, s: "Ce", c: CATEGORIES.LANTHANIDE },
+      { z: 59, s: "Pr", c: CATEGORIES.LANTHANIDE },
+      { z: 60, s: "Nd", c: CATEGORIES.LANTHANIDE },
+      { z: 61, s: "Pm", c: CATEGORIES.LANTHANIDE },
+      { z: 62, s: "Sm", c: CATEGORIES.LANTHANIDE },
+      { z: 63, s: "Eu", c: CATEGORIES.LANTHANIDE },
+      { z: 64, s: "Gd", c: CATEGORIES.LANTHANIDE },
+      { z: 65, s: "Tb", c: CATEGORIES.LANTHANIDE },
+      { z: 66, s: "Dy", c: CATEGORIES.LANTHANIDE },
+      { z: 67, s: "Ho", c: CATEGORIES.LANTHANIDE },
+      { z: 68, s: "Er", c: CATEGORIES.LANTHANIDE },
+      { z: 69, s: "Tm", c: CATEGORIES.LANTHANIDE },
+      { z: 70, s: "Yb", c: CATEGORIES.LANTHANIDE },
+      { z: 71, s: "Lu", c: CATEGORIES.LANTHANIDE },
+      { z: 72, s: "Hf", c: CATEGORIES.TRANSITION },
+      { z: 73, s: "Ta", c: CATEGORIES.TRANSITION },
+      { z: 74, s: "W", c: CATEGORIES.TRANSITION },
+      { z: 75, s: "Re", c: CATEGORIES.TRANSITION },
+      { z: 76, s: "Os", c: CATEGORIES.TRANSITION },
+      { z: 77, s: "Ir", c: CATEGORIES.TRANSITION },
+      { z: 78, s: "Pt", c: CATEGORIES.TRANSITION },
+      { z: 79, s: "Au", c: CATEGORIES.TRANSITION },
+      { z: 80, s: "Hg", c: CATEGORIES.TRANSITION },
+      { z: 81, s: "Tl", c: CATEGORIES.POST_TRANSITION },
+      { z: 82, s: "Pb", c: CATEGORIES.POST_TRANSITION },
+      { z: 83, s: "Bi", c: CATEGORIES.POST_TRANSITION },
+      { z: 84, s: "Po", c: CATEGORIES.POST_TRANSITION },
+      { z: 85, s: "At", c: CATEGORIES.METALLOID },
+      { z: 86, s: "Rn", c: CATEGORIES.NOBLE },
+      { z: 87, s: "Fr", c: CATEGORIES.ALKALI },
+      { z: 88, s: "Ra", c: CATEGORIES.ALKALINE },
+      { z: 89, s: "Ac", c: CATEGORIES.ACTINIDE },
+      { z: 90, s: "Th", c: CATEGORIES.ACTINIDE },
+      { z: 91, s: "Pa", c: CATEGORIES.ACTINIDE },
+      { z: 92, s: "U", c: CATEGORIES.ACTINIDE },
+      { z: 93, s: "Np", c: CATEGORIES.ACTINIDE },
+      { z: 94, s: "Pu", c: CATEGORIES.ACTINIDE },
+      { z: 95, s: "Am", c: CATEGORIES.ACTINIDE },
+      { z: 96, s: "Cm", c: CATEGORIES.ACTINIDE },
+      { z: 97, s: "Bk", c: CATEGORIES.ACTINIDE },
+      { z: 98, s: "Cf", c: CATEGORIES.ACTINIDE },
+      { z: 99, s: "Es", c: CATEGORIES.ACTINIDE },
+      { z: 100, s: "Fm", c: CATEGORIES.ACTINIDE },
+      { z: 101, s: "Md", c: CATEGORIES.ACTINIDE },
+      { z: 102, s: "No", c: CATEGORIES.ACTINIDE },
+      { z: 103, s: "Lr", c: CATEGORIES.ACTINIDE },
+      { z: 104, s: "Rf", c: CATEGORIES.TRANSITION },
+      { z: 105, s: "Db", c: CATEGORIES.TRANSITION },
+      { z: 106, s: "Sg", c: CATEGORIES.TRANSITION },
+      { z: 107, s: "Bh", c: CATEGORIES.TRANSITION },
+      { z: 108, s: "Hs", c: CATEGORIES.TRANSITION },
+      { z: 109, s: "Mt", c: CATEGORIES.UNKNOWN },
+      { z: 110, s: "Ds", c: CATEGORIES.UNKNOWN },
+      { z: 111, s: "Rg", c: CATEGORIES.UNKNOWN },
+      { z: 112, s: "Cn", c: CATEGORIES.TRANSITION },
+      { z: 113, s: "Nh", c: CATEGORIES.UNKNOWN },
+      { z: 114, s: "Fl", c: CATEGORIES.POST_TRANSITION },
+      { z: 115, s: "Mc", c: CATEGORIES.UNKNOWN },
+      { z: 116, s: "Lv", c: CATEGORIES.UNKNOWN },
+      { z: 117, s: "Ts", c: CATEGORIES.UNKNOWN },
+      { z: 118, s: "Og", c: CATEGORIES.UNKNOWN }
+    ];
+
+    // Everyday emojis matching elements (approx 25-30 elements)
+    const PICTURE_ITEMS = [
+      { emoji: "🪥", answers: ["F"] },       // Fluorine in toothpaste
+      { emoji: "🎈", answers: ["He"] },      // Helium balloon
+      { emoji: "💧", answers: ["O", "H"] },  // Water H2O
+      { emoji: "🧂", answers: ["Na", "Cl"] },// Salt NaCl
+      { emoji: "🔋", answers: ["Li"] },      // Lithium battery
+      { emoji: "🥛", answers: ["Ca"] },      // Calcium in milk
+      { emoji: "🍌", answers: ["K"] },       // Potassium in banana
+      { emoji: "🥫", answers: ["Al", "Sn"] },// Aluminum / Tin can
+      { emoji: "🔩", answers: ["Fe"] },      // Iron bolt
+      { emoji: "💍", answers: ["Au"] },      // Gold ring
+      { emoji: "🥈", answers: ["Ag"] },      // Silver medal
+      { emoji: "🔌", answers: ["Cu"] },      // Copper wire / plug
+      { emoji: "💎", answers: ["C"] },       // Carbon diamond
+      { emoji: "✏️", answers: ["C"] },       // Carbon graphite pencil
+      { emoji: "🌡️", answers: ["Hg"] },      // Mercury thermometer
+      { emoji: "💡", answers: ["W"] },       // Tungsten filament lamp
+      { emoji: "☢️", answers: ["U"] },       // Uranium radiation
+      { emoji: "🏊", answers: ["Cl"] },      // Chlorine pool
+      { emoji: "🦴", answers: ["Ca", "P"] }, // Calcium / Phosphorus in bones
+      { emoji: "🪟", answers: ["Si"] },      // Silicon in glass
+      { emoji: "🧲", answers: ["Fe"] },      // Iron magnet
+      { emoji: "🚀", answers: ["H"] },       // Hydrogen rocket fuel
+      { emoji: "🔥", answers: ["O"] },       // Oxygen fire
+      { emoji: "🎆", answers: ["Sr"] },      // Strontium fireworks
+      { emoji: "🏮", answers: ["Ne"] }       // Neon lantern/sign
+    ];
+
+    const BY_SYMBOL = {};
+    ELEMENTS.forEach(el => BY_SYMBOL[el.s] = el);
+
+    // Mute State & Audio Synthesizer
+    let isMuted = (localStorage.getItem('elements_muted') === 'true');
+    const muteBtn = document.getElementById('mute-btn');
+    const muteIcon = document.getElementById('mute-icon');
+
+    function updateMuteUI() {
+      muteIcon.textContent = isMuted ? '🔇' : '🔊';
+      muteBtn.classList.toggle('muted', isMuted);
+    }
+    updateMuteUI();
+
+    muteBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      isMuted = !isMuted;
+      localStorage.setItem('elements_muted', isMuted);
+      updateMuteUI();
+      if (!isMuted) {
+        getAudioContext();
+        playSound('correct');
+      }
+    });
+
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) audioCtx = new AudioCtx();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    // WebAudio sound generator
+    function playSound(type) {
+      if (isMuted) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+
+        if (type === 'correct') {
+          // Happy rising chime: 3 harmonious tones (C5, E5, G5)
+          const notes = [523.25, 659.25, 783.99];
+          notes.forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.07);
+            gain.gain.setValueAtTime(0, now + idx * 0.07);
+            gain.gain.linearRampToValueAtTime(0.2, now + idx * 0.07 + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.25);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + idx * 0.07);
+            osc.stop(now + idx * 0.07 + 0.25);
+          });
+        } else if (type === 'wrong') {
+          // Soft low boop
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.exponentialRampToValueAtTime(110, now + 0.2);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } else if (type === 'fanfare') {
+          // Fanfare for boss round and streak milestones (5, 10)
+          // Notes: G4 -> C5 -> E5 -> G5 (brass-like triangle)
+          const fanfareNotes = [
+            { f: 392.00, t: 0.00, d: 0.10 }, // G4
+            { f: 523.25, t: 0.10, d: 0.10 }, // C5
+            { f: 659.25, t: 0.20, d: 0.12 }, // E5
+            { f: 783.99, t: 0.32, d: 0.35 }  // G5
+          ];
+          fanfareNotes.forEach(note => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(note.f, now + note.t);
+            gain.gain.setValueAtTime(0, now + note.t);
+            gain.gain.linearRampToValueAtTime(0.25, now + note.t + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + note.t + note.d);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + note.t);
+            osc.stop(now + note.t + note.d);
+          });
+        }
+      } catch (e) {
+        // Audio error silent fallback
+      }
+    }
+
+    function triggerVibrate(pattern) {
+      if (navigator.vibrate) {
+        try {
+          navigator.vibrate(pattern);
+        } catch (e) {}
+      }
+    }
+
+    // Confetti engine
+    const confettiCanvas = document.getElementById('confetti-canvas');
+    const confettiCtx = confettiCanvas.getContext('2d');
+    let confettiParticles = [];
+    let confettiAnimId = null;
+
+    function resizeCanvas() {
+      confettiCanvas.width = confettiCanvas.parentElement.clientWidth;
+      confettiCanvas.height = confettiCanvas.parentElement.clientHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function launchConfetti() {
+      resizeCanvas();
+      const colors = ['#f59e0b', '#ec4899', '#3b82f6', '#10b981', '#8b5cf6', '#ef4444', '#fbbf24'];
+      confettiParticles = [];
+      for (let i = 0; i < 65; i++) {
+        confettiParticles.push({
+          x: confettiCanvas.width / 2,
+          y: confettiCanvas.height / 2,
+          vx: (Math.random() - 0.5) * 14,
+          vy: (Math.random() - 0.7) * 16,
+          size: Math.random() * 8 + 6,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 12,
+          opacity: 1
+        });
+      }
+      if (confettiAnimId) cancelAnimationFrame(confettiAnimId);
+      animateConfetti();
+    }
+
+    function animateConfetti() {
+      confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      let alive = false;
+      for (let p of confettiParticles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.42; // gravity
+        p.rotation += p.rotSpeed;
+        p.opacity -= 0.012;
+        if (p.opacity > 0) {
+          alive = true;
+          confettiCtx.save();
+          confettiCtx.translate(p.x, p.y);
+          confettiCtx.rotate((p.rotation * Math.PI) / 180);
+          confettiCtx.fillStyle = p.color;
+          confettiCtx.globalAlpha = Math.max(0, p.opacity);
+          confettiCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 1.4);
+          confettiCtx.restore();
+        }
+      }
+      if (alive) {
+        confettiAnimId = requestAnimationFrame(animateConfetti);
+      } else {
+        confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      }
+    }
+
+    // State
+    let score = 0;
+    let streak = 0;
+    let questionCount = 0;
+    let bestStreak = parseInt(localStorage.getItem('elements_best_streak') || '0', 10);
+    let currentRound = null;
+    let inputLocked = false;
+
+    const scoreEl = document.getElementById('score-val');
+    const streakEl = document.getElementById('streak-val');
+    const streakIcon = document.getElementById('streak-icon');
+    const bestEl = document.getElementById('best-val');
+    const bossBadge = document.getElementById('boss-indicator');
+    const promptSlot = document.getElementById('prompt-slot');
+    const optionsSlot = document.getElementById('options-slot');
+    const flashOverlay = document.getElementById('flash-overlay');
+    const feedbackFlash = document.getElementById('feedback-flash');
+
+    bestEl.textContent = bestStreak;
+
+    // Distractor selection logic
+    function pickDistractors(targetElement, count = 2) {
+      const distractors = [];
+      const usedZ = new Set([targetElement.z]);
+
+      // Strategy 1: Neighboring atomic numbers (+-1, +-2, +-3, +-10)
+      const deltas = [-1, 1, -2, 2, -3, 3, 10, -10];
+      const neighbors = deltas
+        .map(d => targetElement.z + d)
+        .filter(z => z >= 1 && z <= 118 && !usedZ.has(z))
+        .map(z => ELEMENTS[z - 1]);
+
+      neighbors.sort(() => Math.random() - 0.5);
+      for (const n of neighbors) {
+        if (distractors.length < count) {
+          distractors.push(n);
+          usedZ.add(n.z);
+        }
+      }
+
+      // Strategy 2: Same initial letter symbols
+      if (distractors.length < count) {
+        const firstLetter = targetElement.s[0];
+        const sameLetter = ELEMENTS.filter(el => !usedZ.has(el.z) && el.s[0] === firstLetter);
+        sameLetter.sort(() => Math.random() - 0.5);
+        for (const el of sameLetter) {
+          if (distractors.length < count) {
+            distractors.push(el);
+            usedZ.add(el.z);
+          }
+        }
+      }
+
+      // Strategy 3: Random elements
+      while (distractors.length < count) {
+        const randEl = ELEMENTS[Math.floor(Math.random() * ELEMENTS.length)];
+        if (!usedZ.has(randEl.z)) {
+          distractors.push(randEl);
+          usedZ.add(randEl.z);
+        }
+      }
+
+      return distractors;
+    }
+
+    // Generate next round
+    function nextRound(forcedType = null) {
+      inputLocked = false;
+      questionCount++;
+      const isBoss = (questionCount % 10 === 0);
+
+      let targetEl;
+      if (isBoss) {
+        const bossRange = ELEMENTS.slice(89, 118);
+        targetEl = bossRange[Math.floor(Math.random() * bossRange.length)];
+      } else {
+        targetEl = ELEMENTS[Math.floor(Math.random() * ELEMENTS.length)];
+      }
+
+      let type = forcedType;
+      if (!type) {
+        if (isBoss) {
+          type = Math.random() < 0.5 ? 1 : 2;
+        } else {
+          const r = Math.random();
+          if (r < 0.33) type = 3;
+          else if (r < 0.66) type = 1;
+          else type = 2;
+        }
+      }
+
+      bossBadge.style.display = isBoss ? 'inline-flex' : 'none';
+
+      if (type === 3) {
+        // Picture -> Symbol
+        const pic = PICTURE_ITEMS[Math.floor(Math.random() * PICTURE_ITEMS.length)];
+        const validSymbols = pic.answers;
+        const mainAnswerSym = validSymbols[Math.floor(Math.random() * validSymbols.length)];
+        const mainAnswerEl = BY_SYMBOL[mainAnswerSym];
+
+        const distractors = [];
+        const usedZ = new Set(validSymbols.map(s => BY_SYMBOL[s].z));
+
+        const plausible = pickDistractors(mainAnswerEl, 4);
+        for (const p of plausible) {
+          if (!usedZ.has(p.z) && distractors.length < 2) {
+            distractors.push(p);
+            usedZ.add(p.z);
+          }
+        }
+
+        const choices = [mainAnswerEl, ...distractors].sort(() => Math.random() - 0.5);
+
+        currentRound = {
+          type: 3,
+          isBoss: false,
+          emoji: pic.emoji,
+          validSymbols: validSymbols,
+          choices: choices
+        };
+      } else if (type === 1) {
+        // Number -> Symbol
+        const distractors = pickDistractors(targetEl, 2);
+        const choices = [targetEl, ...distractors].sort(() => Math.random() - 0.5);
+
+        currentRound = {
+          type: 1,
+          isBoss: isBoss,
+          targetEl: targetEl,
+          choices: choices
+        };
+      } else {
+        // Symbol -> Number
+        const distractors = pickDistractors(targetEl, 2);
+        const choices = [targetEl, ...distractors].sort(() => Math.random() - 0.5);
+
+        currentRound = {
+          type: 2,
+          isBoss: isBoss,
+          targetEl: targetEl,
+          choices: choices
+        };
+      }
+
+      renderRound();
+    }
+
+    function renderRound() {
+      promptSlot.innerHTML = '';
+      optionsSlot.innerHTML = '';
+
+      if (currentRound.type === 1) {
+        const card = document.createElement('div');
+        card.className = 'prompt-card type-number';
+        card.innerHTML = `
+          ${currentRound.isBoss ? '<div class="boss-flair">👑 90-118</div>' : ''}
+          <div class="prompt-number">${currentRound.targetEl.z}</div>
+        `;
+        promptSlot.appendChild(card);
+
+        currentRound.choices.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.className = 'option-btn';
+          btn.innerHTML = `
+            <span class="opt-atomic-num">${opt.z}</span>
+            <span class="opt-symbol" style="color: ${opt.c}">${opt.s}</span>
+            <span class="opt-dot" style="background: ${opt.c}"></span>
+          `;
+          btn.addEventListener('click', () => handleChoice(opt, btn));
+          optionsSlot.appendChild(btn);
+        });
+
+      } else if (currentRound.type === 2) {
+        const card = document.createElement('div');
+        card.className = 'prompt-card type-symbol';
+        card.style.borderColor = currentRound.targetEl.c;
+        card.style.boxShadow = `0 0 35px ${currentRound.targetEl.c}44`;
+        card.innerHTML = `
+          ${currentRound.isBoss ? '<div class="boss-flair">👑 90-118</div>' : ''}
+          <div class="prompt-symbol" style="color: ${currentRound.targetEl.c}">${currentRound.targetEl.s}</div>
+        `;
+        promptSlot.appendChild(card);
+
+        currentRound.choices.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.className = 'option-btn';
+          btn.innerHTML = `
+            <span class="opt-large-num">${opt.z}</span>
+            <span class="opt-dot" style="background: ${opt.c}"></span>
+          `;
+          btn.addEventListener('click', () => handleChoice(opt, btn));
+          optionsSlot.appendChild(btn);
+        });
+
+      } else if (currentRound.type === 3) {
+        const card = document.createElement('div');
+        card.className = 'prompt-card type-picture';
+        card.innerHTML = `
+          <div class="prompt-emoji">${currentRound.emoji}</div>
+        `;
+        promptSlot.appendChild(card);
+
+        currentRound.choices.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.className = 'option-btn';
+          btn.innerHTML = `
+            <span class="opt-atomic-num">${opt.z}</span>
+            <span class="opt-symbol" style="color: ${opt.c}">${opt.s}</span>
+            <span class="opt-dot" style="background: ${opt.c}"></span>
+          `;
+          btn.addEventListener('click', () => handleChoice(opt, btn));
+          optionsSlot.appendChild(btn);
+        });
+      }
+    }
+
+    function handleChoice(chosenEl, btnElement) {
+      if (inputLocked) return;
+      inputLocked = true;
+
+      let isCorrect = false;
+      if (currentRound.type === 3) {
+        isCorrect = currentRound.validSymbols.includes(chosenEl.s);
+      } else {
+        isCorrect = (chosenEl.z === currentRound.targetEl.z);
+      }
+
+      if (isCorrect) {
+        score++;
+        streak++;
+        if (streak > bestStreak) {
+          bestStreak = streak;
+          localStorage.setItem('elements_best_streak', bestStreak);
+        }
+        scoreEl.textContent = score;
+        streakEl.textContent = streak;
+        bestEl.textContent = bestStreak;
+
+        // Animate streak flame growth
+        streakIcon.classList.remove('streak-grow');
+        void streakIcon.offsetWidth; // trigger reflow
+        streakIcon.classList.add('streak-grow');
+
+        btnElement.classList.add('correct');
+        showFlash('✓', '#10b981', 'flash-green');
+        triggerVibrate([40]);
+
+        const isMilestone = (streak === 5 || streak === 10 || streak % 10 === 0);
+        const isCelebration = currentRound.isBoss || isMilestone;
+
+        if (isCelebration) {
+          playSound('fanfare');
+          launchConfetti();
+        } else {
+          playSound('correct');
+        }
+
+        setTimeout(() => {
+          nextRound();
+        }, isCelebration ? 1100 : 700);
+
+      } else {
+        streak = 0;
+        streakEl.textContent = streak;
+
+        btnElement.classList.add('wrong');
+        showFlash('✗', '#ef4444', 'flash-red');
+        triggerVibrate([60, 40, 60]);
+        playSound('wrong');
+
+        // Reveal the correct option
+        Array.from(optionsSlot.children).forEach((child, idx) => {
+          const opt = currentRound.choices[idx];
+          const isThisCorrect = (currentRound.type === 3)
+            ? currentRound.validSymbols.includes(opt.s)
+            : (opt.z === currentRound.targetEl.z);
+          if (isThisCorrect) {
+            child.classList.add('correct');
+          }
+        });
+
+        setTimeout(() => {
+          nextRound();
+        }, 1200);
+      }
+    }
+
+    function showFlash(icon, color, flashClass) {
+      feedbackFlash.textContent = icon;
+      feedbackFlash.style.color = color;
+      feedbackFlash.classList.add('show');
+      flashOverlay.classList.add(flashClass);
+
+      setTimeout(() => {
+        feedbackFlash.classList.remove('show');
+        flashOverlay.classList.remove(flashClass);
+      }, 450);
+    }
+
+    // Test hook for screenshots and inspection
+    window.__setRound = function(type, targetZ, emoji) {
+      inputLocked = false;
+      if (type === 1) {
+        const target = ELEMENTS[targetZ - 1] || ELEMENTS[25];
+        const distractors = pickDistractors(target, 2);
+        currentRound = {
+          type: 1,
+          isBoss: target.z >= 90,
+          targetEl: target,
+          choices: [target, ...distractors].sort(() => Math.random() - 0.5)
+        };
+      } else if (type === 2) {
+        const target = ELEMENTS[targetZ - 1] || ELEMENTS[25];
+        const distractors = pickDistractors(target, 2);
+        currentRound = {
+          type: 2,
+          isBoss: target.z >= 90,
+          targetEl: target,
+          choices: [target, ...distractors].sort(() => Math.random() - 0.5)
+        };
+      } else if (type === 3) {
+        const pic = PICTURE_ITEMS.find(p => p.emoji === emoji) || PICTURE_ITEMS[0];
+        const mainAnswerEl = BY_SYMBOL[pic.answers[0]];
+        const distractors = pickDistractors(mainAnswerEl, 2);
+        currentRound = {
+          type: 3,
+          isBoss: false,
+          emoji: pic.emoji,
+          validSymbols: pic.answers,
+          choices: [mainAnswerEl, ...distractors].sort(() => Math.random() - 0.5)
+        };
+      }
+      bossBadge.style.display = currentRound.isBoss ? 'inline-flex' : 'none';
+      renderRound();
+    };
+
+    // Initialize game
+    nextRound();
+  </script>
+</body>
+</html>
