@@ -543,7 +543,7 @@ layout: null
         </div>
         <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
           <div class="ratchet-cmd">
-            <code>pip install ratchet-cli &amp;&amp; ratchet init</code>
+            <code>pip install ratchet-size &amp;&amp; ratchet init</code>
           </div>
           <a href="https://github.com/krishansubudhi/ratchet" target="_blank" rel="noopener noreferrer" class="btn-analyze" style="padding: 0.45rem 0.9rem; font-size: 0.82rem;">
             <span>View on GitHub</span>
@@ -665,12 +665,31 @@ layout: null
     // Client-side GitHub search for any arbitrary owner/repo
     async function handleSearch(e) {
       e.preventDefault();
-      const input = document.getElementById('repo-input').value.trim();
+      let input = document.getElementById('repo-input').value.trim();
       if (!input) return;
-      const cleanRepo = input.replace(/^https?:\/\/github\.com\//, '').replace(/\/$/, '');
+
+      // Accept full GitHub URLs, strip leading/trailing slashes, and trim spaces
+      let cleanRepo = input
+        .replace(/^https?:\/\/github\.com\//i, '')
+        .replace(/^github\.com\//i, '')
+        .replace(/^\/+|\/+$/g, '')
+        .trim();
+
+      const parts = cleanRepo.split('/').filter(Boolean);
+      if (parts.length < 2) {
+        const status = document.getElementById('status-msg');
+        status.style.display = 'block';
+        status.style.background = 'rgba(244, 63, 94, 0.15)';
+        status.style.color = '#fda4af';
+        status.innerHTML = '<i class="fa-solid fa-triangle-exclamation me-2"></i> Repo not found. Check owner/name';
+        return;
+      }
+      cleanRepo = `${parts[0]}/${parts[1]}`;
       
       if (PRELOADED[cleanRepo]) {
         selectRepo(cleanRepo);
+        const status = document.getElementById('status-msg');
+        status.style.display = 'none';
         return;
       }
 
@@ -680,13 +699,42 @@ layout: null
       status.style.display = 'block';
       status.style.background = '#1e293b';
       status.style.color = '#94a3b8';
-      status.innerHTML = `<i class="fa-solid fa-spinner fa-spin me-2"></i> Querying GitHub API for merged PRs in <b>${escapeHtml(cleanRepo)}</b>...`;
+      status.innerHTML = `<i class="fa-solid fa-spinner fa-spin me-2"></i> Checking repository <b>${escapeHtml(cleanRepo)}</b>...`;
       btn.disabled = true;
 
       try {
+        // Step 1: Verify repository exists and check rate limit
+        const repoRes = await fetch(`https://api.github.com/repos/${cleanRepo}`);
+        if (!repoRes.ok) {
+          if (repoRes.status === 404) {
+            throw new Error('Repo not found. Check owner/name');
+          } else if (repoRes.status === 403) {
+            const resetHeader = repoRes.headers.get('x-ratelimit-reset');
+            let resetMsg = 'Rate limit exceeded (60 requests/hour). Please retry later.';
+            if (resetHeader) {
+              const resetDate = new Date(parseInt(resetHeader, 10) * 1000);
+              resetMsg = `Rate limit exceeded (60 requests/hour). Please retry at ${resetDate.toLocaleTimeString()}.`;
+            }
+            throw new Error(resetMsg);
+          } else {
+            throw new Error(`GitHub API error: ${repoRes.statusText} (${repoRes.status})`);
+          }
+        }
+
+        status.innerHTML = `<i class="fa-solid fa-spinner fa-spin me-2"></i> Querying GitHub API for merged PRs in <b>${escapeHtml(cleanRepo)}</b>...`;
+
         const query = `repo:${cleanRepo} is:pr is:merged`;
         const res = await fetch(`https://api.github.com/search/issues?q=${encodeURIComponent(query)}&per_page=30`);
         if (!res.ok) {
+          if (res.status === 403) {
+            const resetHeader = res.headers.get('x-ratelimit-reset');
+            let resetMsg = 'Rate limit exceeded (60 requests/hour). Please retry later.';
+            if (resetHeader) {
+              const resetDate = new Date(parseInt(resetHeader, 10) * 1000);
+              resetMsg = `Rate limit exceeded (60 requests/hour). Please retry at ${resetDate.toLocaleTimeString()}.`;
+            }
+            throw new Error(resetMsg);
+          }
           throw new Error(`GitHub API error: ${res.statusText} (${res.status})`);
         }
         const searchData = await res.json();
@@ -706,6 +754,8 @@ layout: null
             if (prRes.ok) {
               const d = await prRes.json();
               prDetails.push(d);
+            } else if (prRes.status === 403) {
+              break;
             }
           } catch(err) {}
         }
@@ -743,7 +793,9 @@ layout: null
           else humanPRs.push(entry);
         });
 
-        const targetAgent = agentPRs.length > 0 ? agentPRs : humanPRs;
+        // Determine target cohort for agent stats
+        const hasAgentPRs = agentPRs.length > 0;
+        const targetAgent = hasAgentPRs ? agentPRs : humanPRs;
         const agNetPos = Math.round(targetAgent.filter(x => x.net_lines > 0).length / targetAgent.length * 100);
         const agZeroDel = Math.round(targetAgent.filter(x => x.deletions === 0).length / targetAgent.length * 100);
         const dels = targetAgent.map(x => x.deletions).sort((a,b)=>a-b);
@@ -751,29 +803,34 @@ layout: null
         const adds = targetAgent.map(x => x.additions).sort((a,b)=>a-b);
         const agMedAdd = adds.length ? adds[Math.floor(adds.length / 2)] : 0;
 
-        const huNetPos = humanPRs.length ? Math.round(humanPRs.filter(x => x.net_lines > 0).length / humanPRs.length * 100) : 75;
-        const huZeroDel = humanPRs.length ? Math.round(humanPRs.filter(x => x.deletions === 0).length / humanPRs.length * 100) : 12;
+        const huNetPos = humanPRs.length ? Math.round(humanPRs.filter(x => x.net_lines > 0).length / humanPRs.length * 100) : 0;
+        const huZeroDel = humanPRs.length ? Math.round(humanPRs.filter(x => x.deletions === 0).length / humanPRs.length * 100) : 0;
         const huDels = humanPRs.map(x => x.deletions).sort((a,b)=>a-b);
-        const huMedDel = huDels.length ? huDels[Math.floor(huDels.length / 2)] : 10;
+        const huMedDel = huDels.length ? huDels[Math.floor(huDels.length / 2)] : 0;
         const huAdds = humanPRs.map(x => x.additions).sort((a,b)=>a-b);
-        const huMedAdd = huAdds.length ? huAdds[Math.floor(huAdds.length / 2)] : 60;
+        const huMedAdd = huAdds.length ? huAdds[Math.floor(huAdds.length / 2)] : 0;
 
-        let grade = 'B';
-        if (agZeroDel > 30 || agNetPos > 90) grade = 'D';
-        else if (agZeroDel > 20 || agNetPos > 85) grade = 'C';
-        else if (agZeroDel <= 10 && agMedDel >= 15) grade = 'A';
+        let grade = 'N/A';
+        if (agentPRs.length >= 3) {
+          grade = 'B';
+          if (agZeroDel > 30 || agNetPos > 90) grade = 'D';
+          else if (agZeroDel > 20 || agNetPos > 85) grade = 'C';
+          else if (agZeroDel <= 10 && agMedDel >= 15) grade = 'A';
+        } else if (agentPRs.length > 0) {
+          grade = agZeroDel > 30 ? 'C' : 'B';
+        }
 
         const customStats = {
           grade: grade,
           agent_count: agentPRs.length,
           human_count: humanPRs.length,
-          agent_net_grow_pct: agNetPos,
+          agent_net_grow_pct: hasAgentPRs ? agNetPos : 0,
           human_net_grow_pct: huNetPos,
-          agent_zero_del_pct: agZeroDel,
+          agent_zero_del_pct: hasAgentPRs ? agZeroDel : 0,
           human_zero_del_pct: huZeroDel,
-          agent_med_del: agMedDel,
+          agent_med_del: hasAgentPRs ? agMedDel : 0,
           human_med_del: huMedDel,
-          agent_med_add: agMedAdd,
+          agent_med_add: hasAgentPRs ? agMedAdd : 0,
           human_med_add: huMedAdd
         };
 
@@ -782,8 +839,14 @@ layout: null
 
         document.getElementById('card-repo-name').textContent = cleanRepo;
         document.getElementById('card-source-badge').textContent = 'LIVE GITHUB API';
-        document.getElementById('card-repo-desc').textContent = 
-          `Live classification: ${agentPRs.length} agent PRs and ${humanPRs.length} human PRs analyzed.`;
+        
+        if (agentPRs.length < 3) {
+          document.getElementById('card-repo-desc').textContent = 
+            `not enough agent PRs to grade (found ${agentPRs.length}). Analyzed ${prDetails.length} merged PRs total (${humanPRs.length} human).`;
+        } else {
+          document.getElementById('card-repo-desc').textContent = 
+            `Live classification: ${agentPRs.length} agent PRs and ${humanPRs.length} human PRs analyzed.`;
+        }
 
         updateMetrics(customStats);
 
@@ -794,11 +857,15 @@ layout: null
 
         status.style.background = 'rgba(16, 185, 129, 0.15)';
         status.style.color = '#34d399';
-        status.innerHTML = `<i class="fa-solid fa-check me-2"></i> Successfully analyzed <b>${escapeHtml(cleanRepo)}</b>!`;
+        if (agentPRs.length < 3) {
+          status.innerHTML = `<i class="fa-solid fa-circle-info me-2"></i> Analyzed <b>${escapeHtml(cleanRepo)}</b>: not enough agent PRs to grade (found ${agentPRs.length}).`;
+        } else {
+          status.innerHTML = `<i class="fa-solid fa-check me-2"></i> Successfully analyzed <b>${escapeHtml(cleanRepo)}</b>!`;
+        }
       } catch(err) {
         status.style.background = 'rgba(244, 63, 94, 0.15)';
         status.style.color = '#fda4af';
-        status.innerHTML = `<i class="fa-solid fa-triangle-exclamation me-2"></i> ${err.message}`;
+        status.innerHTML = `<i class="fa-solid fa-triangle-exclamation me-2"></i> ${escapeHtml(err.message)}`;
       } finally {
         btn.disabled = false;
       }
