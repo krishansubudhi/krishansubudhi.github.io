@@ -4,11 +4,11 @@ author: krishan
 layout: post
 categories: [agents, voice]
 date: 2026-10-29
-title: Talking to my personal AI assistant, Jarvis, through Alexa
+title: Talking to my personal AI assistant through Alexa
 description: I made an Alexa custom skill that forwards what I say to my own assistant. The code was short. The four bugs were not, and two of them were not in my code at all.
 ---
 
-I already talk to my personal assistant, Jarvis, from my phone and my watch. Today I wanted to talk to it out loud, with no device in my hand. So I built an Alexa skill.
+I already talk to my personal assistant from my phone and my watch. Today I wanted to talk to it out loud, with no device in my hand. So I built an Alexa skill.
 
 It works. I can say "Alexa, ask [my skill's name] what did I eat today" and hear the answer. Getting there took four bugs, and only one of them was mine.
 
@@ -20,7 +20,7 @@ My assistant runs on my own server. Alexa does not know that, and it should not.
 
 The server is a small web app. It checks that the request really came from Amazon, then hands the question to my assistant as if I had typed it, and speaks whatever comes back. The assistant needs nothing special for this, which is the point: to the skill it is a black box that takes a sentence and returns a sentence.
 
-Amazon requires an invocation name of at least two words. "Jarvis" alone was rejected, so the skill has a two-word name.
+Amazon requires an invocation name of at least two words. The assistant's one-word name alone was rejected, so the skill has a two-word name.
 
 ## Not trusting the internet
 
