@@ -390,6 +390,12 @@ layout: null
     .del-tag { color: var(--accent-rose); font-family: 'JetBrains Mono', monospace; font-weight: 600; }
     .add-tag { color: var(--accent-emerald); font-family: 'JetBrains Mono', monospace; font-weight: 600; }
 
+    .ratchet-sub { font-size: 0.85rem; color: #94a3b8; margin-top: 0.2rem; }
+    .btn-sm { padding: 0.45rem 0.9rem; font-size: 0.82rem; }
+    .cohort { font-weight: 600; }
+    .pr-agent { font-family: monospace; font-size: 0.8rem; }
+    .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
     footer {
       border-top: 1px solid var(--card-border);
       padding: 2rem 1.5rem;
@@ -397,6 +403,55 @@ layout: null
       font-size: 0.85rem;
       color: var(--text-muted);
       margin-top: auto;
+    }
+
+    /* Phone: one column, 16px+ text, 44px+ tap targets, nothing wider than the screen */
+    @media (max-width: 640px) {
+      body { font-size: 1rem; }
+      .header-nav { position: static; flex-wrap: wrap; padding: 0.5rem 1rem; gap: 0 1rem; }
+      .header-brand, .header-links a { min-height: 44px; font-size: 1rem; display: inline-flex; align-items: center; }
+      .header-links { gap: 1rem; font-size: 1rem; }
+      .container { padding: 1.25rem 1rem 2.5rem; }
+      .hero-badge { font-size: 1rem; align-items: flex-start; border-radius: 16px; padding: 0.5rem 0.9rem; }
+      p.hero-subtitle { font-size: 1rem; margin-bottom: 1.5rem; }
+      .section-label { font-size: 1rem; align-items: flex-start; }
+      .repo-chips { flex-direction: column; gap: 0.5rem; }
+      .chip { width: 100%; min-height: 44px; font-size: 1rem; padding: 0.6rem 0.9rem; overflow-wrap: anywhere; }
+      .search-box { flex-direction: column; padding: 0.5rem; }
+      .search-input { width: 100%; min-height: 48px; font-size: 1rem; }
+      .btn-analyze, .btn-share { width: 100%; min-height: 48px; font-size: 1rem; justify-content: center; }
+      .btn-sm { padding: 0.6rem 0.9rem; font-size: 1rem; }
+      #status-msg { font-size: 1rem; overflow-wrap: anywhere; }
+      .report-card { padding: 1.25rem 1rem; }
+      .card-top { flex-direction: column; align-items: stretch; margin-bottom: 1.25rem; }
+      .card-repo-meta h2 { font-size: 1.35rem; flex-wrap: wrap; overflow-wrap: anywhere; }
+      .card-repo-meta .badge-source { font-size: 1rem; margin-left: 0; }
+      .card-repo-meta p { font-size: 1rem; }
+      .grade-badge-wrap { flex-direction: column-reverse; align-items: stretch; gap: 0.75rem; text-align: left; }
+      .grade-box { width: 100%; height: auto; flex-direction: row; gap: 0.75rem; padding: 0.6rem; }
+      .grade-box .letter { font-size: 2.2rem; }
+      .grade-box .lbl { font-size: 1rem; margin-top: 0; }
+      .metrics-grid { grid-template-columns: 1fr; }
+      .metric-title { font-size: 1rem; }
+      .comparison-row { font-size: 1rem; }
+      .ratchet-box { flex-direction: column; align-items: stretch; padding: 1rem; }
+      .ratchet-box > div { width: 100%; }
+      .ratchet-box > div:last-child { flex-direction: column; align-items: stretch !important; }
+      .ratchet-cta-title, .ratchet-sub { font-size: 1rem; }
+      .ratchet-cmd { display: block; width: 100%; font-size: 1rem; padding: 0.6rem 0.8rem; overflow-wrap: anywhere; }
+      .table-container { margin-top: 1.5rem; }
+      table, tbody, tr, td { display: block; width: 100%; }
+      thead { display: none; }
+      th { font-size: 1rem; }
+      table { font-size: 1rem; }
+      tr { border: 1px solid var(--card-border); border-radius: 10px; margin-bottom: 0.75rem; padding: 0.25rem 0; background: #0d131f; }
+      tr:hover td { background: none; }
+      td { display: flex; justify-content: space-between; align-items: center; gap: 1rem; border-bottom: 0; padding: 0.4rem 0.9rem; min-height: 44px; text-align: right; overflow-wrap: anywhere; }
+      td::before { content: attr(data-label); flex: none; color: var(--text-muted); font-size: 1rem; font-weight: 600; text-align: left; }
+      .pr-link { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: flex-end; }
+      .pr-agent, .add-tag, .del-tag { font-size: 1rem; }
+      footer { padding: 1.25rem 1rem; font-size: 1rem; }
+      footer a { display: inline-block; padding: 0.65rem 0; }
     }
   </style>
 </head>
@@ -537,7 +592,7 @@ layout: null
             <i class="fa-solid fa-shield-halved text-primary"></i>
             <span>Fix agent bloat before it merges with Ratchet</span>
           </div>
-          <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 0.2rem;">
+          <p class="ratchet-sub">
             Enforce code size caps directly in CI so AI agents are forced to refactor & delete dead code.
           </p>
         </div>
@@ -545,7 +600,7 @@ layout: null
           <div class="ratchet-cmd">
             <code>pip install ratchet-size &amp;&amp; ratchet init</code>
           </div>
-          <a href="https://github.com/krishansubudhi/ratchet" target="_blank" rel="noopener noreferrer" class="btn-analyze" style="padding: 0.45rem 0.9rem; font-size: 0.82rem;">
+          <a href="https://github.com/krishansubudhi/ratchet" target="_blank" rel="noopener noreferrer" class="btn-analyze btn-sm">
             <span>View on GitHub</span>
             <i class="fa-solid fa-arrow-up-right-from-square"></i>
           </a>
@@ -557,6 +612,7 @@ layout: null
         <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem; color: #cbd5e1;">
           <i class="fa-solid fa-code-pull-request me-1 text-primary"></i> Sample Analyzed PRs
         </h3>
+        <div class="table-scroll">
         <table id="prs-table">
           <thead>
             <tr>
@@ -571,6 +627,7 @@ layout: null
             <!-- Populated via JS -->
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   </main>
@@ -646,11 +703,11 @@ layout: null
     function appendPrRow(tbody, cohort, pr) {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td style="font-weight: 600;">${cohort}</td>
-        <td><a href="${pr.url || 'https://github.com/' + currentRepo + '/pull/' + pr.pr}" target="_blank">#${pr.pr}</a></td>
-        <td>${escapeHtml(pr.title || '')}</td>
-        <td><span style="font-family: monospace; font-size: 0.8rem;">${escapeHtml(pr.agent || pr.author || '')}</span></td>
-        <td>
+        <td data-label="Cohort" class="cohort">${cohort}</td>
+        <td data-label="PR"><a class="pr-link" href="${pr.url || 'https://github.com/' + currentRepo + '/pull/' + pr.pr}" target="_blank">#${pr.pr}</a></td>
+        <td data-label="Title">${escapeHtml(pr.title || '')}</td>
+        <td data-label="Author"><span class="pr-agent">${escapeHtml(pr.agent || pr.author || '')}</span></td>
+        <td data-label="Changes">
           <span class="add-tag">+${pr.additions}</span>
           <span class="del-tag">-${pr.deletions}</span>
         </td>
