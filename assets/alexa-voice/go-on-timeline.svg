@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 360" width="760" height="360" role="img" aria-labelledby="t2 d2">
+  <title id="t2">The go-on flow for a slow answer</title>
+  <desc id="d2">A timeline. I ask a question, Alexa says One moment straight away, the 8 second limit passes, Alexa says Still thinking, say go on and keeps listening, I say go on, and Alexa reads the answer.</desc>
+  <style>
+    .t{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+    .bg{fill:#ffffff;stroke:#e2e5e9}
+    .ttl{font-size:20px;font-weight:700;fill:#1f2933}
+    .lane{font-size:13px;font-weight:700;fill:#52606d;letter-spacing:.5px}
+    .lbl{font-size:14px;font-weight:600;fill:#1f2933}
+    .cap{font-size:12.5px;fill:#52606d}
+    .me{fill:#e6f4ea;stroke:#6fae85;stroke-width:1.6}
+    .al{fill:#e8f1fb;stroke:#8fb3de;stroke-width:1.6}
+    .ok{fill:#fff4e5;stroke:#e08a1e;stroke-width:1.6}
+    .axis{stroke:#9aa5b1;stroke-width:2.5}
+    .tick{stroke:#9aa5b1;stroke-width:1.5}
+    .lim{stroke:#c0392b;stroke-width:2;stroke-dasharray:4 3}
+    .limt{font-size:13px;font-weight:700;fill:#a8321f}
+    .dot{fill:#7b8794}
+    .gap{fill:#f5f7f9;stroke:#dde3ea;stroke-width:1.2}
+  </style>
+  <rect class="bg" x="0.5" y="0.5" width="759" height="359" rx="12"/>
+  <text class="t ttl" x="24" y="38">When the answer takes longer than Alexa will wait</text>
+
+  <text class="t lane" x="24" y="112">ME</text>
+  <text class="t lane" x="24" y="278">ALEXA</text>
+
+  <rect class="gap" x="210" y="170" width="260" height="20" rx="4"/>
+  <text class="t cap" x="340" y="185" text-anchor="middle">assistant is still working</text>
+  <line class="axis" x1="100" y1="180" x2="740" y2="180"/>
+  <circle class="dot" cx="140" cy="180" r="5"/>
+  <circle class="dot" cx="210" cy="180" r="5"/>
+  <circle class="dot" cx="470" cy="180" r="5"/>
+  <circle class="dot" cx="590" cy="180" r="5"/>
+  <circle class="dot" cx="690" cy="180" r="5"/>
+
+  <line class="lim" x1="470" y1="140" x2="470" y2="180"/>
+  <text class="t limt" x="470" y="134" text-anchor="middle">~8 s: Alexa's wait runs out</text>
+  <text class="t cap" x="140" y="204" text-anchor="middle">0 s</text>
+
+  <path class="tick" d="M140 124V175"/>
+  <rect class="me" x="100" y="90" width="150" height="34" rx="8" transform="translate(-10 0)"/>
+  <text class="t lbl" x="165" y="112" text-anchor="middle">asks a question</text>
+
+  <path class="tick" d="M590 124V175"/>
+  <rect class="me" x="530" y="90" width="120" height="34" rx="8"/>
+  <text class="t lbl" x="590" y="112" text-anchor="middle">says "go on"</text>
+
+  <path class="tick" d="M210 185V248"/>
+  <rect class="al" x="100" y="248" width="150" height="50" rx="8"/>
+  <text class="t lbl" x="175" y="268" text-anchor="middle">"One moment"</text>
+  <text class="t cap" x="175" y="286" text-anchor="middle">sent straight away</text>
+
+  <path class="tick" d="M470 185V248"/>
+  <rect class="al" x="330" y="248" width="210" height="50" rx="8"/>
+  <text class="t lbl" x="435" y="268" text-anchor="middle">"Still thinking, say go on"</text>
+  <text class="t cap" x="435" y="286" text-anchor="middle">microphone stays open</text>
+
+  <path class="tick" d="M690 185V248"/>
+  <rect class="ok" x="600" y="248" width="140" height="50" rx="8"/>
+  <text class="t lbl" x="670" y="268" text-anchor="middle">Reads the answer</text>
+  <text class="t cap" x="670" y="286" text-anchor="middle">ready by now</text>
+
+  <text class="t cap" x="24" y="334">A short conversation instead of one request and one response.</text>
+</svg>

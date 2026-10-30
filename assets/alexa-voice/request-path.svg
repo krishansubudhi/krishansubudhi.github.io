@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 290" width="760" height="290" role="img" aria-labelledby="t1 d1">
+  <title id="t1">The path of a spoken question from me to my assistant</title>
+  <desc id="d1">Six steps left to right: me, an Echo, the Alexa cloud, Cloudflare, my server, my assistant. Cloudflare's Bot Fight Mode blocked the request between the Alexa cloud and my server until I turned it off. The server checks Amazon's signature and the skill's application id.</desc>
+  <style>
+    .t{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+    .bg{fill:#ffffff;stroke:#e2e5e9}
+    .ttl{font-size:20px;font-weight:700;fill:#1f2933}
+    .lbl{font-size:15px;font-weight:600;fill:#1f2933;text-anchor:middle}
+    .cap{font-size:12.5px;fill:#52606d;text-anchor:middle}
+    .box{fill:#eef2f7;stroke:#9fb3c8;stroke-width:1.6}
+    .me{fill:#e6f4ea;stroke:#6fae85;stroke-width:1.6}
+    .cf{fill:#fff4e5;stroke:#e08a1e;stroke-width:2.2;stroke-dasharray:5 3}
+    .ar{stroke:#7b8794;stroke-width:2;fill:none;marker-end:url(#ah)}
+    .ahf{fill:#7b8794}
+    .blk{stroke:#c0392b;stroke-width:4;stroke-linecap:round}
+    .bt{font-size:13px;font-weight:700;fill:#a8321f;text-anchor:middle}
+    .bc{fill:#fdecea;stroke:#d99a90;stroke-width:1.4}
+    .chk{fill:#e8f1fb;stroke:#8fb3de;stroke-width:1.4}
+    .ct{font-size:12.5px;fill:#1f4f8a;text-anchor:middle}
+    .stub{stroke:#c0392b;stroke-width:2;stroke-dasharray:3 3;fill:none}
+    .ptr{stroke:#d99a90;stroke-width:1.6;fill:none}
+    .ptr2{stroke:#8fb3de;stroke-width:1.6;fill:none}
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" class="ahf"/></marker>
+  </defs>
+  <rect class="bg" x="0.5" y="0.5" width="759" height="289" rx="12"/>
+  <text class="t ttl" x="24" y="38">A spoken question, step by step</text>
+
+  <rect class="me" x="20" y="90" width="98" height="64" rx="10"/>
+  <text class="t lbl" x="69" y="119">Me</text>
+  <text class="t cap" x="69" y="138">"Alexa, ask…"</text>
+
+  <rect class="box" x="146" y="90" width="98" height="64" rx="10"/>
+  <text class="t lbl" x="195" y="119">Echo</text>
+  <text class="t cap" x="195" y="138">hears me</text>
+
+  <rect class="box" x="272" y="90" width="98" height="64" rx="10"/>
+  <text class="t lbl" x="321" y="119">Alexa cloud</text>
+  <text class="t cap" x="321" y="138">speech → text</text>
+
+  <rect class="cf" x="398" y="90" width="98" height="64" rx="10"/>
+  <text class="t lbl" x="447" y="119">Cloudflare</text>
+  <text class="t cap" x="447" y="138">public front door</text>
+
+  <rect class="box" x="524" y="90" width="98" height="64" rx="10"/>
+  <text class="t lbl" x="573" y="119">My server</text>
+  <text class="t cap" x="573" y="138">small web app</text>
+
+  <rect class="me" x="650" y="90" width="90" height="64" rx="10"/>
+  <text class="t lbl" x="695" y="119">Assistant</text>
+  <text class="t cap" x="695" y="138">writes the reply</text>
+
+  <path class="ar" d="M118 122H142"/>
+  <path class="ar" d="M244 122H268"/>
+  <path class="ar" d="M370 122H394"/>
+  <path class="stub" d="M496 122H520"/>
+  <path class="ar" d="M622 122H646"/>
+  <path class="blk" d="M502 112L514 132M514 112L502 132"/>
+
+  <path class="ptr" d="M447 154V190"/>
+  <rect class="bc" x="290" y="190" width="314" height="48" rx="8"/>
+  <text class="t bt" x="447" y="210">Bot Fight Mode blocked it here</text>
+  <text class="t cap" x="447" y="228">a "prove you are human" page that Alexa cannot solve</text>
+
+  <path class="ptr2" d="M610 154V190"/>
+  <rect class="chk" x="620" y="190" width="120" height="48" rx="8" transform="translate(0 0)"/>
+  <text class="t ct" x="680" y="210">server checks</text>
+  <text class="t ct" x="680" y="228">signature + skill id</text>
+
+  <text class="t cap" x="24" y="268" style="text-anchor:start">The reply text travels back the same way, and Alexa speaks it.</text>
+</svg>

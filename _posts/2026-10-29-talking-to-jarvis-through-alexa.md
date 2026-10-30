@@ -10,36 +10,17 @@ description: I made an Alexa custom skill that forwards what I say to my own ass
 
 I already talk to my personal assistant, Jarvis, from my phone and my watch. Today I wanted to talk to it out loud, with no device in my hand. So I built an Alexa skill.
 
-It works. I can say "Alexa, ask lean jarvis what did I eat today" and hear the answer. Getting there took four bugs, and only one of them was mine.
+It works. I can say "Alexa, ask [my skill's name] what did I eat today" and hear the answer. Getting there took four bugs, and only one of them was mine.
 
 ## How it fits together
 
-Jarvis runs on my own server. Alexa does not know that, and it should not. It only knows how to call a web endpoint, so I wrote one.
+My assistant runs on my own server. Alexa does not know that, and it should not. It only knows how to call a web endpoint, so I wrote one. Here is the path a question takes:
 
-```text
- you: "Alexa, ask lean jarvis ..."
-        |
-        v
-  Alexa (speech -> text, picks the skill)
-        |  HTTPS POST, signed by Amazon
-        v
-  Cloudflare tunnel
-        |
-        v
-  small Python server
-   - checks Amazon's signature
-   - checks the skill's application id
-        |
-        v
-  Jarvis chat (the same one my phone uses)
-        |
-        v
-  reply text -> Alexa speaks it
-```
+![A question travels from me to an Echo, to the Alexa cloud, through Cloudflare to my server and then to my assistant. Cloudflare's Bot Fight Mode blocked the request between the Alexa cloud and my server until I turned it off](/assets/alexa-voice/request-path.svg)
 
-The server is small Python. It checks that the request really came from Amazon, then passes the question into Jarvis's normal chat as if I had typed it. Nothing special exists on the Jarvis side, which is the point.
+The server is a small web app. It checks that the request really came from Amazon, then hands the question to my assistant as if I had typed it, and speaks whatever comes back. The assistant needs nothing special for this, which is the point: to the skill it is a black box that takes a sentence and returns a sentence.
 
-Amazon requires an invocation name of at least two words. "Jarvis" alone was rejected, so the skill is called "lean jarvis".
+Amazon requires an invocation name of at least two words. "Jarvis" alone was rejected, so the skill has a two-word name.
 
 ## Not trusting the internet
 
@@ -63,18 +44,20 @@ I only found it in the Cloudflare dashboard under Security Events: a pile of blo
 
 ## Bug 3: "what" disappeared
 
-Once requests reached the server, I asked "what is my age" and Jarvis received "is my age". My sample phrase was `what {query}`, and Alexa treated the word "what" as part of the phrase, not part of the question.
+Once requests reached the server, I asked "what is my age" and my assistant received "is my age". My sample phrase was `what {query}`, and Alexa treated the word "what" as part of the phrase, not part of the question.
 
 The fix was a custom slot type that acts as a catch-all, and a sample phrase that is only `{query}`. Now the whole sentence comes through unchanged.
 
 ## Bug 4: Alexa only waits about 8 seconds
 
-This one is the real problem. Alexa waits about 8 seconds for a skill to answer. A chat reply from an agent that looks things up can take 10 to 60 seconds.
+This one is the real problem. Alexa waits about 8 seconds for a skill to answer. A reply from an assistant that looks things up can take 10 to 60 seconds.
 
 I fixed it in two steps:
 
-1. The skill sends a progressive response straight away, so Alexa says "One moment" while the agent works.
+1. The skill sends a progressive response straight away, so Alexa says "One moment" while the assistant works.
 2. If the answer is still not ready when the wait runs out, Alexa says "Still thinking, say go on" and keeps the microphone open. When I say "go on", the skill checks again and reads the answer.
+
+![A timeline: I ask a question, Alexa says One moment straight away, Alexa's eight second wait runs out, Alexa says Still thinking say go on and keeps listening, I say go on, and Alexa reads the answer](/assets/alexa-voice/go-on-timeline.svg)
 
 It is a small conversation instead of a single request and response. It is not elegant, but a voice interface for an agent has to be designed for waiting.
 
@@ -85,6 +68,6 @@ It is a small conversation instead of a single request and response. It is not e
 
 ## What is next
 
-For now the server runs on the same machine as the rest of Jarvis. Next I want to move the whole thing onto a Mac mini at home, so it is a quiet box on a shelf that listens and answers.
+For now it all runs on one machine. Next I want to move the whole thing onto a Mac mini at home, so it is a quiet box on a shelf that listens and answers.
 
 The long-term dream is the one in the movies: Iron Man's workshop, where you talk to a room and things happen. Today it is "what did I eat today" and a one-moment pause.
