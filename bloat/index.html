@@ -336,6 +336,14 @@ layout: null
     .mix-ok { color: var(--accent-emerald); font-weight: 700; }
     .mix-no { color: var(--text-muted); }
     .mix-note { color: var(--text-muted); font-size: 0.8rem; line-height: 1.5; margin: 0.8rem 0 0; }
+    .gb-scroll { overflow-x: auto; margin-top: 0.75rem; -webkit-overflow-scrolling: touch; }
+    .grade-breakdown { border-collapse: collapse; width: 100%; min-width: 34rem; font-size: 0.85rem; }
+    .grade-breakdown th, .grade-breakdown td { padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--card-border); text-align: left; white-space: nowrap; }
+    .grade-breakdown th { color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .grade-breakdown .gb-n { text-align: right; font-family: 'JetBrains Mono', monospace; }
+    .grade-breakdown .gb-cap { color: #fbbf24; }
+    .grade-breakdown .gb-skip td { color: var(--text-muted); opacity: 0.6; font-style: italic; }
+    .grade-breakdown .gb-skip td:first-child { font-style: normal; }
     .tt { display: inline-block; margin-right: 0.4rem; padding: 0 0.4rem; border-radius: 4px; background: #1e293b; color: #cbd5e1; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
 
     /* Ratchet Banner */
@@ -478,6 +486,13 @@ layout: null
       .mix-bar b { font-size: 0.9rem; }
       .mix-note, .grade-why { font-size: 1rem; }
       .tt { font-size: 0.8rem; }
+      .grade-breakdown { display: table; width: auto; min-width: 34rem; font-size: 1rem; }
+      .grade-breakdown thead { display: table-header-group; }
+      .grade-breakdown tbody { display: table-row-group; width: auto; }
+      .grade-breakdown tr { display: table-row; width: auto; border: 0; border-radius: 0; margin: 0; padding: 0; background: none; }
+      .grade-breakdown th { display: table-cell; font-size: 0.8rem; }
+      .grade-breakdown td { display: table-cell; width: auto; min-height: 0; gap: 0; }
+      .grade-breakdown td::before { content: none; }
       .ratchet-box { flex-direction: column; align-items: stretch; padding: 1rem; }
       .ratchet-box > div { width: 100%; }
       .ratchet-box > div:last-child { flex-direction: column; align-items: stretch !important; }
@@ -593,10 +608,16 @@ layout: null
       </section>
 
       <p class="grade-why" id="grade-why"></p>
+      <div class="mix-box" id="grade-box-detail">
+        <div class="metric-title">Grade breakdown by task type</div>
+        <p class="mix-note gb-formula">Type score = geometric mean of three agent-vs-human ratios (net lines, deletions with human over agent, net lines per file). Each ratio is clamped to 0.5-2 (&#9650; marks a clamped one). Above 1 is worse for the agent.</p>
+        <div class="gb-scroll"><table class="grade-breakdown" id="grade-breakdown"></table></div>
+        <p class="mix-note" id="grade-formula"></p>
+      </div>
       <div class="mix-box">
         <div class="metric-title">Task mix (% of each cohort's PRs)</div>
         <div class="mix-grid" id="mix-grid"></div>
-        <p class="mix-note">Each PR is tagged feature, fix, test, docs, refactor, chore or other from its title prefix, labels or wording. The grade compares agents with humans <b>within</b> each type that has at least 3 agent and 3 human PRs (marked &#10003;): median net lines, median deletions and net lines per file, weighted by agent PRs. A is 0.8x the human growth or lower, B up to 1.1x, C up to 1.5x, D above. It does not count how often a PR grows code, because feature PRs normally do.</p>
+        <p class="mix-note">Each PR is tagged feature, fix, test, docs, refactor, chore or other from its title prefix, labels or wording. The grade compares agents with humans <b>within</b> each type that has at least 3 agent and 3 human PRs (marked &#10003;): median net lines, median deletions and net lines per file, weighted by agent PRs. Each of the three ratios is clamped to between 0.5 and 2 first. A is a score of 0.8 or lower, B up to 1.1x, C up to 1.5x, D above. It does not count how often a PR grows code, because feature PRs normally do.</p>
       </div>
 
       <!-- Core Metrics -->
@@ -780,6 +801,9 @@ layout: null
     }
     const medianOf = a => { a = a.slice().sort((x, y) => x - y); const n = a.length; return n ? (n % 2 ? a[(n - 1) / 2] : (a[n / 2 - 1] + a[n / 2]) / 2) : 0; };
     const ratioOf = (a, h, k) => (Math.max(a, 0) + k) / (Math.max(h, 0) + k);
+    // Each of the three ratios is clamped to [1/DEL_RATIO_CAP, DEL_RATIO_CAP] so one extreme ratio (say 6.6x more deletions by humans) cannot outvote the other two.
+    const DEL_RATIO_CAP = 2;
+    const clampRatio = x => Math.min(DEL_RATIO_CAP, Math.max(1 / DEL_RATIO_CAP, x));
     // prs: [{c: 'a'|'h', t: task type, a: additions, d: deletions, f: files}]
     function gradeRepo(prs) {
       const A = prs.filter(p => p.c === 'a'), H = prs.filter(p => p.c === 'h');
@@ -790,15 +814,18 @@ layout: null
         const net = L => medianOf(L.map(p => p.a - p.d)), del = L => medianOf(L.map(p => p.d)), per = L => medianOf(L.map(p => (p.a - p.d) / Math.max(p.f, 1)));
         const row = {t, na: a.length, nh: h.length, q: a.length >= 3 && h.length >= 3};
         if (row.q) {
-          row.net = ratioOf(net(a), net(h), 20); row.del = (del(h) + 5) / (del(a) + 5); row.per = ratioOf(per(a), per(h), 5);
+          const raw = {net: ratioOf(net(a), net(h), 20), del: (del(h) + 5) / (del(a) + 5), per: ratioOf(per(a), per(h), 5)};
+          row.raw = raw; row.capped = {};
+          ['net', 'del', 'per'].forEach(k => { row[k] = clampRatio(raw[k]); row.capped[k] = row[k] !== raw[k]; });
           row.idx = Math.cbrt(row.net * row.del * row.per);
-        }
+        } else row.skip = a.length < 3 && h.length < 3 ? 'too few agent and human PRs' : h.length < 3 ? 'too few human PRs' : 'too few agent PRs';
         types.push(row);
       });
       const q = types.filter(r => r.q), cover = q.reduce((s, r) => s + r.na, 0);
       const out = {grade: 'N/A', index: null, mix, types, covered: A.length ? Math.round(cover / A.length * 100) : 0, why: ''};
       if (A.length < 3) { out.why = `Only ${A.length} agent PR${A.length === 1 ? '' : 's'} found; a grade needs at least 3.`; return out; }
       if (!q.length) { out.why = 'No task type has 3 or more agent PRs and 3 or more human PRs, so there is no like-for-like comparison.'; return out; }
+      q.forEach(r => { r.w = r.na / cover; });
       out.index = Math.exp(q.reduce((s, r) => s + r.na * Math.log(r.idx), 0) / cover);
       out.grade = out.index <= 0.8 ? 'A' : out.index <= 1.1 ? 'B' : out.index <= 1.5 ? 'C' : 'D';
       const g = k => Math.exp(q.reduce((s, r) => s + r.na * Math.log(r[k]), 0) / cover), fx = x => x < 0.95 ? Math.round((1 - x) * 100) + '% less' : x > 1.05 ? Math.round((x - 1) * 100) + '% more' : 'about the same';
@@ -885,7 +912,17 @@ layout: null
         el.insertAdjacentHTML('beforeend', `<span>${TYPE_NAMES[r.t]}</span>${bar('a', g.mix.a[r.t])}${bar('h', g.mix.h[r.t])}` +
           (r.q ? '<span class="mix-ok" title="3+ agent and 3+ human PRs">&#10003;</span>' : '<span class="mix-no" title="Too few PRs to compare">&ndash;</span>'));
       });
+      renderBreakdown(g);
       document.getElementById('grade-why').textContent = (g.grade === 'N/A' ? 'No grade: ' : 'Why this grade: ') + g.why;
+    }
+
+    function renderBreakdown(g) {
+      const f2 = x => x.toFixed(2), cell = (r, k) => `<td class="gb-n${r.capped[k] ? ' gb-cap' : ''}"${r.capped[k] ? ` title="capped from ${f2(r.raw[k])}"` : ''}>${f2(r[k])}${r.capped[k] ? '&nbsp;&#9650;' : ''}</td>`;
+      const rows = g.types.filter(r => r.na || r.nh).map(r => r.q
+        ? `<tr><td>${TYPE_NAMES[r.t]}</td><td class="gb-n">${r.na}</td><td class="gb-n">${r.nh}</td>${cell(r, 'net')}${cell(r, 'del')}${cell(r, 'per')}<td class="gb-n"><b>${f2(r.idx)}</b></td><td class="gb-n">${Math.round(r.w * 100)}%</td></tr>`
+        : `<tr class="gb-skip"><td>${TYPE_NAMES[r.t]}</td><td class="gb-n">${r.na}</td><td class="gb-n">${r.nh}</td><td colspan="5">skipped: ${r.skip}</td></tr>`);
+      document.getElementById('grade-breakdown').innerHTML = '<thead><tr><th>Type</th><th class="gb-n" title="Agent PRs">Agent</th><th class="gb-n" title="Human PRs">Human</th><th class="gb-n">Net lines</th><th class="gb-n">Deletions</th><th class="gb-n">Per file</th><th class="gb-n">Score</th><th class="gb-n">Weight</th></tr></thead><tbody>' + rows.join('') + '</tbody>';
+      document.getElementById('grade-formula').textContent = g.index == null ? 'No type had enough PRs on both sides, so there is no score.' : `Overall score ${f2(g.index)}: the weighted geometric mean of the type scores, weighted by agent PRs.`;
     }
 
     function appendPrRow(tbody, cohort, pr) {
