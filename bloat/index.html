@@ -401,6 +401,16 @@ layout: null
     .del-tag { color: var(--accent-rose); font-family: 'JetBrains Mono', monospace; font-weight: 600; }
     .add-tag { color: var(--accent-emerald); font-family: 'JetBrains Mono', monospace; font-weight: 600; }
 
+    .share-panel { margin: 0 0 1.75rem; padding: 1.25rem; background: #0d131f; border: 1px solid var(--card-border); border-radius: 12px; }
+    .share-panel[hidden] { display: none; }
+    .share-panel canvas { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--card-border); }
+    .share-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1rem; }
+    .share-actions .btn-share { min-height: 44px; }
+    .share-note { color: var(--text-muted); font-size: 0.85rem; margin-top: 0.6rem; min-height: 1.3em; overflow-wrap: anywhere; }
+    .btn-primary { background: var(--primary); border-color: var(--primary); }
+    .btn-primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+    .btn-row .btn-share { min-height: 44px; }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: flex-end; }
     .ratchet-sub { font-size: 0.85rem; color: #94a3b8; margin-top: 0.2rem; }
     .btn-sm { padding: 0.45rem 0.9rem; font-size: 0.82rem; }
     .cohort { font-weight: 600; }
@@ -431,6 +441,10 @@ layout: null
       .search-box { flex-direction: column; padding: 0.5rem; }
       .search-input { width: 100%; min-height: 48px; font-size: 1rem; }
       .btn-analyze, .btn-share { width: 100%; min-height: 48px; font-size: 1rem; justify-content: center; }
+      .btn-row { flex-direction: column; }
+      .share-panel { padding: 0.75rem; }
+      .share-actions { flex-direction: column; }
+      .share-note { font-size: 1rem; }
       .btn-sm { padding: 0.6rem 0.9rem; font-size: 1rem; }
       #status-msg { font-size: 1rem; overflow-wrap: anywhere; }
       .report-card { padding: 1.25rem 1rem; }
@@ -532,9 +546,13 @@ layout: null
           <p id="card-repo-desc">Empirical benchmark of 40 agent PRs (Devin) matched 1:1 against 40 human PRs.</p>
         </div>
         <div class="grade-badge-wrap">
-          <div>
-            <button class="btn-share" onclick="copyShareText()" id="share-btn">
-              <i class="fa-solid fa-share-nodes"></i>
+          <div class="btn-row">
+            <button type="button" class="btn-share btn-primary" onclick="openShare()" id="open-share-btn" aria-controls="share-panel">
+              <i class="fa-solid fa-image"></i>
+              <span>Share result</span>
+            </button>
+            <button type="button" class="btn-share" onclick="copyShareText()" id="share-btn">
+              <i class="fa-solid fa-copy"></i>
               <span>Copy Share Text</span>
             </button>
           </div>
@@ -544,6 +562,16 @@ layout: null
           </div>
         </div>
       </div>
+
+      <section class="share-panel" id="share-panel" hidden aria-label="Share card">
+        <canvas id="share-canvas" width="1200" height="630" role="img" aria-label="Share card for this result"></canvas>
+        <div class="share-actions">
+          <button type="button" class="btn-share btn-primary" id="dl-btn" onclick="downloadCard()"><i class="fa-solid fa-download"></i><span>Download PNG</span></button>
+          <button type="button" class="btn-share" id="native-share-btn" onclick="nativeShare()" hidden><i class="fa-solid fa-share-nodes"></i><span>Share</span></button>
+          <button type="button" class="btn-share" id="copy-link-btn" onclick="copyLink()"><i class="fa-solid fa-link"></i><span>Copy link</span></button>
+        </div>
+        <p class="share-note" id="share-note" role="status" aria-live="polite"></p>
+      </section>
 
       <!-- 4 Core Metrics -->
       <div class="metrics-grid">
@@ -668,8 +696,9 @@ layout: null
       });
     }
 
-    function selectRepo(repo) {
+    function selectRepo(repo, silent) {
       currentRepo = repo;
+      if (!silent) syncUrl();
       document.querySelectorAll('.chip').forEach(c => {
         c.classList.toggle('active', c.textContent.trim().endsWith(repo));
       });
@@ -731,9 +760,12 @@ layout: null
     }
 
     // Client-side GitHub search for any arbitrary owner/repo
-    async function handleSearch(e) {
+    function handleSearch(e) {
       e.preventDefault();
-      let input = document.getElementById('repo-input').value.trim();
+      return runSearch(document.getElementById('repo-input').value.trim());
+    }
+
+    async function runSearch(input) {
       if (!input) return;
 
       // Accept full GitHub URLs, strip leading/trailing slashes, and trim spaces
@@ -904,6 +936,7 @@ layout: null
 
         currentRepo = cleanRepo;
         currentStats = customStats;
+        syncUrl();
 
         document.getElementById('card-repo-name').textContent = cleanRepo;
         document.getElementById('card-source-badge').textContent = 'LIVE GITHUB API';
@@ -956,9 +989,104 @@ layout: null
       });
     }
 
-    // Init
+    // Share card: 1200x630 PNG drawn on a canvas; the link re-runs the analysis
+    function syncUrl() {
+      document.getElementById('share-panel').hidden = true;
+      history.replaceState(null, '', location.pathname + '?repo=' + currentRepo);
+    }
+    function shareLink() { return location.origin + location.pathname + '?repo=' + currentRepo; }
+    function setNote(t) { document.getElementById('share-note').textContent = t; }
+    function fitText(ctx, text, maxW, size, weight) {
+      for (; size > 28; size -= 2) { ctx.font = weight + ' ' + size + 'px "Plus Jakarta Sans", system-ui, sans-serif'; if (ctx.measureText(text).width <= maxW) break; }
+      return size;
+    }
+    function rrect(ctx, x, y, w, h, r) {
+      ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+    }
+    function drawCard() {
+      const c = document.getElementById('share-canvas'), ctx = c.getContext('2d'), d = currentStats, F = '"Plus Jakarta Sans", system-ui, sans-serif';
+      ctx.clearRect(0, 0, 1200, 630);
+      ctx.fillStyle = '#090d16'; ctx.fillRect(0, 0, 1200, 630);
+      const bar = ctx.createLinearGradient(0, 0, 1200, 0); bar.addColorStop(0, '#6366f1'); bar.addColorStop(0.5, '#06b6d4'); bar.addColorStop(1, '#10b981');
+      ctx.fillStyle = bar; ctx.fillRect(0, 0, 1200, 8);
+      ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
+      ctx.fillStyle = '#94a3b8'; ctx.font = '700 26px ' + F; ctx.fillText('AI AGENT BLOAT & DELETION REPORT CARD', 60, 76);
+      ctx.fillStyle = '#ffffff'; fitText(ctx, currentRepo, 800, 64, 800); ctx.fillText(currentRepo, 60, 156);
+      const col = {A: '#10b981', B: '#06b6d4', C: '#f59e0b', D: '#f43f5e', F: '#fda4af'}[d.grade] || '#94a3b8';
+      ctx.fillStyle = col + '33'; rrect(ctx, 940, 40, 200, 200, 28); ctx.fill();
+      ctx.strokeStyle = col; ctx.lineWidth = 5; rrect(ctx, 940, 40, 200, 200, 28); ctx.stroke();
+      ctx.fillStyle = col; ctx.textAlign = 'center';
+      ctx.font = '800 ' + (d.grade === 'N/A' ? 84 : 130) + 'px ' + F; ctx.fillText(d.grade, 1040, d.grade === 'N/A' ? 156 : 176);
+      ctx.font = '700 22px ' + F; ctx.fillText('BLOAT GRADE', 1040, 214); ctx.textAlign = 'left';
+      const graded = d.grade !== 'N/A';
+      ctx.fillStyle = '#ffffff'; ctx.font = '800 54px ' + F;
+      ctx.fillText(graded ? d.agent_med_del + (d.agent_med_del === 1 ? ' line' : ' lines') + ' deleted per agent PR' : 'Not enough agent PRs to grade', 60, 236);
+      ctx.fillStyle = '#94a3b8'; ctx.font = '500 30px ' + F;
+      ctx.fillText(graded ? 'median, vs ' + d.human_med_del + ' for human PRs' : 'a grade needs at least 3 merged agent PRs', 60, 280);
+      const rows = [['Net-growth PRs', d.agent_net_grow_pct, d.human_net_grow_pct], ['Zero-deletion PRs', d.agent_zero_del_pct, d.human_zero_del_pct]];
+      rows.forEach((r, i) => {
+        const y = 330 + i * 110;
+        ctx.fillStyle = '#cbd5e1'; ctx.font = '700 24px ' + F; ctx.fillText(r[0], 60, y);
+        [['Agent', r[1], '#818cf8'], ['Human', r[2], '#64748b']].forEach((b, j) => {
+          const by = y + 14 + j * 34, w = Math.max(6, 760 * Math.min(100, b[1]) / 100);
+          ctx.fillStyle = '#1e293b'; rrect(ctx, 200, by, 760, 24, 12); ctx.fill();
+          if (b[1] > 0) { ctx.fillStyle = b[2]; rrect(ctx, 200, by, w, 24, Math.min(12, w / 2)); ctx.fill(); }
+          ctx.fillStyle = '#94a3b8'; ctx.font = '600 20px ' + F; ctx.fillText(b[0], 60, by + 20);
+          ctx.fillStyle = '#ffffff'; ctx.font = '700 22px ' + F; ctx.fillText(b[1] + '%', 980, by + 21);
+        });
+      });
+      ctx.fillStyle = '#1e293b'; ctx.fillRect(60, 560, 1080, 2);
+      ctx.fillStyle = '#a5b4fc'; ctx.font = '700 26px ' + F; ctx.fillText('krishansubudhi.github.io/bloat', 60, 604);
+      ctx.fillStyle = '#94a3b8'; ctx.font = '500 22px ' + F; ctx.textAlign = 'right';
+      ctx.fillText(d.agent_count + ' agent PRs vs ' + d.human_count + ' human PRs', 1140, 604); ctx.textAlign = 'left';
+    }
+    async function openShare() {
+      if (!currentStats) return;
+      const panel = document.getElementById('share-panel');
+      try { await Promise.all([document.fonts.load('800 54px "Plus Jakarta Sans"'), document.fonts.load('500 30px "Plus Jakarta Sans"')]); } catch (e) {}
+      drawCard();
+      document.getElementById('native-share-btn').hidden = !navigator.share;
+      setNote('Link: ' + shareLink());
+      panel.hidden = false;
+      panel.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+    }
+    function cardBlob() { return new Promise(res => document.getElementById('share-canvas').toBlob(res, 'image/png')); }
+    async function downloadCard() {
+      const blob = await cardBlob(), a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = 'bloat-' + currentRepo.replace('/', '-') + '.png';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+      setNote('Saved ' + a.download);
+    }
+    async function copyLink() {
+      const url = shareLink();
+      try { await navigator.clipboard.writeText(url); setNote('Link copied: ' + url); }
+      catch (e) {
+        const t = document.createElement('textarea'); t.value = url; document.body.appendChild(t); t.select();
+        try { document.execCommand('copy'); setNote('Link copied: ' + url); } catch (e2) { setNote('Copy this link: ' + url); }
+        t.remove();
+      }
+    }
+    async function nativeShare() {
+      const data = {title: 'AI Agent Bloat Report Card: ' + currentRepo, text: 'Bloat grade ' + currentStats.grade + ' for ' + currentRepo, url: shareLink()};
+      try {
+        const file = new File([await cardBlob()], 'bloat-' + currentRepo.replace('/', '-') + '.png', {type: 'image/png'});
+        if (navigator.canShare && navigator.canShare({files: [file]})) data.files = [file];
+        await navigator.share(data);
+      } catch (e) { if (e.name !== 'AbortError') copyLink(); }
+    }
+
+    // Init (?repo=owner/name re-runs that analysis)
     initChips();
-    selectRepo('BerriAI/litellm');
+    selectRepo('BerriAI/litellm', true);
+    const wanted = new URLSearchParams(location.search).get('repo');
+    if (wanted) {
+      document.getElementById('repo-input').value = wanted;
+      const card = document.getElementById('report-card');
+      card.style.display = 'none';
+      runSearch(wanted).finally(() => { card.style.display = ''; });
+    }
   </script>
 </body>
 </html>
