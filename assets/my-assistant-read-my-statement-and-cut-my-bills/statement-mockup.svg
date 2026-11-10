@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 400" width="780" height="400" role="img" aria-labelledby="t3 d3">
+  <title id="t3">An illustrated card statement with made-up rows</title>
+  <desc id="d3">A mock statement. Made-up rows for groceries, a coffee shop, internet at $129.81 marked as doubled, DashPass at $9.99 marked as a duplicate, Prime at $16.36 struck through because it was declined, and a streaming service.</desc>
+  <style>
+    .t{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+    .bg{fill:#ffffff;stroke:#e2e5e9}
+    .ttl{font-size:20px;font-weight:700;fill:#1f2933}
+    .tag{font-size:12px;font-weight:700;fill:#8a5a00}
+    .tagb{fill:#fff4e5;stroke:#e08a1e}
+    .hd{font-size:12.5px;font-weight:700;fill:#52606d;letter-spacing:.5px}
+    .c{font-size:14.5px;fill:#1f2933}
+    .m{font-size:14.5px;fill:#52606d}
+    .amt{font-size:14.5px;font-weight:600;fill:#1f2933;text-anchor:end}
+    .dim{font-size:14.5px;fill:#9aa5b1}
+    .dimamt{font-size:14.5px;fill:#9aa5b1;text-anchor:end}
+    .rule{stroke:#e4e7eb;stroke-width:1}
+    .hl{fill:#fff4e5}
+    .hl2{fill:#fdecea}
+    .note{font-size:12.5px;font-weight:700}
+    .n1{fill:#b4650c}
+    .n2{fill:#a8321f}
+    .n3{fill:#7b8794}
+    .strike{stroke:#9aa5b1;stroke-width:1.5}
+    .blur{fill:#d9dee4}
+  </style>
+  <g class="t">
+    <rect class="bg" x="1" y="1" width="778" height="398" rx="14"/>
+    <text class="ttl" x="30" y="42">Card activity</text>
+    <rect class="tagb" x="560" y="24" width="190" height="26" rx="13"/>
+    <text class="tag" x="655" y="42" text-anchor="middle">ILLUSTRATION · MADE-UP ROWS</text>
+    <rect class="blur" x="160" y="30" width="120" height="14" rx="7"/>
+
+    <text class="hd" x="30" y="84">DATE</text>
+    <text class="hd" x="110" y="84">MERCHANT</text>
+    <text class="hd" x="440" y="84">STATUS</text>
+    <text class="hd" x="620" y="84" text-anchor="end">AMOUNT</text>
+    <line class="rule" x1="30" y1="96" x2="750" y2="96"/>
+
+    <text class="m" x="30" y="126">Oct 03</text><text class="c" x="110" y="126">Grocery store</text><text class="m" x="440" y="126">Posted</text><text class="amt" x="620" y="126">$64.20</text>
+    <line class="rule" x1="30" y1="142" x2="750" y2="142"/>
+
+    <rect class="hl" x="30" y="143" width="720" height="44"/>
+    <text class="m" x="30" y="171">Oct 14</text><text class="c" x="110" y="171">Internet provider</text><text class="m" x="440" y="171">Posted</text><text class="amt" x="620" y="171">$129.81</text>
+    <text class="note n1" x="640" y="171">was $65 ↑</text>
+    <line class="rule" x1="30" y1="187" x2="750" y2="187"/>
+
+    <text class="m" x="30" y="216">Oct 18</text><text class="c" x="110" y="216">Coffee shop</text><text class="m" x="440" y="216">Posted</text><text class="amt" x="620" y="216">$6.75</text>
+    <line class="rule" x1="30" y1="232" x2="750" y2="232"/>
+
+    <rect class="hl2" x="30" y="233" width="720" height="44"/>
+    <text class="m" x="30" y="261">Nov 07</text><text class="c" x="110" y="261">DoorDash DashPass</text><text class="m" x="440" y="261">Posted</text><text class="amt" x="620" y="261">$9.99</text>
+    <text class="note n2" x="640" y="261">2nd one ✕</text>
+    <line class="rule" x1="30" y1="277" x2="750" y2="277"/>
+
+    <text class="dim" x="30" y="306">Oct 16</text><text class="dim" x="110" y="306">Amazon Prime</text><text class="dim" x="440" y="306">Declined</text><text class="dimamt" x="620" y="306">$16.36</text>
+    <line class="strike" x1="108" y1="301" x2="622" y2="301"/>
+    <text class="note n3" x="640" y="306">$0, skip</text>
+    <line class="rule" x1="30" y1="322" x2="750" y2="322"/>
+
+    <text class="m" x="30" y="351">Oct 21</text><text class="c" x="110" y="351">Streaming service</text><text class="m" x="440" y="351">Posted</text><text class="amt" x="620" y="351">$7.99</text>
+    <line class="rule" x1="30" y1="367" x2="750" y2="367"/>
+  </g>
+</svg>

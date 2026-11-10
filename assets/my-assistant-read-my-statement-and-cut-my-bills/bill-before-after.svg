@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 360" width="780" height="360" role="img" aria-labelledby="t2 d2">
+  <title id="t2">My internet bill before and after the chats</title>
+  <desc id="d2">Before: $129.81 a month, made of Gigabit internet at $114, a $25 router add-on, a $10 autopay discount and 81 cents of tax. After: $86.46 a month for 1 Gig, with the router included and the price held for five years. That is $43.35 a month less, plus a one-time credit of $25.69.</desc>
+  <style>
+    .t{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+    .bg{fill:#ffffff;stroke:#e2e5e9}
+    .ttl{font-size:20px;font-weight:700;fill:#1f2933}
+    .lbl{font-size:15px;font-weight:600;fill:#1f2933}
+    .big{font-size:22px;font-weight:700;fill:#1f2933}
+    .cap{font-size:12.5px;fill:#52606d}
+    .seg{font-size:12.5px;font-weight:600;fill:#1f2933;text-anchor:middle}
+    .net{fill:#c9d6e6;stroke:#9fb3c8}
+    .rtr{fill:#fbe3c4;stroke:#e08a1e}
+    .tax{fill:#e4e7eb;stroke:#9aa5b1}
+    .new{fill:#cfe8d7;stroke:#6fae85}
+    .save{fill:none;stroke:#6fae85;stroke-width:2;stroke-dasharray:5 4}
+    .savet{font-size:15px;font-weight:700;fill:#2f7d4a;text-anchor:middle}
+    .ax{stroke:#cbd2d9;stroke-width:1}
+  </style>
+  <g class="t">
+    <rect class="bg" x="1" y="1" width="778" height="358" rx="14"/>
+    <text class="ttl" x="30" y="40">My internet bill, before and after</text>
+
+    <!-- scale: $1 = 4px, x0 = 130 -->
+    <line class="ax" x1="130" y1="70" x2="130" y2="300"/>
+
+    <text class="lbl" x="30" y="105">Before</text>
+    <text class="cap" x="30" y="124">Gigabit</text>
+    <rect class="net" x="130" y="86" width="416" height="44"/>
+    <text class="seg" x="338" y="113">Internet $114 − $10 autopay</text>
+    <rect class="rtr" x="546" y="86" width="100" height="44"/>
+    <text class="seg" x="596" y="113">Router $25</text>
+    <rect class="tax" x="646" y="86" width="4" height="44"/>
+    <text class="big" x="660" y="116">$129.81</text>
+
+    <text class="lbl" x="30" y="195">After</text>
+    <text class="cap" x="30" y="214">1 Gig</text>
+    <rect class="new" x="130" y="176" width="346" height="44"/>
+    <text class="seg" x="303" y="203">$86.46, router included, held 5 years</text>
+    <rect class="save" x="476" y="176" width="174" height="44"/>
+    <text class="savet" x="563" y="203">−$43.35 a month</text>
+
+    <text class="cap" x="130" y="262">Plus a one-time $25.69 credit on the first bill, and a mobile line free for 12 months.</text>
+    <text class="cap" x="130" y="284">The other ask, $17.66 more on that bill, was refused.</text>
+  </g>
+</svg>

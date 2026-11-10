@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 560" width="640" height="560" role="img" aria-labelledby="t4 d4">
+  <title id="t4">An illustrated support chat, shortened</title>
+  <desc id="d4">Chat bubbles. Agent: the best I can do for 500 Mbps is $85, and 300 Mbps is fine for streaming. Assistant: 300 is too slow for us; a competitor lists 500 Mbps at $50, can you match it? Agent: $85 is the best price for 500. Assistant: then I will switch this week, unless you can do better. Agent: I can do 500 Mbps at $86.46 a month all in, router included, no contract. Assistant: let me confirm with the account holder.</desc>
+  <style>
+    .t{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+    .bg{fill:#ffffff;stroke:#e2e5e9}
+    .bar{fill:#f5f7fa;stroke:#e2e5e9}
+    .ttl{font-size:16px;font-weight:700;fill:#1f2933}
+    .tag{font-size:11.5px;font-weight:700;fill:#8a5a00;text-anchor:middle}
+    .tagb{fill:#fff4e5;stroke:#e08a1e}
+    .who{font-size:11.5px;font-weight:700;fill:#7b8794}
+    .ag{fill:#eef2f7}
+    .me{fill:#2f6fb5}
+    .at{font-size:14px;fill:#1f2933}
+    .mt{font-size:14px;fill:#ffffff}
+    .win{fill:#e6f4ea;stroke:#6fae85;stroke-width:1.5}
+    .wt{font-size:14px;fill:#1f2933;font-weight:600}
+  </style>
+  <g class="t">
+    <rect class="bg" x="1" y="1" width="638" height="558" rx="14"/>
+    <path class="bar" d="M1,15 a14,14 0 0 1 14,-14 h610 a14,14 0 0 1 14,14 v41 h-638 z"/>
+    <text class="ttl" x="24" y="35">Support chat</text>
+    <rect class="tagb" x="420" y="17" width="196" height="24" rx="12"/>
+    <text class="tag" x="518" y="33">ILLUSTRATION · SHORTENED</text>
+
+    <text class="who" x="24" y="84">AGENT</text>
+    <rect class="ag" x="24" y="90" width="380" height="58" rx="14"/>
+    <text class="at" x="40" y="114">The best I can do for 500 Mbps is $85.</text>
+    <text class="at" x="40" y="136">300 Mbps is fine for streaming.</text>
+
+    <text class="who" x="520" y="170">ASSISTANT</text>
+    <rect class="me" x="216" y="176" width="400" height="58" rx="14"/>
+    <text class="mt" x="232" y="200">300 is too slow for us. A competitor lists</text>
+    <text class="mt" x="232" y="222">500 Mbps at $50. Can you match it?</text>
+
+    <text class="who" x="24" y="256">AGENT</text>
+    <rect class="ag" x="24" y="262" width="300" height="38" rx="14"/>
+    <text class="at" x="40" y="286">$85 is the best price for 500.</text>
+
+    <text class="who" x="520" y="322">ASSISTANT</text>
+    <rect class="me" x="236" y="328" width="380" height="58" rx="14"/>
+    <text class="mt" x="252" y="352">Then I'll switch providers this week,</text>
+    <text class="mt" x="252" y="374">unless you can do better.</text>
+
+    <text class="who" x="24" y="408">AGENT</text>
+    <rect class="win" x="24" y="414" width="400" height="58" rx="14"/>
+    <text class="wt" x="40" y="438">I can do 500 Mbps at $86.46 a month, all in.</text>
+    <text class="wt" x="40" y="460">Router included, no contract.</text>
+
+    <text class="who" x="520" y="494">ASSISTANT</text>
+    <rect class="me" x="296" y="500" width="320" height="38" rx="14"/>
+    <text class="mt" x="312" y="524">Let me confirm with the account holder.</text>
+  </g>
+</svg>
