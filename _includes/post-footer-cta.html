@@ -26,11 +26,6 @@
     <hr class="my-3 opacity-25">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 text-muted" style="font-size: 0.85rem;">
       <div class="d-flex align-items-center gap-2">
-        <span class="badge rounded-pill bg-light text-dark border">
-          <i class="fa-solid fa-eye me-1 text-primary"></i>
-          <span id="blog-post-views">...</span> views
-        </span>
-        <span class="text-muted">·</span>
         <a href="{{ '/bloat/' | relative_url }}" class="text-decoration-none text-muted">
           <i class="fa-solid fa-chart-simple me-1 text-info"></i>Check repo bloat report card →
         </a>
@@ -41,40 +36,3 @@
     </div>
   </div>
 </div>
-
-<script>
-  (function() {
-    var beaconUrl = 'https://blog-stats.krishan-liquid.com';
-    var path = window.location.pathname;
-    var ref = document.referrer || '';
-    
-    // Beacon hit
-    try {
-      if (navigator.sendBeacon) {
-        navigator.sendBeacon(beaconUrl + '/hit', JSON.stringify({ path: path, ref: ref, action: 'view' }));
-      } else {
-        var img = new Image();
-        img.src = beaconUrl + '/hit.gif?path=' + encodeURIComponent(path) + '&ref=' + encodeURIComponent(ref);
-      }
-    } catch(e) {}
-
-    // Fetch view count for badge
-    var viewBadge = document.getElementById('blog-post-views');
-    if (viewBadge) {
-      fetch(beaconUrl + '/stats')
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-          if (data && data.by_path && data.by_path[path]) {
-            viewBadge.textContent = data.by_path[path].views;
-          } else if (data && data.total_views) {
-            viewBadge.textContent = data.total_views;
-          } else {
-            viewBadge.textContent = '1';
-          }
-        })
-        .catch(function() {
-          viewBadge.textContent = '1+';
-        });
-    }
-  })();
-</script>
