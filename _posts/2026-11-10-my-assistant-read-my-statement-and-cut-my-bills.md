@@ -3,7 +3,7 @@ comments: true
 author: krishan
 layout: post
 categories: agents
-date: 2026-11-10
+date: 2026-11-10 12:00:00 -0800
 title: My AI assistant read my card statement and cut $53 a month
 description: "I asked my personal AI assistant to find money I was wasting. It read a year of card charges, caught a duplicate subscription, and talked a support agent down from $129.81 to $86.46 a month. It also made a few mistakes worth telling."
 ---
