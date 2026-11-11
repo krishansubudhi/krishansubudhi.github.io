@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 380" width="780" height="380" role="img" aria-labelledby="t1 d1">
+  <title id="t1">From a card statement to two fixes</title>
+  <desc id="d1">Three columns. The statement: a year of charges, posted rows only. Findings: a duplicate DashPass at $9.99 a month, an internet bill that doubled from $65 to $129.81, and a second Prime that was a false alarm because every charge was declined. Actions: the duplicate DashPass was cancelled, the internet plan was renegotiated over live chat to $86.46, and Prime was left alone.</desc>
+  <style>
+    .t{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+    .bg{fill:#ffffff;stroke:#e2e5e9}
+    .ttl{font-size:20px;font-weight:700;fill:#1f2933}
+    .hd{font-size:13px;font-weight:700;fill:#52606d;letter-spacing:1px;text-anchor:middle}
+    .lbl{font-size:15px;font-weight:600;fill:#1f2933;text-anchor:middle}
+    .cap{font-size:12.5px;fill:#52606d;text-anchor:middle}
+    .box{fill:#eef2f7;stroke:#9fb3c8;stroke-width:1.6}
+    .ok{fill:#e6f4ea;stroke:#6fae85;stroke-width:1.6}
+    .bad{fill:#fdecea;stroke:#d99a90;stroke-width:1.6;stroke-dasharray:5 3}
+    .badt{font-size:15px;font-weight:600;fill:#a8321f;text-anchor:middle}
+    .ar{stroke:#7b8794;stroke-width:2;fill:none;marker-end:url(#ah)}
+    .arx{stroke:#d99a90;stroke-width:2;fill:none;stroke-dasharray:4 3;marker-end:url(#ahx)}
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7b8794"/></marker>
+    <marker id="ahx" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#d99a90"/></marker>
+  </defs>
+  <g class="t">
+    <rect class="bg" x="1" y="1" width="778" height="378" rx="14"/>
+    <text class="ttl" x="30" y="40">From a card statement to two fixes</text>
+
+    <text class="hd" x="120" y="78">STATEMENT</text>
+    <text class="hd" x="390" y="78">FINDINGS</text>
+    <text class="hd" x="660" y="78">ACTIONS</text>
+
+    <rect class="box" x="30" y="150" width="180" height="110" rx="10"/>
+    <text class="lbl" x="120" y="190">A year of charges</text>
+    <text class="cap" x="120" y="214">every recurring merchant</text>
+    <text class="cap" x="120" y="234">posted rows only</text>
+
+    <rect class="box" x="290" y="96" width="200" height="72" rx="10"/>
+    <text class="lbl" x="390" y="126">Duplicate DashPass</text>
+    <text class="cap" x="390" y="148">$9.99 a month, 8 months</text>
+
+    <rect class="box" x="290" y="186" width="200" height="72" rx="10"/>
+    <text class="lbl" x="390" y="216">Internet bill doubled</text>
+    <text class="cap" x="390" y="238">$65 → $129.81 in September</text>
+
+    <rect class="bad" x="290" y="276" width="200" height="72" rx="10"/>
+    <text class="badt" x="390" y="306">"Second Prime"</text>
+    <text class="cap" x="390" y="328">false alarm: all Declined, $0</text>
+
+    <rect class="ok" x="570" y="96" width="180" height="72" rx="10"/>
+    <text class="lbl" x="660" y="126">Cancelled</text>
+    <text class="cap" x="660" y="148">−$9.99 a month</text>
+
+    <rect class="ok" x="570" y="186" width="180" height="72" rx="10"/>
+    <text class="lbl" x="660" y="216">Renegotiated in chat</text>
+    <text class="cap" x="660" y="238">−$43.35 a month</text>
+
+    <rect class="box" x="570" y="276" width="180" height="72" rx="10"/>
+    <text class="lbl" x="660" y="306">Left alone</text>
+    <text class="cap" x="660" y="328">nothing to cancel</text>
+
+    <path class="ar" d="M210,190 C250,190 250,132 286,132"/>
+    <path class="ar" d="M210,205 L286,222"/>
+    <path class="arx" d="M210,225 C250,225 250,312 286,312"/>
+    <path class="ar" d="M490,132 L566,132"/>
+    <path class="ar" d="M490,222 L566,222"/>
+    <path class="arx" d="M490,312 L566,312"/>
+  </g>
+</svg>
