@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 400" width="820" height="400" role="img" aria-labelledby="t1 d1">
+  <title id="t1">Three limits on an AI purchaser</title>
+  <desc id="d1">A shield with three layers. Its own identity: its own email and accounts, none of my cards reachable. A hard cap: 500 dollars a month. A human tap: every charge waits for my approval. Worst case: one charge I approved.</desc>
+  <style>
+    .t{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+    .bg{fill:#ffffff;stroke:#e2e5e9}
+    .ttl{font-size:20px;font-weight:700;fill:#1f2933}
+    .lbl{font-size:16px;font-weight:700;fill:#1f2933}
+    .cap{font-size:13.5px;fill:#52606d}
+    .okt{font-size:15px;font-weight:700;fill:#2f6b45}
+    .num{font-size:15px;font-weight:700;fill:#ffffff;text-anchor:middle}
+  </style>
+  <g class="t">
+    <rect class="bg" x="1" y="1" width="818" height="398" rx="14"/>
+    <text class="ttl" x="30" y="40">Three limits that make it safe enough</text>
+    <path d="M150,70 L250,100 L250,200 C250,265 205,305 150,330 C95,305 50,265 50,200 L50,100 Z" fill="#e6f4ea" stroke="#6fae85" stroke-width="2"/>
+    <path d="M150,100 L225,122 L225,200 C225,250 192,282 150,302 C108,282 75,250 75,200 L75,122 Z" fill="#fff4d6" stroke="#d9b45a" stroke-width="2"/>
+    <path d="M150,130 L200,145 L200,200 C200,235 178,256 150,272 C122,256 100,235 100,200 L100,145 Z" fill="#eef2f7" stroke="#9fb3c8" stroke-width="2"/>
+    <circle cx="150" cy="205" r="20" fill="#ffffff" stroke="#9fb3c8" stroke-width="2"/>
+    <text x="150" y="211" text-anchor="middle" font-size="16" font-weight="700" fill="#52606d">$</text>
+
+    <circle cx="315" cy="105" r="15" fill="#5f9f76"/><text class="num" x="315" y="110">1</text>
+    <text class="lbl" x="345" y="103">Its own identity</text>
+    <text class="cap" x="345" y="124">Its own email and accounts. None of my saved cards are reachable.</text>
+
+    <circle cx="315" cy="185" r="15" fill="#c9a043"/><text class="num" x="315" y="190">2</text>
+    <text class="lbl" x="345" y="183">A hard monthly cap</text>
+    <text class="cap" x="345" y="204">The agentic card stops at $500 a month, whatever goes wrong.</text>
+
+    <circle cx="315" cy="265" r="15" fill="#7d93ad"/><text class="num" x="315" y="270">3</text>
+    <text class="lbl" x="345" y="263">A human tap per charge</text>
+    <text class="cap" x="345" y="284">Every charge waits for my approval in the app, or it is declined.</text>
+
+    <rect x="300" y="318" width="490" height="44" rx="10" fill="#e6f4ea" stroke="#6fae85" stroke-width="1.6"/>
+    <text class="okt" x="545" y="346" text-anchor="middle">Worst case: one charge I approved myself</text>
+  </g>
+</svg>
