@@ -3,6 +3,7 @@ comments: true
 author: krishan
 layout: post
 categories: agents
+date: 2026-11-14 12:00:00 -0800
 title: My AI assistant bought my lunch with its own card
 description: "An agent with its own email, its own accounts and a capped agentic card that needs my tap for every charge can buy things in the real world without ever touching my wallet. Here is how lunch proved it."
 ---
