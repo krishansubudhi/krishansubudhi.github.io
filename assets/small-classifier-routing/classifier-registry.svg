@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 340" width="760" height="340" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">
+  <style>
+    .card { fill: #ffffff; }
+    .h { fill: #1d2433; font-size: 18px; font-weight: 600; }
+    .t { fill: #1d2433; font-size: 15px; }
+    .s { fill: #56607a; font-size: 12px; }
+    .reg { fill: #f4f6fb; stroke: #4a5a80; stroke-width: 1.5; }
+    .plug { fill: #e8f0ff; stroke: #2f5bd3; stroke-width: 1.5; }
+    .soon { fill: #ffffff; stroke: #8a94aa; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .ln { stroke: #4a5a80; stroke-width: 1.5; }
+    .sw { fill: #fff4e5; stroke: #c27a00; stroke-width: 1.5; }
+    .knob { fill: #c27a00; animation: flip 7s ease-in-out infinite; }
+    .new { animation: appear 7s ease-in-out infinite; }
+    .new2 { animation-delay: 1s; }
+    .new3 { animation-delay: 2s; }
+    @keyframes flip { 0%, 40% { transform: translateX(0); } 50%, 90% { transform: translateX(34px); } 100% { transform: translateX(0); } }
+    @keyframes appear { 0%, 15% { opacity: 0.15; } 35%, 85% { opacity: 1; } 100% { opacity: 0.15; } }
+  </style>
+  <rect class="card" x="0" y="0" width="760" height="340" rx="16"/>
+  <text class="h" x="30" y="40">One interface, many plug-in classifiers</text>
+
+  <rect class="reg" x="30" y="70" width="230" height="200" rx="12"/>
+  <text class="t" x="145" y="100" text-anchor="middle">registry</text>
+  <text class="s" x="145" y="122" text-anchor="middle">name -> classifier</text>
+  <text class="s" x="145" y="150" text-anchor="middle">classify(text, recent turns)</text>
+  <text class="s" x="145" y="168" text-anchor="middle">-> label, or "don't know"</text>
+
+  <rect class="sw" x="70" y="200" width="150" height="46" rx="10"/>
+  <text class="s" x="90" y="228">rules</text>
+  <rect x="128" y="214" width="58" height="20" rx="10" fill="#ffffff" stroke="#c27a00"/>
+  <circle class="knob" cx="138" cy="224" r="8"/>
+  <text class="s" x="192" y="228">LLM</text>
+
+  <line class="ln" x1="260" y1="120" x2="330" y2="90"/>
+  <line class="ln" x1="260" y1="150" x2="330" y2="150"/>
+  <line class="ln" x1="260" y1="180" x2="330" y2="210"/>
+  <line class="ln" x1="260" y1="230" x2="330" y2="270"/>
+
+  <rect class="plug" x="330" y="68" width="190" height="44" rx="10"/>
+  <text class="t" x="425" y="95" text-anchor="middle">who answers</text>
+  <rect class="soon new" x="330" y="128" width="190" height="44" rx="10"/>
+  <text class="t new" x="425" y="155" text-anchor="middle">is this urgent?</text>
+  <rect class="soon new new2" x="330" y="188" width="190" height="44" rx="10"/>
+  <text class="t new new2" x="425" y="215" text-anchor="middle">is this a task?</text>
+  <rect class="soon new new3" x="330" y="248" width="190" height="44" rx="10"/>
+  <text class="t new new3" x="425" y="275" text-anchor="middle">which tool?</text>
+
+  <text class="s" x="545" y="95">live now</text>
+  <text class="s" x="545" y="155">next ones plug in</text>
+  <text class="s" x="545" y="173">the same way</text>
+  <text class="s" x="30" y="320">Every classifier has a name and one method. Rules stay as the fallback for each.</text>
+</svg>
