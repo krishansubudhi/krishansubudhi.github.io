@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 480" width="880" height="480" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">
+  <style>
+    .card { fill: #ffffff; }
+    .h { fill: #1d2433; font-size: 18px; font-weight: 600; }
+    .t { fill: #1d2433; font-size: 14px; }
+    .s { fill: #56607a; font-size: 12px; }
+    .v { fill: #1d2433; font-size: 13px; font-weight: 600; }
+    .track { fill: #eef1f6; }
+    .grid { stroke: #d5dae5; stroke-width: 1; stroke-dasharray: 3 4; }
+    .b { transform-box: fill-box; transform-origin: left center; animation: grow 7s ease-out infinite; }
+    .rules { fill: #c27a00; }
+    .small { fill: #8a94aa; }
+    .moe { fill: #2f5bd3; }
+    .cloud { fill: #2e8b47; }
+    .range { opacity: .45; }
+    .d1 { animation-delay: .15s; } .d2 { animation-delay: .3s; } .d3 { animation-delay: .45s; }
+    .d4 { animation-delay: .6s; } .d5 { animation-delay: .75s; } .d6 { animation-delay: .9s; }
+    .lab { animation: fade 7s ease-out infinite; }
+    @keyframes grow { 0% { transform: scaleX(0); } 25% { transform: scaleX(1); } 88% { transform: scaleX(1); } 100% { transform: scaleX(0); } }
+    @keyframes fade { 0%, 22% { opacity: 0; } 32%, 88% { opacity: 1; } 100% { opacity: 0; } }
+  </style>
+  <rect class="card" x="0" y="0" width="880" height="480" rx="16"/>
+  <text class="h" x="30" y="38">Picking the right assistant on 46 hand-labelled turns</text>
+  <text class="s" x="320" y="66">accuracy</text>
+  <text class="s" x="730" y="66">latency per decision</text>
+
+  <line class="grid" x1="320" y1="76" x2="320" y2="420"/>
+  <line class="grid" x1="420" y1="76" x2="420" y2="420"/>
+  <line class="grid" x1="520" y1="76" x2="520" y2="420"/>
+  <line class="grid" x1="620" y1="76" x2="620" y2="420"/>
+  <line class="grid" x1="720" y1="76" x2="720" y2="420"/>
+  <text class="s" x="320" y="438" text-anchor="middle">0%</text>
+  <text class="s" x="420" y="438" text-anchor="middle">25%</text>
+  <text class="s" x="520" y="438" text-anchor="middle">50%</text>
+  <text class="s" x="620" y="438" text-anchor="middle">75%</text>
+  <text class="s" x="720" y="438" text-anchor="middle">100%</text>
+
+  <!-- rows: y step 48, bar height 26; 1% = 4px -->
+  <text class="t" x="30" y="102">Topic router, 1.5B</text>
+  <rect class="track" x="320" y="84" width="400" height="26" rx="5"/>
+  <rect class="b small" x="320" y="84" width="132" height="26" rx="5"/>
+  <text class="v lab" x="460" y="102">33%</text>
+  <text class="s" x="730" y="102">66 ms median</text>
+
+  <text class="t" x="30" y="150">Keyword rules</text>
+  <rect class="track" x="320" y="132" width="400" height="26" rx="5"/>
+  <rect class="b rules range d1" x="320" y="132" width="176" height="26" rx="5"/>
+  <rect class="b rules d1" x="320" y="132" width="148" height="26" rx="5"/>
+  <text class="v lab" x="504" y="150">37–44%</text>
+  <text class="s" x="730" y="150">~0 ms</text>
+
+  <text class="t" x="30" y="198">Small 4B model, zero-shot</text>
+  <rect class="track" x="320" y="180" width="400" height="26" rx="5"/>
+  <rect class="b small d2" x="320" y="180" width="208" height="26" rx="5"/>
+  <text class="v lab" x="536" y="198">52%</text>
+  <text class="s" x="730" y="198">fast, local</text>
+
+  <text class="t" x="30" y="246">Rules + "else last speaker"</text>
+  <rect class="track" x="320" y="228" width="400" height="26" rx="5"/>
+  <rect class="b rules d3" x="320" y="228" width="268" height="26" rx="5"/>
+  <text class="v lab" x="596" y="246">67%</text>
+  <text class="s" x="730" y="246">~0 ms</text>
+
+  <text class="t" x="30" y="294">Local 26B MoE model</text>
+  <rect class="track" x="320" y="276" width="400" height="26" rx="5"/>
+  <rect class="b moe range d4" x="320" y="276" width="340" height="26" rx="5"/>
+  <rect class="b moe d4" x="320" y="276" width="332" height="26" rx="5"/>
+  <text class="v lab" x="668" y="294">83–85%</text>
+  <text class="s" x="730" y="294">~50–200 ms, free</text>
+
+  <text class="t" x="30" y="342">Claude Haiku (cloud)</text>
+  <rect class="track" x="320" y="324" width="400" height="26" rx="5"/>
+  <rect class="b cloud d5" x="320" y="324" width="374" height="26" rx="5"/>
+  <text class="v lab" x="684" y="342" text-anchor="end" fill="#ffffff" style="fill:#ffffff">93.5%</text>
+  <text class="s" x="730" y="342">2–3 s per call</text>
+
+  <text class="t" x="30" y="390">Claude Sonnet (cloud, batched)</text>
+  <rect class="track" x="320" y="372" width="400" height="26" rx="5"/>
+  <rect class="b cloud d6" x="320" y="372" width="374" height="26" rx="5"/>
+  <text class="v lab" x="684" y="390" text-anchor="end" style="fill:#ffffff">93.5%</text>
+  <text class="s" x="730" y="390">~12 s per batch</text>
+
+  <rect x="30" y="452" width="12" height="12" class="rules"/><text class="s" x="48" y="462">rules</text>
+  <rect x="100" y="452" width="12" height="12" class="small"/><text class="s" x="118" y="462">small local models</text>
+  <rect x="245" y="452" width="12" height="12" class="moe"/><text class="s" x="263" y="462">local MoE (the pick)</text>
+  <rect x="400" y="452" width="12" height="12" class="cloud"/><text class="s" x="418" y="462">cloud, paid</text>
+  <text class="s" x="520" y="462">Lighter tail = range across runs</text>
+</svg>
