@@ -49,7 +49,7 @@ Two things keep the judges honest. Every suite ships a must-fail control: a jour
 
 For a first real subject I used [OpenCode](https://opencode.ai), an open-source coding agent, on two local models through Ollama: Qwen 3.8 27B and Gemma 4 26B. The journeys were the 5 easiest pytest tasks from SWE-bench Lite.
 
-I wanted the judge blind to the tests. It saw only the issue and each model's diff, with no test output. Only after judging did I run the benchmark's hidden tests on each saved patch.
+I wanted the judge blind to the tests. My first judging run leaked the test counts to the judge, so I re-judged blind, and every number below comes from that re-judge. It saw only the issue and each model's diff, with no test output. Only after judging did I run the benchmark's hidden tests on each saved patch.
 
 Qwen won the blind compare 4-0-1. By the hidden tests it resolved 4 of 5.
 
