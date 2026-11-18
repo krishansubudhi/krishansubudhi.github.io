@@ -3,6 +3,7 @@ comments: true
 author: krishan
 layout: post
 categories: agents
+date: 2026-11-18
 title: "Michelin: evaluating agents on the journeys users actually take"
 description: "I open-sourced Michelin, an eval harness that tests a whole agent system the way a user meets it. You write a journey in plain words, an LLM drives your agent through it, and judges score the evidence. Its first real run found a setup bug that made one model look far worse than it was."
 ---
@@ -95,4 +96,4 @@ michelin run
 
 To point it at your own agent, write the three subject files and a CUJ, and run the same command. To compare two builds, two prompts or two models, run each and hand both run folders to `michelin compare`.
 
-It's early, version 0.1.2, MIT licensed. If you build agents, try it on yours and tell me where it breaks.
+It's early, version 0.1.3, MIT licensed. If you build agents, try it on yours and tell me where it breaks.
