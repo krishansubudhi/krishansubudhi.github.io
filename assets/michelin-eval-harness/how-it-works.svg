@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="900" height="420" rx="16" fill="#ffffff"/>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#555"/>
+    </marker>
+  </defs>
+  <text x="30" y="40" font-size="20" font-weight="600" fill="#222">One Michelin run</text>
+  <text x="30" y="64" font-size="14" fill="#666">You write the left column in plain words. LLMs do the rest.</text>
+
+  <!-- inputs -->
+  <rect x="30" y="95" width="190" height="120" rx="10" fill="#f3f6fb" stroke="#9fb3d1"/>
+  <text x="45" y="122" font-size="15" font-weight="600" fill="#223">Subject</text>
+  <text x="45" y="146" font-size="13" fill="#444">setup.md</text>
+  <text x="45" y="166" font-size="13" fill="#444">howtorun.md</text>
+  <text x="45" y="186" font-size="13" fill="#444">teardown.md</text>
+
+  <rect x="30" y="235" width="190" height="140" rx="10" fill="#f3f6fb" stroke="#9fb3d1"/>
+  <text x="45" y="262" font-size="15" font-weight="600" fill="#223">CUJ (yaml)</text>
+  <text x="45" y="286" font-size="13" fill="#444">what the user does</text>
+  <text x="45" y="306" font-size="13" fill="#444">what should be true</text>
+  <text x="45" y="326" font-size="13" fill="#444">after</text>
+  <text x="45" y="352" font-size="12" fill="#777">+ a must-fail control</text>
+
+  <!-- pipeline -->
+  <rect x="270" y="170" width="120" height="70" rx="10" fill="#eef7f0" stroke="#7fb58d"/>
+  <text x="330" y="200" font-size="14" font-weight="600" fill="#1f4d2b" text-anchor="middle">Constructor</text>
+  <text x="330" y="220" font-size="12" fill="#444" text-anchor="middle">sets it up</text>
+
+  <rect x="420" y="170" width="120" height="70" rx="10" fill="#eef7f0" stroke="#7fb58d"/>
+  <text x="480" y="200" font-size="14" font-weight="600" fill="#1f4d2b" text-anchor="middle">Executor</text>
+  <text x="480" y="220" font-size="12" fill="#444" text-anchor="middle">drives the journey</text>
+
+  <rect x="570" y="170" width="120" height="70" rx="10" fill="#eef7f0" stroke="#7fb58d"/>
+  <text x="630" y="200" font-size="14" font-weight="600" fill="#1f4d2b" text-anchor="middle">Destructor</text>
+  <text x="630" y="220" font-size="12" fill="#444" text-anchor="middle">tears it down</text>
+
+  <rect x="720" y="170" width="150" height="70" rx="10" fill="#fdf3e7" stroke="#d9a35b"/>
+  <text x="795" y="200" font-size="14" font-weight="600" fill="#6b4210" text-anchor="middle">Judges</text>
+  <text x="795" y="220" font-size="12" fill="#444" text-anchor="middle">score the evidence</text>
+
+  <!-- agent under test -->
+  <rect x="400" y="300" width="160" height="60" rx="10" fill="#ffffff" stroke="#888" stroke-dasharray="5,4"/>
+  <text x="480" y="326" font-size="14" font-weight="600" fill="#333" text-anchor="middle">Your agent</text>
+  <text x="480" y="345" font-size="12" fill="#666" text-anchor="middle">as it really runs</text>
+  <line x1="480" y1="240" x2="480" y2="298" stroke="#555" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="490" y="275" font-size="12" fill="#666">CLI, server, chat</text>
+
+  <!-- evidence -->
+  <rect x="420" y="95" width="270" height="44" rx="10" fill="#f7f7f7" stroke="#bbb"/>
+  <text x="555" y="122" font-size="13" fill="#333" text-anchor="middle">evidence: commands, replies, files, diffs</text>
+  <line x1="480" y1="170" x2="480" y2="141" stroke="#555" stroke-width="1.5" marker-end="url(#a)"/>
+  <path d="M690,117 L795,117 L795,168" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <!-- arrows -->
+  <path d="M220,155 L245,155 L245,205 L268,205" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#a)"/>
+  <path d="M220,305 L245,305 L245,205" fill="none" stroke="#555" stroke-width="1.5"/>
+  <line x1="390" y1="205" x2="418" y2="205" stroke="#555" stroke-width="1.5" marker-end="url(#a)"/>
+  <line x1="540" y1="205" x2="568" y2="205" stroke="#555" stroke-width="1.5" marker-end="url(#a)"/>
+  <line x1="690" y1="205" x2="718" y2="205" stroke="#555" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <!-- report -->
+  <rect x="720" y="300" width="150" height="60" rx="10" fill="#f3f6fb" stroke="#9fb3d1"/>
+  <text x="795" y="326" font-size="14" font-weight="600" fill="#223" text-anchor="middle">report.html</text>
+  <text x="795" y="345" font-size="12" fill="#666" text-anchor="middle">pass / fail per line</text>
+  <line x1="795" y1="240" x2="795" y2="298" stroke="#555" stroke-width="1.5" marker-end="url(#a)"/>
+</svg>
