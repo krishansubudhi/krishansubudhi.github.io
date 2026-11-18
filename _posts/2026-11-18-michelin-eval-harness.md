@@ -3,7 +3,7 @@ comments: true
 author: krishan
 layout: post
 categories: agents
-date: 2026-11-18
+date: 2026-11-18 12:00:00 -0800
 title: "Michelin: evaluating agents on the journeys users actually take"
 description: "I open-sourced Michelin, an eval harness that tests a whole agent system the way a user meets it. You write a journey in plain words, an LLM drives your agent through it, and judges score the evidence. Its first real run found a setup bug that made one model look far worse than it was."
 ---
