@@ -1,5 +1,5 @@
 // Offline cache for /games/. Bump VERSION whenever any file below changes.
-const VERSION = 'games-v17';
+const VERSION = 'games-v18';
 const FILES = [
   '/games/',
   '/games/index.html',
@@ -21,6 +21,7 @@ const FILES = [
   '/games/pumpkin-catch.html',
   '/games/flags.html',
   '/games/garbage-truck.html',
+  '/games/garage.html',
   '/games/animal-colors/',
   '/games/animal-colors/index.html',
   '/games/animal-colors/black-animals.jpg',

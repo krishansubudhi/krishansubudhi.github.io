@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>(function(){function v(){var h=(window.visualViewport&&visualViewport.height)||innerHeight;document.documentElement.style.setProperty('--vh',h*0.01+'px');}v();addEventListener('resize',v);addEventListener('orientationchange',v);if(window.visualViewport)visualViewport.addEventListener('resize',v);})();</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0e1116">
+<link rel="manifest" href="/games/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="/games/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/games/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="/games/games.css">
+<title>Garage Parking</title>
+<style>
+.top h1{font-size:21px;white-space:nowrap}
+.stats{font-size:22px}
+#area{flex:1;min-height:0;margin:6px 0 0;position:relative;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;border-radius:14px;background:#7ec8f0}
+#garage{position:absolute;background:#d9573b;border-radius:14px 14px 0 0;box-shadow:inset 0 -6px 0 rgba(0,0,0,.15)}
+#roof{position:absolute;left:0;right:0;top:0;display:flex;align-items:center;justify-content:center;font-size:28px;background:repeating-linear-gradient(90deg,#b8402a 0 22px,#c94a32 22px 44px);border-radius:14px 14px 0 0;color:#fff;letter-spacing:6px}
+#inside{position:absolute;background:#3a3f4b;border-radius:6px}
+.bay{position:absolute;border-radius:10px;display:flex;justify-content:center;align-items:flex-start;font-weight:900;color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.25);font-family:system-ui,sans-serif;box-shadow:inset 0 0 0 5px rgba(255,255,255,.55);transition:filter .3s,transform .3s}
+.bay.full{filter:brightness(1.08)}
+.bay.hot{transform:scale(1.04);filter:brightness(1.2)}
+#door{position:absolute;overflow:hidden;z-index:3;height:0;transition:height .8s ease-in-out;background:repeating-linear-gradient(180deg,#e9e3d6 0 26px,#bdb4a2 26px 30px);border-radius:6px;pointer-events:none}
+#road{position:absolute;left:0;right:0;bottom:0;background:#555b66;border-top:6px solid #f2c94c}
+#road:after{content:"";position:absolute;left:0;right:0;top:50%;height:6px;margin-top:-3px;background:repeating-linear-gradient(90deg,#fff 0 30px,transparent 30px 60px);opacity:.7}
+.car{position:absolute;z-index:2;transition:left .9s cubic-bezier(.45,.05,.3,1),top .9s cubic-bezier(.45,.05,.3,1);cursor:pointer;touch-action:none}
+.car.drag{transition:none;z-index:4}
+.car.fast{transition:none}
+.car .bod{width:100%;height:100%;transform-origin:50% 90%}
+.car svg{display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 4px 2px rgba(0,0,0,.3))}
+.car.drive .bod{animation:rumble .18s linear infinite}
+.bounce{animation:bounce .5s ease}
+.wig{animation:wig .5s ease}
+@keyframes rumble{50%{transform:translateY(-2px)}}
+@keyframes bounce{30%{transform:translateY(-22%) scale(1.05,.95)}60%{transform:translateY(0) scale(1.08,.9)}80%{transform:translateY(-6%)}}
+@keyframes wig{20%{transform:rotate(-8deg)}40%{transform:rotate(7deg)}60%{transform:rotate(-5deg)}80%{transform:rotate(3deg)}}
+.spark{position:absolute;z-index:5;pointer-events:none;font-size:26px;animation:spark .9s ease-out forwards}
+@keyframes spark{0%{transform:translate(-50%,-50%) scale(.3);opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.2);opacity:0}}
+@media (max-width:340px),(max-height:360px){
+ body.play{padding:6px 8px}
+ body.play .top{margin:0 0 4px;gap:6px}
+ body.play .top h1{font-size:15px}
+ body.play .back,body.play .mute{min-width:34px;height:34px;font-size:16px;border-radius:8px}
+ body.play .stats{font-size:13px}
+ #area{margin:4px 0}
+}
+</style>
+</head>
+<body class="play">
+<main>
+<div class="top"><a class="back" href="/games/" aria-label="Back to games">‹</a><h1>🚗 Garage Parking</h1><button id="mute" class="mute" aria-label="Sound on or off">🔊</button></div>
+<div class="stats"><span>🚗 <b id="s" style="color:var(--ink)">0</b></span></div>
+<div id="area" aria-label="Garage Parking. Tap a car to park it in the bay with the same colour.">
+<div id="garage"><div id="roof">🅿️</div><div id="inside"></div></div>
+<div id="door"></div>
+<div id="road"></div>
+</div>
+</main>
+<script>
+// Gentle sounds via WebAudio, with a mute toggle shared by every game.
+const SFX=(function(){let ac=null,muted=false,unlocked=false;try{muted=localStorage.getItem('games.muted')==='1';}catch(e){}
+const btn=document.getElementById('mute');function paint(){if(btn){btn.textContent=muted?'🔇':'🔊';btn.setAttribute('aria-pressed',muted?'true':'false');}}paint();
+function ctx(){ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();return ac;}
+function unlock(){if(unlocked)return;unlocked=true;
+ try{if(navigator.audioSession)navigator.audioSession.type='playback';}catch(e){}
+ try{const a=ctx(),b=a.createBuffer(1,1,22050),s=a.createBufferSource();s.buffer=b;s.connect(a.destination);s.start(0);}catch(e){}}
+document.addEventListener('touchend',unlock,{once:true,passive:true});
+document.addEventListener('click',unlock,{once:true});
+function tone(f,d,type,vol,slide){if(muted)return;try{const a=ctx();
+ const t=a.currentTime,o=ac.createOscillator(),g=ac.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);
+ g.gain.setValueAtTime(vol||0.06,t);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d+0.02);}catch(e){}}
+function notes(list,step,type){list.forEach((f,i)=>setTimeout(()=>tone(f,step*1.4,type),i*step*1000));}
+if(btn)btn.addEventListener('click',()=>{muted=!muted;try{localStorage.setItem('games.muted',muted?'1':'0');}catch(e){}paint();tone(660,0.08);});
+return{tone,notes,get muted(){return muted;}};})();
+</script>
+<script>
+(function(){
+const area=document.getElementById('area'),garage=document.getElementById('garage'),roof=document.getElementById('roof'),inside=document.getElementById('inside'),door=document.getElementById('door'),road=document.getElementById('road'),sEl=document.getElementById('s');
+const PAL=[['#ff4d4d','#c62828'],['#2f80ff','#1452b8'],['#ffd23f','#d9a400'],['#2ecc71','#1b8f4c'],['#ff8c1a','#c45f00'],['#b45cff','#7a2fc2'],['#ff5fb0','#c42f7f']];
+let L={},bays=[],cars=[],queue=[],total=0,busy=false;
+function act(){document.body.dataset.acts=(+document.body.dataset.acts||0)+1;}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;}
+const honk=()=>{SFX.tone(470,0.14,'square',0.045);setTimeout(()=>SFX.tone(370,0.2,'square',0.045),150);};
+const chime=()=>SFX.notes([660,880,1320],0.09,'triangle');
+const boop=()=>SFX.tone(280,0.22,'sine',0.07,170);
+const cheer=()=>SFX.notes([523,659,784,1047,784,1047],0.12,'triangle');
+const rumble=()=>SFX.tone(110,0.8,'sawtooth',0.025,60);
+
+function layout(){
+ const W=area.clientWidth,H=area.clientHeight,port=W/H<0.85,cols=port?2:4,rows=port?2:1;
+ let cw=Math.max(80,Math.min(180,W/(port?2.6:5.2),H*0.2)),ch=cw*0.66;
+ const roadH=Math.round(ch*1.25+30),gH=H-roadH,rh=Math.max(40,Math.min(60,gH*0.09)),pad=10,gap=10;
+ const gw=Math.min(W,port?W:H*1.9),gx=(W-gw)/2;
+ Object.assign(garage.style,{left:gx+'px',top:'0px',width:gw+'px',height:gH+'px'});
+ roof.style.height=rh+'px';
+ const ix=pad,iy=rh+pad*0.6,iw=gw-pad*2,ih=gH-iy;
+ Object.assign(inside.style,{left:ix+'px',top:iy+'px',width:iw+'px',height:ih+'px'});
+ road.style.height=roadH+'px';
+ const bw=(iw-gap*(cols+1))/cols,bh=(ih-gap*(rows+1))/rows;
+ cw=Math.max(80,Math.min(cw,bw*0.88));ch=cw*0.66;
+ L={W,H,cw,ch,roadH,gH,ex:W/2-cw/2,ey:gH+(roadH-ch)/2+ch*0.14,doorTop:iy,doorLeft:gx+ix,doorW:iw,doorH:ih,rects:[]};
+ Object.assign(door.style,{left:L.doorLeft+'px',top:L.doorTop+'px',width:iw+'px'});
+ if(door.dataset.down)door.style.height=ih+'px';
+ for(let i=0;i<4;i++){const c=i%cols,r=(i/cols)|0;
+  const x=gx+ix+gap+c*(bw+gap),y=iy+gap+r*(bh+gap);
+  L.rects[i]={x,y,w:bw,h:bh,px:x+bw/2-cw/2,py:y+bh-ch-Math.min(18,bh*0.08)};
+  if(bays[i]){Object.assign(bays[i].el.style,{left:(x-gx)+'px',top:y+'px',width:bw+'px',height:bh+'px',fontSize:Math.min(bw*0.55,(bh-ch)*0.7,110)+'px',lineHeight:Math.min(bh-ch,bw*0.8)+'px'});}
+ }
+}
+function carSVG(col,dark,n){
+ return '<svg viewBox="0 0 160 106"><path d="M38 44 L52 14 Q55 8 62 8 L104 8 Q111 8 114 14 L128 44 Z" fill="'+col+'" stroke="'+dark+'" stroke-width="4"/>'+
+ '<path d="M50 42 L60 18 L80 18 L80 42 Z M86 42 L86 18 L106 18 L116 42 Z" fill="#cdeeff" stroke="'+dark+'" stroke-width="3"/>'+
+ '<rect x="6" y="40" width="148" height="44" rx="18" fill="'+col+'" stroke="'+dark+'" stroke-width="4"/>'+
+ '<rect x="140" y="52" width="12" height="10" rx="4" fill="#fff6a8"/><rect x="8" y="54" width="9" height="9" rx="3" fill="#ff6b6b"/>'+
+ '<circle cx="83" cy="-6" r="19" fill="#fff" stroke="'+dark+'" stroke-width="4"/><text x="83" y="4" font-size="29" font-weight="900" text-anchor="middle" font-family="system-ui,sans-serif" fill="'+dark+'">'+n+'</text>'+
+ '<circle cx="42" cy="86" r="16" fill="#222"/><circle cx="42" cy="86" r="6" fill="#ccc"/><circle cx="118" cy="86" r="16" fill="#222"/><circle cx="118" cy="86" r="6" fill="#ccc"/></svg>';
+}
+function place(car,x,y,instant){
+ if(instant){car.el.classList.add('fast');}
+ car.el.style.left=x+'px';car.el.style.top=y+'px';car.el.style.width=L.cw+'px';car.el.style.height=L.ch+'px';
+ if(instant){void car.el.offsetWidth;car.el.classList.remove('fast');}
+}
+function drive(car,x,y,done){car.el.classList.add('drive');place(car,x,y);clearTimeout(car.t);car.t=setTimeout(()=>{car.el.classList.remove('drive');done&&done();},920);}
+function anim(el,c){el.classList.remove(c);void el.offsetWidth;el.classList.add(c);setTimeout(()=>el.classList.remove(c),520);}
+function sparkle(x,y){const s=['✨','⭐','🌟','✨','💫','⭐'];for(let i=0;i<8;i++){const e=document.createElement('span');e.className='spark';e.textContent=s[i%s.length];
+ const a=i/8*Math.PI*2,d=50+Math.random()*30;e.style.left=x+'px';e.style.top=y+'px';e.style.setProperty('--dx',Math.cos(a)*d+'px');e.style.setProperty('--dy',Math.sin(a)*d+'px');area.appendChild(e);setTimeout(()=>e.remove(),950);}}
+
+function newRound(){
+ garage.querySelectorAll('.bay').forEach(b=>b.remove());bays=[];
+ const pal=shuffle(PAL.slice()).slice(0,4);
+ for(let i=0;i<4;i++){const el=document.createElement('div');el.className='bay';el.textContent=i+1;el.style.background=pal[i][0];garage.appendChild(el);bays.push({el,col:pal[i]});}
+ layout();
+ queue=shuffle([0,1,2,3]);busy=false;
+ setTimeout(spawn,400);
+}
+function spawn(){
+ if(!queue.length)return;
+ const b=queue.shift(),el=document.createElement('div');el.className='car';
+ el.innerHTML='<div class="bod">'+carSVG(bays[b].col[0],bays[b].col[1],b+1)+'</div>';
+ const car={el,bay:b,state:'coming'};cars.push(car);area.appendChild(el);
+ place(car,-L.cw-20,L.ey,true);honk();
+ drive(car,L.ex,L.ey,()=>{if(car.state==='coming')car.state='waiting';});
+ bindCar(car);
+}
+function park(car){
+ car.state='driving';const r=L.rects[car.bay];
+ drive(car,r.px,r.py,()=>{car.state='parked';bays[car.bay].el.classList.add('full');chime();sparkle(r.x+r.w/2,r.py+L.ch/2);anim(car.el.firstChild,'bounce');
+  total++;sEl.textContent=total;act();
+  if(cars.every(c=>c.state==='parked')&&!queue.length)roundEnd();else setTimeout(spawn,500);});
+}
+function rollBack(car,wrong){
+ car.state='driving';
+ if(wrong){boop();anim(car.el.firstChild,'wig');}
+ setTimeout(()=>drive(car,L.ex,L.ey,()=>{car.state='waiting';}),wrong?450:0);
+}
+function roundEnd(){
+ busy=true;setTimeout(cheer,300);
+ setTimeout(()=>{rumble();door.dataset.down='1';door.style.height=L.doorH+'px';},1100);
+ setTimeout(()=>{rumble();delete door.dataset.down;door.style.height='0px';},2600);
+ setTimeout(()=>{cars.forEach((c,i)=>{c.state='out';setTimeout(()=>{honk();drive(c,c.el.offsetLeft,L.ey,()=>drive(c,L.W+40,L.ey,()=>c.el.remove()));},i*350);});},3600);
+ setTimeout(()=>{cars=[];bays.forEach(b=>b.el.classList.remove('full'));newRound();},3600+4*350+2000);
+}
+function bayAt(x,y){for(let i=0;i<4;i++){const r=L.rects[i];if(x>=r.x&&x<=r.x+r.w&&y>=r.y&&y<=r.y+r.h)return i;}return -1;}
+function bindCar(car){
+ const el=car.el;let sx,sy,ox,oy,drag=false,down=false,hot=-1;
+ el.addEventListener('pointerdown',e=>{e.preventDefault();if(car.state==='out'||car.state==='driving')return;
+  down=true;drag=false;sx=e.clientX;sy=e.clientY;try{el.setPointerCapture(e.pointerId);}catch(_){}});
+ el.addEventListener('pointermove',e=>{if(!down)return;if(car.state!=='waiting'&&car.state!=='coming')return;
+  const dx=e.clientX-sx,dy=e.clientY-sy;
+  if(!drag&&Math.hypot(dx,dy)>12){drag=true;const ar=area.getBoundingClientRect(),cr=el.getBoundingClientRect();ox=cr.left-ar.left;oy=cr.top-ar.top;clearTimeout(car.t);el.classList.remove('drive');el.classList.add('drag');car.state='drag';}
+  if(drag){el.style.left=(ox+dx)+'px';el.style.top=(oy+dy)+'px';
+   const ar=area.getBoundingClientRect(),b=bayAt(e.clientX-ar.left,e.clientY-ar.top);
+   if(b!==hot){if(hot>=0)bays[hot].el.classList.remove('hot');hot=b;if(b>=0)bays[b].el.classList.add('hot');}}});
+ const up=e=>{if(!down)return;down=false;
+  if(hot>=0){bays[hot].el.classList.remove('hot');hot=-1;}
+  if(drag){el.classList.remove('drag');const ar=area.getBoundingClientRect(),b=bayAt(e.clientX-ar.left,e.clientY-ar.top);
+   if(b===car.bay)park(car);else rollBack(car,b>=0);return;}
+  if(car.state==='waiting'||car.state==='coming')park(car);
+  else if(car.state==='parked'){honk();anim(el.firstChild,'bounce');act();}};
+ el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);
+}
+addEventListener('resize',()=>{layout();cars.forEach(c=>{if(c.state==='parked'){const r=L.rects[c.bay];place(c,r.px,r.py,true);}else if(c.state==='waiting'||c.state==='coming')place(c,L.ex,L.ey,true);});});
+newRound();
+})();
+</script>
+<script src="/games/register.js"></script>
+</body>
+</html>
