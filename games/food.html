@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>(function(){function v(){var h=(window.visualViewport&&visualViewport.height)||innerHeight;document.documentElement.style.setProperty('--vh',h*0.01+'px');}v();addEventListener('resize',v);addEventListener('orientationchange',v);if(window.visualViewport)visualViewport.addEventListener('resize',v);})();</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0e1116">
+<link rel="manifest" href="/games/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="/games/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/games/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="/games/games.css">
+<title>Feed the Monster</title>
+<style>
+.top h1{font-size:21px;white-space:nowrap}
+#area{flex:1;min-height:0;margin:8px 0 0;position:relative;display:flex;flex-direction:column;overflow:hidden;touch-action:none;border-radius:18px;
+ background:radial-gradient(circle at 50% 38%,#fff6c9 0,#ffd96b 45%,#ffb347 100%);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+#stage{flex:1;min-height:0;position:relative;display:flex;align-items:center;justify-content:center}
+#tummy{position:absolute;top:10px;left:12px;background:#fff;border-radius:999px;padding:6px 14px;font-size:24px;font-weight:800;color:#e0457b;box-shadow:0 3px 0 rgba(0,0,0,.12);z-index:3}
+#tummy b{display:inline-block}
+#tummy b.pop{animation:pop .35s ease}
+@keyframes pop{50%{transform:scale(1.6)}}
+/* ---- monster face ---- */
+#face{--s:260px;position:relative;width:var(--s);height:calc(var(--s)*0.92);cursor:pointer}
+#body{position:absolute;inset:0;border-radius:50% 50% 46% 46%/55% 55% 45% 45%;background:radial-gradient(circle at 35% 30%,#8ff0a4,#3cc66b 60%,#26a455);box-shadow:inset 0 calc(var(--s)*-0.04) 0 rgba(0,0,0,.12),0 calc(var(--s)*0.03) 0 rgba(0,0,0,.12)}
+.horn{position:absolute;top:calc(var(--s)*-0.09);width:calc(var(--s)*0.14);height:calc(var(--s)*0.2);background:#ff8fb8;border-radius:50% 50% 20% 20%}
+.horn.l{left:18%;transform:rotate(-18deg)}.horn.r{right:18%;transform:rotate(18deg)}
+.eye{position:absolute;top:20%;width:calc(var(--s)*0.25);height:calc(var(--s)*0.25);background:#fff;border-radius:50%;box-shadow:inset 0 -4px 0 rgba(0,0,0,.08);overflow:hidden;transition:height .15s}
+.eye.l{left:17%}.eye.r{right:17%}
+.pupil{position:absolute;left:50%;top:52%;width:46%;height:46%;margin:-23% 0 0 -23%;background:#1d1d3a;border-radius:50%;transition:transform .2s}
+.pupil::after{content:"";position:absolute;left:18%;top:15%;width:34%;height:34%;background:#fff;border-radius:50%}
+.lid{position:absolute;left:0;right:0;top:0;height:0;background:#3cc66b;transition:height .08s}
+#face.blink .lid{height:100%}
+#face.happy .eye{border-radius:50% 50% 50% 50%/100% 100% 0 0}
+#face.happy .pupil{transform:translateY(-14%) scale(.9)}
+.cheek{position:absolute;top:50%;width:calc(var(--s)*0.13);height:calc(var(--s)*0.08);background:#ff8fb8;border-radius:50%;opacity:.7}
+.cheek.l{left:9%}.cheek.r{right:9%}
+#mouth{position:absolute;left:50%;top:58%;width:calc(var(--s)*0.44);height:calc(var(--s)*0.09);transform:translateX(-50%);background:#7a1636;border-radius:0 0 999px 999px/0 0 100% 100%;overflow:hidden;transition:height .15s ease,width .15s ease,border-radius .15s}
+#mouth .tongue{position:absolute;left:50%;bottom:-20%;width:55%;height:55%;transform:translateX(-50%);background:#ff6f91;border-radius:50%}
+#mouth .teeth{position:absolute;left:18%;top:0;width:64%;height:calc(var(--s)*0.05);background:repeating-linear-gradient(90deg,#fff 0 46%,transparent 46% 54%);border-radius:0 0 6px 6px}
+#face.open #mouth{height:calc(var(--s)*0.28);width:calc(var(--s)*0.4);border-radius:45% 45% 50% 50%}
+#face.chomp #mouth{height:calc(var(--s)*0.03)}
+#face.bounce{animation:bounce .5s ease}
+@keyframes bounce{0%{transform:translateY(0) scale(1)}30%{transform:translateY(-6%) scale(1.06,.96)}60%{transform:translateY(1%) scale(.97,1.04)}100%{transform:none}}
+#face.no{animation:no .7s ease}
+@keyframes no{0%,100%{transform:none}20%{transform:rotate(-8deg) translateX(-3%)}45%{transform:rotate(8deg) translateX(3%)}70%{transform:rotate(-5deg)}85%{transform:rotate(3deg)}}
+#face.no #mouth{height:calc(var(--s)*0.05);width:calc(var(--s)*0.22);border-radius:999px}
+/* ---- tray ---- */
+#tray{flex:none;display:flex;justify-content:center;gap:8px;padding:10px 8px 12px;background:linear-gradient(#fff4,#fff8);border-top:6px solid #fff;border-radius:28px 28px 0 0;position:relative;z-index:2}
+.slot{width:var(--fs,84px);height:var(--fs,84px);border-radius:22px;background:#fff;box-shadow:0 4px 0 #e2a23a;display:flex;align-items:center;justify-content:center;position:relative}
+.food{font-size:calc(var(--fs,84px)*0.66);line-height:1;cursor:pointer;touch-action:none;width:100%;height:100%;display:flex;align-items:center;justify-content:center;transition:transform .2s}
+.food.new{animation:grow .4s cubic-bezier(.3,1.6,.6,1)}
+@keyframes grow{from{transform:scale(0)}to{transform:scale(1)}}
+.food.junk{animation:wiggle 1.4s ease-in-out infinite}
+@keyframes wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
+.food.gone{visibility:hidden}
+.food.hop{animation:hop .6s ease}
+@keyframes hop{0%{transform:none}35%{transform:translateY(-55%) scale(1.15)}65%{transform:translateY(0) scale(.9,1.1)}82%{transform:translateY(-12%)}100%{transform:none}}
+.fly{position:absolute;left:0;top:0;pointer-events:none;line-height:1;z-index:5;will-change:transform}
+.crumb{position:absolute;left:0;top:0;border-radius:50%;pointer-events:none;z-index:6}
+.star{position:absolute;left:0;top:0;pointer-events:none;z-index:7;line-height:1}
+@media (max-width:340px),(max-height:360px){
+ body.play{padding:6px 8px}
+ body.play .top{margin:0 0 4px;gap:6px}
+ body.play .top h1{font-size:15px}
+ body.play .back,body.play .mute{min-width:34px;height:34px;font-size:16px;border-radius:8px}
+ #area{margin:4px 0 0}
+}
+</style>
+</head>
+<body class="play">
+<main>
+<div class="top"><a class="back" href="/games/" aria-label="Back to games">‹</a><h1>😋 Feed the Monster</h1><button id="mute" class="mute" aria-label="Sound on or off">🔊</button></div>
+<div id="area" aria-label="Feed the Monster. Tap a food to feed the hungry monster.">
+ <div id="stage">
+  <div id="tummy" aria-label="Foods eaten">🍽️ <b id="cnt">0</b></div>
+  <div id="face">
+   <div class="horn l"></div><div class="horn r"></div>
+   <div id="body"></div>
+   <div class="eye l"><div class="pupil"></div><div class="lid"></div></div>
+   <div class="eye r"><div class="pupil"></div><div class="lid"></div></div>
+   <div class="cheek l"></div><div class="cheek r"></div>
+   <div id="mouth"><div class="teeth"></div><div class="tongue"></div></div>
+  </div>
+ </div>
+ <div id="tray"></div>
+</div>
+</main>
+<script>
+// Gentle sounds via WebAudio, with a mute toggle shared by every game.
+const SFX=(function(){let ac=null,muted=false,unlocked=false;try{muted=localStorage.getItem('games.muted')==='1';}catch(e){}
+const btn=document.getElementById('mute');function paint(){if(btn){btn.textContent=muted?'🔇':'🔊';btn.setAttribute('aria-pressed',muted?'true':'false');}}paint();
+function ctx(){ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();return ac;}
+function unlock(){if(unlocked)return;unlocked=true;
+ try{if(navigator.audioSession)navigator.audioSession.type='playback';}catch(e){}
+ try{const a=ctx(),b=a.createBuffer(1,1,22050),s=a.createBufferSource();s.buffer=b;s.connect(a.destination);s.start(0);}catch(e){}}
+document.addEventListener('touchend',unlock,{once:true,passive:true});
+document.addEventListener('click',unlock,{once:true});
+function tone(f,d,type,vol,slide){if(muted)return;try{const a=ctx();
+ const t=a.currentTime,o=ac.createOscillator(),g=ac.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);
+ g.gain.setValueAtTime(vol||0.06,t);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d+0.02);}catch(e){}}
+function notes(list,step,type){list.forEach((f,i)=>setTimeout(()=>tone(f,step*1.4,type),i*step*1000));}
+if(btn)btn.addEventListener('click',()=>{muted=!muted;try{localStorage.setItem('games.muted',muted?'1':'0');}catch(e){}paint();tone(660,0.08);});
+return{tone,notes,get muted(){return muted;}};})();
+</script>
+<script>
+(function(){
+const area=document.getElementById('area'),stage=document.getElementById('stage'),face=document.getElementById('face'),
+ mouth=document.getElementById('mouth'),tray=document.getElementById('tray'),cnt=document.getElementById('cnt');
+const GOOD=['🍎','🍌','🥕','🥦','🍇','🍓','🍉','🧀','🥚','🍞','🍐','🥒','🫐','🍊'],JUNK=['🍭','🍩','🍟','🧁'];
+let eaten=0,busy=false,nSlots=0,sinceJunk=0;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function act(){document.body.dataset.acts=(+document.body.dataset.acts||0)+1;}
+
+// Short white-noise burst (munch).
+let nbuf=null;
+const AC=window.AudioContext||window.webkitAudioContext;let nac=null;
+function crunch(d,vol,freq){if(SFX.muted||!AC)return;try{
+ nac=nac||new AC();if(nac.state==='suspended')nac.resume();
+ if(!nbuf){nbuf=nac.createBuffer(1,nac.sampleRate*0.3,nac.sampleRate);const ch=nbuf.getChannelData(0);for(let i=0;i<ch.length;i++)ch[i]=Math.random()*2-1;}
+ const t=nac.currentTime,s=nac.createBufferSource(),f=nac.createBiquadFilter(),g=nac.createGain();
+ s.buffer=nbuf;f.type='bandpass';f.frequency.value=freq||1200;f.Q.value=0.9;
+ g.gain.setValueAtTime(vol||0.25,t);g.gain.exponentialRampToValueAtTime(0.0001,t+d);
+ s.connect(f);f.connect(g);g.connect(nac.destination);s.start(t);s.stop(t+d+0.02);}catch(e){}}
+function munch(){[0,140,280].forEach((ms,i)=>setTimeout(()=>{crunch(0.08,0.22,900+i*300);SFX.tone(140-i*15,0.09,'triangle',0.08);},ms));}
+
+function layout(){
+ const w=area.clientWidth,h=area.clientHeight;
+ nSlots=w<440?4:5;
+ const fs=Math.max(64,Math.min(110,(w-16-8*(nSlots-1))/nSlots,h*0.16));
+ area.style.setProperty('--fs',fs+'px');
+ if(tray.children.length!==nSlots)buildTray();
+ const sh=Math.max(120,h-tray.offsetHeight);
+ const s=Math.max(150,Math.min(w*0.78,(sh-40)/1.15,420));
+ face.style.setProperty('--s',s+'px');
+}
+function makeFood(slot,junk){
+ slot.innerHTML='';const f=document.createElement('div');
+ f.className='food new'+(junk?' junk':'');f.textContent=junk?pick(JUNK):freshGood();f.dataset.junk=junk?'1':'';
+ slot.appendChild(f);if(!junk)setTimeout(()=>f.classList.remove('new'),450);
+ bind(f);return f;
+}
+function freshGood(){const have=[...tray.querySelectorAll('.food')].map(e=>e.textContent);const opts=GOOD.filter(g=>!have.includes(g));return pick(opts.length?opts:GOOD);}
+function buildTray(){
+ tray.innerHTML='';for(let i=0;i<nSlots;i++){const s=document.createElement('div');s.className='slot';tray.appendChild(s);makeFood(s,false);}
+}
+function refill(slot){
+ sinceJunk++;const junk=sinceJunk>=3&&Math.random()<0.4&&!tray.querySelector('.food.junk');
+ if(junk)sinceJunk=0;makeFood(slot,junk);
+}
+function center(el){const r=el.getBoundingClientRect(),a=area.getBoundingClientRect();return{x:r.left-a.left+r.width/2,y:r.top-a.top+r.height/2};}
+function mouthPt(){const m=center(mouth);return m;}
+
+// ---- feeding ----
+function feed(f,from){
+ if(busy||f.classList.contains('gone'))return;
+ if(f.dataset.junk){reject(f);return;}
+ busy=true;act();
+ const slot=f.parentNode,st=from||center(f),em=f.textContent,fs=parseFloat(getComputedStyle(f).fontSize);
+ f.classList.add('gone');
+ face.classList.add('open');SFX.tone(520,0.18,'sine',0.05,780);
+ const fly=document.createElement('div');fly.className='fly';fly.textContent=em;fly.style.fontSize=fs+'px';area.appendChild(fly);
+ const half=fs/2;const end=mouthPt();
+ const mid={x:(st.x+end.x)/2,y:Math.min(st.y,end.y)-area.clientHeight*0.12};
+ const tf=(p,s,r)=>`translate(${p.x-half}px,${p.y-half}px) scale(${s}) rotate(${r}deg)`;
+ const an=fly.animate([{transform:tf(st,1,0)},{transform:tf(mid,1.15,-160)},{transform:tf(end,0.45,-340)}],{duration:520,easing:'ease-in'});
+ an.onfinish=()=>{fly.remove();chomp(end);
+  setTimeout(()=>{refill(slot);busy=false;},260);};
+}
+function chomp(p){
+ face.classList.remove('open');face.classList.add('chomp');munch();
+ let k=0;const iv=setInterval(()=>{face.classList.toggle('chomp');if(++k>=4){clearInterval(iv);face.classList.remove('chomp');}},120);
+ crumbs(p);
+ eaten++;cnt.textContent=eaten;cnt.classList.remove('pop');void cnt.offsetWidth;cnt.classList.add('pop');
+ face.classList.remove('bounce');void face.offsetWidth;face.classList.add('bounce','happy');
+ clearTimeout(chomp.t);chomp.t=setTimeout(()=>face.classList.remove('happy'),1200);
+ setTimeout(()=>SFX.notes([523,659,784],0.08,'triangle'),520);
+ if(eaten%5===0)setTimeout(party,650);
+}
+function crumbs(p){
+ const cols=['#c8843a','#f2c14e','#fff','#8bd16a','#ff7a7a'];
+ for(let i=0;i<14;i++){const c=document.createElement('div');c.className='crumb';const r=5+Math.random()*7;
+  c.style.width=c.style.height=r+'px';c.style.background=pick(cols);area.appendChild(c);
+  const a=Math.PI*(1+Math.random()),v=50+Math.random()*90,dx=Math.cos(a)*v,dy=Math.sin(a)*v;
+  c.animate([{transform:`translate(${p.x}px,${p.y}px)`,opacity:1},{transform:`translate(${p.x+dx}px,${p.y+dy}px)`,opacity:1,offset:.5},{transform:`translate(${p.x+dx*1.4}px,${p.y+dy+120}px)`,opacity:0}],{duration:800+Math.random()*300,easing:'ease-out'}).onfinish=()=>c.remove();}
+}
+function party(){
+ SFX.notes([523,659,784,1047,784,1047],0.1,'triangle');
+ const w=area.clientWidth,h=area.clientHeight,em=['⭐','🌟','✨','🎉','💛'];
+ for(let i=0;i<18;i++){const s=document.createElement('div');s.className='star';s.textContent=pick(em);s.style.fontSize=(26+Math.random()*26)+'px';area.appendChild(s);
+  const x0=w/2,y0=h*0.4,a=Math.random()*Math.PI*2,v=Math.min(w,h)*(0.3+Math.random()*0.3);
+  s.animate([{transform:`translate(${x0}px,${y0}px) scale(.2)`,opacity:1},{transform:`translate(${x0+Math.cos(a)*v}px,${y0+Math.sin(a)*v}px) scale(1.2) rotate(180deg)`,opacity:1,offset:.6},{transform:`translate(${x0+Math.cos(a)*v}px,${y0+Math.sin(a)*v+60}px) scale(1) rotate(260deg)`,opacity:0}],{duration:1300+Math.random()*400,easing:'ease-out'}).onfinish=()=>s.remove();}
+ face.classList.remove('bounce');void face.offsetWidth;face.classList.add('bounce','happy');
+}
+function reject(f){
+ if(face.classList.contains('no'))return;
+ act();
+ face.classList.remove('bounce','open','happy');void face.offsetWidth;face.classList.add('no');
+ SFX.tone(392,0.16,'sine',0.07);setTimeout(()=>SFX.tone(294,0.22,'sine',0.07),200);
+ f.style.transform='';f.classList.remove('junk','hop');void f.offsetWidth;f.classList.add('hop');
+ setTimeout(()=>{face.classList.remove('no');f.classList.remove('hop');f.classList.add('junk');},700);
+ // after a no-no, swap the junk for something yummy so the tray stays useful
+ setTimeout(()=>{if(f.isConnected&&f.dataset.junk)makeFood(f.parentNode,false);},1600);
+}
+
+// ---- tap / drag ----
+function bind(f){
+ f.addEventListener('pointerdown',e=>{
+  e.preventDefault();e.stopPropagation();if(busy||f.classList.contains('gone'))return;
+  const sx=e.clientX,sy=e.clientY;let drag=false,ghost=null;const id=e.pointerId;
+  try{f.setPointerCapture(id);}catch(_){}
+  const a=area.getBoundingClientRect(),fs=parseFloat(getComputedStyle(f).fontSize);
+  function mv(ev){if(ev.pointerId!==id)return;
+   if(!drag&&Math.hypot(ev.clientX-sx,ev.clientY-sy)>12&&!f.dataset.junk){drag=true;f.classList.add('gone');
+    ghost=document.createElement('div');ghost.className='fly';ghost.textContent=f.textContent;ghost.style.fontSize=fs*1.15+'px';area.appendChild(ghost);face.classList.add('open');}
+   if(ghost)ghost.style.transform=`translate(${ev.clientX-a.left-fs*0.575}px,${ev.clientY-a.top-fs*0.575}px)`;}
+  function up(ev){if(ev.pointerId!==id)return;f.removeEventListener('pointermove',mv);f.removeEventListener('pointerup',up);f.removeEventListener('pointercancel',up);
+   if(!drag){if(ev.type==='pointerup')feed(f);return;}
+   const p={x:ev.clientX-a.left,y:ev.clientY-a.top},fr=face.getBoundingClientRect();
+   const onFace=ev.clientX>fr.left&&ev.clientX<fr.right&&ev.clientY>fr.top&&ev.clientY<fr.bottom+30;
+   ghost.remove();
+   if(onFace){f.classList.remove('gone');feed(f,p);}
+   else{const back=document.createElement('div');back.className='fly';back.textContent=f.textContent;back.style.fontSize=fs+'px';area.appendChild(back);
+    const h=fs/2,to=center(f);face.classList.remove('open');
+    back.animate([{transform:`translate(${p.x-h}px,${p.y-h}px)`},{transform:`translate(${to.x-h}px,${to.y-h}px)`}],{duration:300,easing:'cubic-bezier(.3,1.4,.6,1)'}).onfinish=()=>{back.remove();f.classList.remove('gone');};}
+  }
+  f.addEventListener('pointermove',mv);f.addEventListener('pointerup',up);f.addEventListener('pointercancel',up);
+ });
+}
+// tapping the monster itself feeds the next healthy food, so any tap does something
+face.addEventListener('pointerdown',e=>{e.preventDefault();if(busy)return;
+ const f=[...tray.querySelectorAll('.food')].find(x=>!x.dataset.junk&&!x.classList.contains('gone'));if(f)feed(f);});
+area.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
+area.addEventListener('contextmenu',e=>e.preventDefault());
+
+// idle life: blink and look around, mouth opens hungrily now and then
+setInterval(()=>{face.classList.add('blink');setTimeout(()=>face.classList.remove('blink'),140);},3200);
+setInterval(()=>{if(busy)return;const dx=(Math.random()-0.5)*40,dy=(Math.random()-0.2)*30;
+ document.querySelectorAll('.pupil').forEach(p=>p.style.transform=`translate(${dx}%,${dy}%)`);},1500);
+setInterval(()=>{if(busy||face.classList.contains('no'))return;face.classList.add('open');setTimeout(()=>{if(!busy)face.classList.remove('open');},700);},4500);
+
+addEventListener('resize',layout);addEventListener('orientationchange',layout);
+layout();requestAnimationFrame(layout);
+})();
+</script>
+<script src="/games/register.js"></script>
+</body>
+</html>
