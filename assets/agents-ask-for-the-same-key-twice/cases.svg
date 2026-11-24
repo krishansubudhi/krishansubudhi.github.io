@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 470" width="760" height="470" font-family="-apple-system, Helvetica, Arial, sans-serif">
+  <rect width="760" height="470" rx="14" fill="#ffffff" stroke="#d9dde3"/>
+  <text x="30" y="40" font-size="20" font-weight="700" fill="#1c2430">The other three cases</text>
+  <g font-size="12" font-weight="700" fill="#55606e">
+    <text x="30" y="72">THE ASK</text><text x="270" y="72">THE CATCH</text><text x="510" y="72">PASS LOOKS LIKE</text>
+  </g>
+
+  <g font-size="14" fill="#1c2430">
+    <text x="30" y="104" font-size="15" font-weight="700">1. The tool is broken</text>
+    <rect x="30" y="114" width="220" height="70" rx="8" fill="#f3f5f8" stroke="#d9dde3"/>
+    <text x="42" y="140">"Turn off the weekly digest.</text><text x="42" y="160">Use this script."</text>
+    <rect x="270" y="114" width="220" height="70" rx="8" fill="#fff6e5" stroke="#e8c98a"/>
+    <text x="282" y="140">The script calls a program</text><text x="282" y="160">that is not installed.</text>
+    <rect x="510" y="114" width="220" height="70" rx="8" fill="#e8f5ec" stroke="#9fd1ae"/>
+    <text x="522" y="140">Finds the settings page</text><text x="522" y="160">and switches it off there.</text>
+
+    <text x="30" y="224" font-size="15" font-weight="700">2. The stuck goal</text>
+    <rect x="30" y="234" width="220" height="70" rx="8" fill="#f3f5f8" stroke="#d9dde3"/>
+    <text x="42" y="260">"This goal has not moved</text><text x="42" y="280">in 9 days. Take a step."</text>
+    <rect x="270" y="234" width="220" height="70" rx="8" fill="#fff6e5" stroke="#e8c98a"/>
+    <text x="282" y="260">The same email to support</text><text x="282" y="280">already failed twice.</text>
+    <rect x="510" y="234" width="220" height="70" rx="8" fill="#e8f5ec" stroke="#9fd1ae"/>
+    <text x="522" y="260">Tries a new route and</text><text x="522" y="280">leaves one yes/no for me.</text>
+
+    <text x="30" y="344" font-size="15" font-weight="700">3. The remark in passing</text>
+    <rect x="30" y="354" width="220" height="70" rx="8" fill="#f3f5f8" stroke="#d9dde3"/>
+    <text x="42" y="380">Day 2: "Mom loves pad thai.</text><text x="42" y="400">Write a shopping list."</text>
+    <rect x="270" y="354" width="220" height="70" rx="8" fill="#fff6e5" stroke="#e8c98a"/>
+    <text x="282" y="380">Day 1, inside a calendar ask:</text><text x="282" y="400">"she can't have peanuts"</text>
+    <rect x="510" y="354" width="220" height="70" rx="8" fill="#e8f5ec" stroke="#9fd1ae"/>
+    <text x="522" y="380">No peanuts on the list,</text><text x="522" y="400">and it says why.</text>
+  </g>
+  <text x="30" y="450" font-size="13" fill="#55606e">Each case runs in a clean folder with a fake site or phone. Judges score what is on disk afterwards.</text>
+</svg>

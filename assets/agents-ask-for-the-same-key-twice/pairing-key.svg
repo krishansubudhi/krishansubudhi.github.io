@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 380" width="760" height="380" font-family="-apple-system, Helvetica, Arial, sans-serif">
+  <defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8a94a3"/></marker></defs>
+  <rect width="760" height="380" rx="14" fill="#ffffff" stroke="#d9dde3"/>
+  <text x="30" y="40" font-size="20" font-weight="700" fill="#1c2430">The pairing key case</text>
+
+  <text x="30" y="78" font-size="14" font-weight="700" fill="#55606e">DAY 1</text>
+  <g font-size="14" fill="#1c2430">
+    <rect x="30" y="90" width="150" height="62" rx="8" fill="#f3f5f8" stroke="#d9dde3"/>
+    <text x="105" y="116" text-anchor="middle">Me: "Start the</text><text x="105" y="136" text-anchor="middle">vacuum"</text>
+    <rect x="212" y="90" width="150" height="62" rx="8" fill="#f3f5f8" stroke="#d9dde3"/>
+    <text x="287" y="116" text-anchor="middle">Agent: "I need the</text><text x="287" y="136" text-anchor="middle">pairing key"</text>
+    <rect x="394" y="90" width="150" height="62" rx="8" fill="#f3f5f8" stroke="#d9dde3"/>
+    <text x="469" y="116" text-anchor="middle">Me: "The key is</text><text x="469" y="136" text-anchor="middle">c8470f2ba9"</text>
+    <rect x="576" y="90" width="154" height="62" rx="8" fill="#e8f5ec" stroke="#9fd1ae"/>
+    <text x="653" y="116" text-anchor="middle">Connects.</text><text x="653" y="136" text-anchor="middle">Vacuum runs.</text>
+  </g>
+  <g stroke="#8a94a3" stroke-width="1.5" marker-end="url(#a)">
+    <line x1="182" y1="121" x2="208" y2="121"/><line x1="364" y1="121" x2="390" y2="121"/><line x1="546" y1="121" x2="572" y2="121"/>
+  </g>
+
+  <line x1="30" y1="182" x2="730" y2="182" stroke="#d9dde3" stroke-dasharray="5 5"/>
+  <rect x="270" y="168" width="220" height="28" rx="14" fill="#ffffff" stroke="#d9dde3"/>
+  <text x="380" y="187" font-size="13" text-anchor="middle" fill="#55606e">overnight: phone drops the connection</text>
+
+  <text x="30" y="226" font-size="14" font-weight="700" fill="#55606e">DAY 2, NEW CONVERSATION</text>
+  <g font-size="14" fill="#1c2430">
+    <rect x="30" y="252" width="150" height="62" rx="8" fill="#f3f5f8" stroke="#d9dde3"/>
+    <text x="105" y="278" text-anchor="middle">Me: "Start the</text><text x="105" y="298" text-anchor="middle">vacuum"</text>
+
+    <rect x="260" y="238" width="470" height="42" rx="8" fill="#e8f5ec" stroke="#9fd1ae"/>
+    <text x="276" y="264"><tspan font-weight="700" fill="#1b7f3b">Pass:</tspan> reconnects with yesterday's key. Vacuum runs.</text>
+    <rect x="260" y="290" width="470" height="42" rx="8" fill="#fdecea" stroke="#e9a59f"/>
+    <text x="276" y="316"><tspan font-weight="700" fill="#b3261e">What happened:</tspan> "Could you send me the pairing key?"</text>
+  </g>
+  <g stroke="#8a94a3" stroke-width="1.5" marker-end="url(#a)" fill="none">
+    <path d="M182,275 L256,260"/><path d="M182,291 L256,310"/>
+  </g>
+  <text x="30" y="358" font-size="13" fill="#55606e">Opus 5.5, Gemini 4 Neon, Gemini 4 Hydrogen: 3 runs each, 9 of 9 asked again.</text>
+</svg>
