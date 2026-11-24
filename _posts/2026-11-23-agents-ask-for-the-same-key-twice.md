@@ -8,7 +8,7 @@ title: "I gave the agent my pairing key yesterday. Today it asked again."
 description: "I ran Opus 5.5, Gemini 4 Neon and Gemini 4 Hydrogen on four everyday errands for a personal AI agent. The two big models handle a broken tool and a stuck goal. All three asked for the same pairing key twice, 9 runs out of 9."
 ---
 
-I ran Opus 5.5, Gemini 4 Neon and Gemini 4 Hydrogen on four everyday errands for a personal AI agent. Each errand is something that has gone wrong for me in real use.
+I ran Opus 5.5, Gemini 4 Neon and Gemini 4 Hydrogen on four everyday errands for a personal AI agent. Each errand is something that has gone wrong for me in real use. I wanted to test these agents on real-life cases, in a way anyone can reproduce and trust.
 
 ## Results
 
