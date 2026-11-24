@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 330" font-family="-apple-system, Helvetica, Arial, sans-serif">
+  <rect width="760" height="330" rx="14" fill="#ffffff" stroke="#d9dde3"/>
+  <text x="30" y="42" font-size="20" font-weight="700" fill="#1c2430">The folder the agent worked in</text>
+
+  <text x="30" y="84" font-size="15" font-weight="700" fill="#b3261e">Before</text>
+  <rect x="30" y="96" width="700" height="46" rx="8" fill="#fdecea" stroke="#e9a59f"/>
+  <text x="44" y="125" font-size="15" font-family="Menlo, Consolas, monospace" fill="#1c2430">/tmp/runs/2026-11-24T00-46-59-<tspan font-weight="700" fill="#b3261e">remembers_pairing_key</tspan>/</text>
+  <text x="30" y="166" font-size="14" fill="#55606e">The agent's own notes: "The workspace path name suggests this is a memory recall task."</text>
+
+  <text x="30" y="218" font-size="15" font-weight="700" fill="#1b7f3b">After</text>
+  <rect x="30" y="230" width="700" height="46" rx="8" fill="#e8f5ec" stroke="#9fd1ae"/>
+  <text x="44" y="259" font-size="15" font-family="Menlo, Consolas, monospace" fill="#1c2430">/tmp/runs/2026-11-24T01-00-28-<tspan font-weight="700" fill="#1b7f3b">47aeb4e6</tspan>/</text>
+  <text x="30" y="300" font-size="14" fill="#55606e">Same test, same day. The name is now a hash that says nothing.</text>
+</svg>
