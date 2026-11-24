@@ -123,10 +123,10 @@ actions:
 
 comments:
   # Global switch for the post-comment system. Keeping it empty means disabled.
-  provider: disqus
+  provider:
   # The provider options are as follows:
   disqus:
-    shortname: krishansubudhi-github-io
+    shortname:
   # utterances settings › https://utteranc.es/
   utterances:
     repo: # <gh-username>/<repo>
